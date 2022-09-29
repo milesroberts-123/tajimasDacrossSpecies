@@ -1,5 +1,9 @@
 **/logs
 **/data
 **/.snakemake
+**/results
 **.vcf.gz
 **.vcg.gz.tbi
+**.fastq.gz
+**.bam
+**.bam.bai
