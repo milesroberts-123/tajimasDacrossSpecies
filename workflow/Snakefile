@@ -1,0 +1,40 @@
+import pandas as pd
+samples = pd.read_table("data/samples.tsv", sep="\t", dtype={"samples": str}).set_index("samples", drop=False)
+
+chroms = pd.read_table("data/chroms.txt", sep="\t", dtype={"chroms": str}).set_index("chroms", drop=False)
+
+#rule all:
+#	input:
+#		expand("{sample}_{end}.fastq.gz", sample=samples.index, end=[1,2])
+
+rule all:
+	input:
+		expand("filtered_variantAndInvariant_{chrom}.frq.count", chrom=chroms.index),
+		"multiqc_report.html",
+		expand("out_{chrom}.frq", chrom=chroms.index),
+                expand("out_{chrom}.ldepth.mean", chrom=chroms.index),
+		expand("out_{chrom}.lqual", chrom=chroms.index),
+                expand("out_{chrom}.lmiss", chrom=chroms.index)
+
+include: "rules/download.smk"
+include: "rules/fastp.smk"
+include: "rules/multiqc.smk"
+include: "rules/bwa_index.smk"
+include: "rules/bwa_mem.smk"
+include: "rules/samtools_sort.smk"
+include: "rules/picard_mark_duplicates.smk"
+include: "rules/samtools_index.smk"
+include: "rules/samtools_faidx.smk"
+include: "rules/picard_create_sequence_dictionary.smk"
+include: "rules/subset_genome.smk"
+include: "rules/gatk_haplotype_caller.smk"
+include: "rules/gatk_combine_gvcfs.smk"
+include: "rules/gatk_genotype_gvcfs.smk"
+include: "rules/separate_variant_invariant_sites.smk"
+include: "rules/vcftools_check_genotype_calls.smk"
+include: "rules/gatk_variant_filtration_variant_sites.smk"
+include: "rules/gatk_variant_filtration_invariant_sites.smk"
+include: "rules/vcftools_filter_variant_sites.smk"
+include: "rules/vcftools_filter_invariant_sites.smk"
+include: "rules/bcftools_concat.smk"
+include: "rules/vcftools_counts.smk"
