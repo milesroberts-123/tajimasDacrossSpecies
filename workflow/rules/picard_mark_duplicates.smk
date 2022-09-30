@@ -8,7 +8,7 @@ rule picard_mark_duplicates:
 		"picard/2.22.1-Java-11"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=32000
 	log:
 		"logs/picard_mark_duplicates/{sample}.log"
 	shell:
