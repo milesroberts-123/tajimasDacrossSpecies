@@ -19,4 +19,5 @@ cd ../workflow
 
 # submit snakemake to HPCC
 # subtract one job and one core from max to account for this submission command
-snakemake --cluster "sbatch --time 4-00:00:00 --partition=josephsnodes --account=josephsnodes" --jobs 999 --cores 511 --use-envmodules
+# rerun-incomplete in case previous snakemake instances failed and left incomplete files
+snakemake --cluster "sbatch --time 4-00:00:00 --partition=josephsnodes --account=josephsnodes" --jobs 999 --cores 511 --use-envmodules --rerun-incomplete
