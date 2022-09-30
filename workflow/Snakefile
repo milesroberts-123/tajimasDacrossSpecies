@@ -13,13 +13,13 @@ chroms = pd.read_table("data/chroms.txt", sep="\t", dtype={"chroms": str}).set_i
 wildcard_constraints:
 	sampleSe="[A-Za-z0-9]+"
 
-rule all:
-	input:
+#rule all:
+#	input:
 		#expand("{sampleSe}.fastq.gz", sampleSe=samplesSe.index),
 		#expand("{samplePe}_{end}.fastq.gz", samplePe=samplesPe.index, end = [1,2]),
 		#expand("trimmed_reads/{sampleSe}_trim.fastq.gz", sampleSe=samplesSe.index),
 		#expand("trimmed_reads/{samplePe}_{end}_trim.fastq.gz", samplePe=samplesPe.index, end = [1,2]),
-		"multiqc_report.html",
+#		"multiqc_report.html",
 		#expand("mapped_reads/{samplePe}_pe.bam", samplePe=samplesPe.index),
 		#expand("mapped_reads/{sampleSe}_se.bam", sampleSe=samplesSe.index)
 		#expand("sorted_reads/{samplePe}_pe.bam", samplePe=samplesPe.index),
@@ -28,17 +28,19 @@ rule all:
 		#expand("sorted_marked_reads/{samplePe}_pe.bam", samplePe=samplesPe.index)
 		#expand("sorted_marked_reads/{sampleSe}_se.bam.bai", sampleSe=samplesSe.index),
 		#expand("sorted_marked_reads/{samplePe}_pe.bam.bai", samplePe=samplesPe.index)
-		expand("calls/{sampleSe}_se.g.vcf.gz", sampleSe=samplesSe.index),
-		expand("calls/{samplePe}_pe.g.vcf.gz", samplePe=samplesPe.index),
-		#expand("combinedCalls_{chrom}.g.vcf.gz", chrom=chroms.index)
-#rule all:
-#	input:
-#		expand("filtered_variantAndInvariant_{chrom}.frq.count", chrom=chroms.index),
-#		"multiqc_report.html",
-#		expand("out_{chrom}.frq", chrom=chroms.index),
-#               expand("out_{chrom}.ldepth.mean", chrom=chroms.index),
-#		expand("out_{chrom}.lqual", chrom=chroms.index),
-#               expand("out_{chrom}.lmiss", chrom=chroms.index)
+		#expand("calls/{sampleSe}_se.g.vcf.gz", sampleSe=samplesSe.index),
+		#expand("calls/{samplePe}_pe.g.vcf.gz", samplePe=samplesPe.index),
+		#expand("combinedCalls_{chrom}.g.vcf.gz", chrom=chroms.index),
+#		expand("jointGenotypes_{chrom}.vcf.gz", chrom=chroms.index)
+
+rule all:
+	input:
+		expand("filtered_variantAndInvariant_{chrom}.frq.count", chrom=chroms.index),
+		"multiqc_report.html",
+		expand("out_{chrom}.frq", chrom=chroms.index),
+		expand("out_{chrom}.ldepth.mean", chrom=chroms.index),
+		expand("out_{chrom}.lqual", chrom=chroms.index),
+		expand("out_{chrom}.lmiss", chrom=chroms.index)
 
 include: "rules/download_pe.smk"
 include: "rules/download_se.smk"
@@ -55,13 +57,13 @@ include: "rules/samtools_faidx.smk"
 include: "rules/picard_create_sequence_dictionary.smk"
 include: "rules/subset_genome.smk"
 include: "rules/gatk_haplotype_caller.smk"
-#include: "rules/gatk_combine_gvcfs.smk"
-#include: "rules/gatk_genotype_gvcfs.smk"
-#include: "rules/separate_variant_invariant_sites.smk"
-#include: "rules/vcftools_check_genotype_calls.smk"
-#include: "rules/gatk_variant_filtration_variant_sites.smk"
-#include: "rules/gatk_variant_filtration_invariant_sites.smk"
-#include: "rules/vcftools_filter_variant_sites.smk"
-#include: "rules/vcftools_filter_invariant_sites.smk"
-#include: "rules/bcftools_concat.smk"
-#include: "rules/vcftools_counts.smk"
+include: "rules/gatk_combine_gvcfs.smk"
+include: "rules/gatk_genotype_gvcfs.smk"
+include: "rules/separate_variant_invariant_sites.smk"
+include: "rules/vcftools_check_genotype_calls.smk"
+include: "rules/gatk_variant_filtration_variant_sites.smk"
+include: "rules/gatk_variant_filtration_invariant_sites.smk"
+include: "rules/vcftools_filter_variant_sites.smk"
+include: "rules/vcftools_filter_invariant_sites.smk"
+include: "rules/bcftools_concat.smk"
+include: "rules/vcftools_counts.smk"
