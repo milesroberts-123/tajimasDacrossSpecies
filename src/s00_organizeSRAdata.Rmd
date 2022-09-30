@@ -15,9 +15,9 @@ athalSe = athalSraRunInfo[(athalSraRunInfo$spots_with_mates == 0),"Run"]
 athalPe = athalSraRunInfo[(athalSraRunInfo$spots_with_mates != 0), "Run"]
 
 # add assembly name to file
-# for now, subset to just one sample each
-athalSe = data.frame(samples = athalSe[1:2], genome = "arabidopsis_thaliana")
-athalPe = data.frame(samples = athalPe[1:2], genome = "arabidopsis_thaliana")
+# can subset data here to get toy dataset
+athalSe = data.frame(samples = athalSe, genome = "arabidopsis_thaliana")
+athalPe = data.frame(samples = athalPe, genome = "arabidopsis_thaliana")
 
 # write single-end and paired-end samples to separate files
 write.table(athalSe, file = "../workflow/data/samples_se.tsv", sep = "\t", quote = F, row.names = F)
