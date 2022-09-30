@@ -13,7 +13,7 @@ echo "This job is running on $HOSTNAME on `date`"
 ml -* iccifort/2020.1.217 impi/2019.7.217 snakemake/5.26.1-Python-3.8.2
 
 # go to workflow directory with Snakefile
-cd workflow
+cd ../workflow
 
 # submit snakemake to HPCC
 # subtract one job and one core from max to account for this submission command
