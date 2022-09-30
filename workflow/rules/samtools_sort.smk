@@ -4,6 +4,8 @@ rule samtools_sort:
 	output:
 		temp("sorted_reads/{sample}.bam")
 	threads: 1
+	resources:
+		mem_mb=8000
 	envmodules:
 		"GCC/9.3.0 SAMtools/1.11"
 	shell:

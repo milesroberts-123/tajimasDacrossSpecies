@@ -7,6 +7,8 @@ rule picard_mark_duplicates:
 	envmodules:
 		"picard/2.22.1-Java-11"
 	threads: 1
+	resources:
+		mem_mb=16000
 	log:
 		"logs/picard_mark_duplicates/{sample}.log"
 	shell:

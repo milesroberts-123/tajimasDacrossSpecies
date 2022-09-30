@@ -6,6 +6,8 @@ rule fastp_se:
 		htmlReport=temp("fastp_output/{sampleSe}_fastp.html"),
 		jsonReport=temp("fastp_output/{sampleSe}_se_fastp.json")
 	threads: 4
+	resources:
+		mem_mb=8000
 	params:
 		qualityScore=20,
 		minReadLength=25
