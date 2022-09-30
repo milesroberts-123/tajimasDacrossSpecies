@@ -7,6 +7,8 @@ rule bcftools_concat:
 	log:
 		"logs/bcftools_concat/bcftools_concat_{chrom}.log"
 	threads: 1
+	resources:
+		mem_mb_per_cpu=16000
 	envmodules:
 		"GCC/10.2.0 BCFtools/1.11"	
 	shell:
