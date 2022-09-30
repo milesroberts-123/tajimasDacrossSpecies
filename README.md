@@ -1,8 +1,8 @@
 # Starting files for workflow
-`data/samples.tsv` - column of SRA run numbers
-
-`data/genome.fa` - fasta file of reference genome assembly
-
-`gata/genome.gff3` - annotation of reference genome
-
-`data/chroms.txt` - a column of chromosome names for genome.fa
+```
+workflow/data/
+	arabidopsis_thaliana.gff # ARAPORT11 genome annotation of Arabidopsis thaliana, acquired from phytozome
+	arabidopsis_thaliana.fa # TAIR 10 assembly of Arabidopsis thaliana genome, acquired from phytozome
+	chroms.txt # list of chromosome names for Arabidopsis thaliana genome assembly (TAIR 10)
+	SraRunInfo_arabidopsis_thaliana.csv # SRA run info for 1135 arabidopsis genomes, downloaded from SRA on 2022-09-29
+```

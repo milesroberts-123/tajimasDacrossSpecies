@@ -1,0 +1,25 @@
+# Purpose: organize sra data from multiple species for input into snakemake workflow
+
+# clear wd and load packages
+```{r}
+rm(list = ls())
+```
+
+# Split SRA run data for A. thaliana into single-end and paired end
+```{r}
+athalSraRunInfo = read.csv("../workflow/data/SraRunInfo_arabidopsis_thaliana.csv")
+
+# separate paired end and single-end data
+# if spot_with_mates == 0 in sra run info, then data is single-end
+athalSe = athalSraRunInfo[(athalSraRunInfo$spots_with_mates == 0),"Run"]
+athalPe = athalSraRunInfo[(athalSraRunInfo$spots_with_mates != 0), "Run"]
+
+# add assembly name to file
+# for now, subset to just one sample each
+athalSe = data.frame(samples = athalSe[1:2], genome = "arabidopsis_thaliana")
+athalPe = data.frame(samples = athalPe[1:2], genome = "arabidopsis_thaliana")
+
+# write single-end and paired-end samples to separate files
+write.table(athalSe, file = "../workflow/data/samples_se.tsv", sep = "\t", quote = F, row.names = F)
+write.table(athalPe, file = "../workflow/data/samples_pe.tsv", sep = "\t", quote = F, row.names = F)
+```
