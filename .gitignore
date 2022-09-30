@@ -8,4 +8,6 @@
 **.bam
 **.bam.bai
 **.out
+**.json
+**.html
 core.**
