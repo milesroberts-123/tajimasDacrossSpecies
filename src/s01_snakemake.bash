@@ -6,6 +6,8 @@
 #SBATCH --mem-per-cpu=1G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=robe1195@msu.edu
+#SBATCH --partition=josephsnodes
+#SBATCH --account=josephsnodes
 # output information about how this job is running using bash commands
 echo "This job is running on $HOSTNAME on `date`"
 
@@ -17,4 +19,4 @@ cd ../workflow
 
 # submit snakemake to HPCC
 # subtract one job and one core from max to account for this submission command
-snakemake --cluster "sbatch --time 4-00:00:00" --jobs 999 --cores 511 --use-envmodules
+snakemake --cluster "sbatch --time 4-00:00:00 --partition=josephsnodes --account=josephsnodes" --jobs 999 --cores 511 --use-envmodules
