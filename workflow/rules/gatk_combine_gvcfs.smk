@@ -11,6 +11,8 @@ rule gatk_combine_gvcfs:
 	log:
 		"logs/gatk_combine_gvcfs/gatk_combine_gvcfs_{chrom}.log"
 	threads: 1
+	resources:
+		mem_mb_per_cpu=20000
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:

@@ -6,6 +6,8 @@ rule samtools_index:
 	log:
 		"logs/samtools_index/{sample}.log"
 	threads: 1
+	resources:
+		mem_mb_per_cpu=4000
 	envmodules:
 		"GCC/9.3.0 SAMtools/1.11"
 	shell:
