@@ -6,6 +6,9 @@ rule multiqc:
 		"multiqc_report.html"
 	log:
 		"logs/multiqc.log"
+	threads: 1
+	resources:
+		mem_mb_per_cpu=32000
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 MultiQC/1.7-Python-3.6.6"
 	shell:
