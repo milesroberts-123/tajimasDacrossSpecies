@@ -2,8 +2,10 @@
 **/data
 **/.snakemake
 **/results
+**/calls
+**/markedDups
 **.vcf.gz
-**.vcg.gz.tbi
+**.vcf.gz.tbi
 **.fastq.gz
 **.bam
 **.bam.bai
@@ -11,4 +13,3 @@
 **.json
 **.html
 core.**
-**/markedDups
