@@ -1,0 +1,11 @@
+
+
+```{r}
+info = read.csv("SraRunInfo.csv")
+sort(table(info$BioProject), decreasing = T)
+
+capsella = read.csv("SraRunInfo_capsella_rubella.csv")
+sort(table(capsella$BioProject), decreasing = T)
+
+
+```
