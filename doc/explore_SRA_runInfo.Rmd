@@ -7,5 +7,13 @@ sort(table(info$BioProject), decreasing = T)
 capsella = read.csv("SraRunInfo_capsella_rubella.csv")
 sort(table(capsella$BioProject), decreasing = T)
 
+cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
+sort(table(cgrandiflora$BioProject), decreasing = T)
+
+bdistachyon = read.csv("SraRunInfo_brachypodium_distachyon.csv")
+sort(table(bdistachyon$BioProject), decreasing = T)
+
+tintermedium = read.csv("SraRunInfo_thinopyrum_intermedium.csv")
+sort(table(tintermedium$BioProject), decreasing = T)
 
 ```
