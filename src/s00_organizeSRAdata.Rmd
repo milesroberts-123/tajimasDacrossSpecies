@@ -3,9 +3,22 @@
 # clear wd and load packages
 ```{r}
 rm(list = ls())
+
+# if (!require("BiocManager", quietly = TRUE))
+#     install.packages("BiocManager")
+# 
+# BiocManager::install("SRAdb")
+
+speciesList = unique(read.csv("../workflow/data/speciesList.csv")$Species)
 ```
 
-# Split SRA run data for A. thaliana into single-end and paired end
+# Manually check top few bioprojects for each species to see if they're WGS data
+```{r}
+
+```
+
+# Split SRA run data into single-end and paired end
+## Arabidopsis thaliana
 ```{r}
 athalSraRunInfo = read.csv("../workflow/data/SraRunInfo_arabidopsis_thaliana.csv")
 
