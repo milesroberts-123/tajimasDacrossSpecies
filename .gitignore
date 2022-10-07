@@ -13,3 +13,4 @@
 **.json
 **.html
 core.**
+**/multiqc_report_data
