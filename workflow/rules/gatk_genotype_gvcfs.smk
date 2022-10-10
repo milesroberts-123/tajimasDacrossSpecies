@@ -1,7 +1,7 @@
 # need to split over multiple chromsomes
 rule gatk_genotype_gvcfs:
 	input:
-		allCalls=ancient("combinedCalls_{chrom}.g.vcf.gz"),
+		allCalls="combinedCalls_{chrom}.g.vcf.gz",
 		genome="data/genome.fa"
 	output:
 		temp("jointGenotypes_{chrom}.vcf.gz")
