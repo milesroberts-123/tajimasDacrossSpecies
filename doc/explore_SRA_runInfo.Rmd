@@ -37,4 +37,19 @@ sort(table(cucumis_sativus$BioProject), decreasing = T)
 fragaria_x_ananassa = read.csv("SraRunInfo_fragaria_x_ananassa_2022-10-13.csv")
 sort(table(fragaria_x_ananassa$BioProject), decreasing = T)
 
+lactuca_sativa = read.csv("SraRunInfo_lactuca_sativa_2022-10-13.csv")
+sort(table(lactuca_sativa$BioProject), decreasing = T)
+
+linum_usitatissimum = read.csv("SraRunInfo_linum_usitatissimum_2022-10-13.csv")
+sort(table(linum_usitatissimum$BioProject), decreasing = T)
+
+lotus_japonicus = read.csv("SraRunInfo_lotus_japonicus_2022-10-13.csv")
+sort(table(lotus_japonicus$BioProject), decreasing = T)
+
+manihot_esculenta = read.csv("SraRunInfo_manihot_esculenta_2022-10-13.csv")
+sort(table(manihot_esculenta$BioProject), decreasing = T)
+
+medicago_truncatula = read.csv("SraRunInfo_medicago_truncatula_2022-10-13.csv")
+sort(table(medicago_truncatula$BioProject), decreasing = T)
+
 ```
