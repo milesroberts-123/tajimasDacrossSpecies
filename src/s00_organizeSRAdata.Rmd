@@ -10,7 +10,688 @@ rm(list = ls())
 # BiocManager::install("SRAdb")
 
 speciesList = unique(read.csv("../workflow/data/speciesList.csv")$Species)
+
+# create empty objects for growing list of reads
+peReads = NULL
+seReads = NULL
 ```
+
+# Compile SRA run info for each species into master list, separate paired end and single-end reads
+## Amaranthus hypochondriacus
+```{r}
+# load data for species
+amaranthus_hypochondriacus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_amaranthus_hypochondriacus_PRJEB30531.csv")
+
+# subset to only appropriate reads
+amaranthus_hypochondriacus = amaranthus_hypochondriacus[(amaranthus_hypochondriacus$ScientificName == "Amaranthus hypochondriacus"),]
+
+# Check if there are any technical replicates
+any(duplicated(amaranthus_hypochondriacus$Experiment))
+
+# check if any reads are single-end
+any(amaranthus_hypochondriacus$spots_with_mates == 0)
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = amaranthus_hypochondriacus[,"Run"], genome = "amaranthus_hypochondriacus"))
+```
+
+## Ananas comosus
+```{r}
+# load data for species
+ananas_comosus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_ananas_comosus_PRJNA389669.csv")
+
+# remove outgroups
+ananas_comosus = ananas_comosus[grepl("Ananas",ananas_comosus$ScientificName),]
+
+# Check if there are any technical replicates
+any(duplicated(ananas_comosus$Experiment))
+any(duplicated(ananas_comosus$SampleName))
+
+# check if any reads are single-end
+any(ananas_comosus$spots_with_mates == 0)
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = ananas_comosus[,"Run"], genome = "ananas_comosus"))
+```
+
+## Arabidopsis halleri
+```{r}
+# load data for species
+arabidopsis_halleri = read.csv("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_halleri_PRJDB3777.csv")
+
+# just use hiseq2000 reads so that you don't have to merge technical reps
+arabidopsis_halleri = arabidopsis_halleri[(arabidopsis_halleri$Model == "Illumina HiSeq 2000"),]
+
+# check if any reads are single-end
+any(arabidopsis_halleri$spots_with_mates == 0)
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = arabidopsis_halleri[,"Run"], genome = "arabidopsis_halleri"))
+```
+
+## Arabidopsis thaliana
+```{r}
+# load data for species
+arabidopsis_thaliana = read.csv("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_thaliana_PRJNA273563.csv")
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = arabidopsis_thaliana[(arabidopsis_thaliana$spots_with_mates > 0),"Run"], genome = "arabidopsis_thaliana"))
+
+seReads = rbind(seReads, data.frame(samples = arabidopsis_thaliana[(arabidopsis_thaliana$spots_with_mates == 0),"Run"], genome = "arabidopsis_thaliana"))
+```
+
+## Beta vulgaris
+```{r}
+# load data for species
+beta_vulgaris = read.csv("../workflow/data/SRArunInfo/SraRunInfo_beta_vulgaris_PRJNA815240.csv")
+
+# remove close relatives
+beta_vulgaris = beta_vulgaris[grepl("Beta vulgaris",beta_vulgaris$ScientificName),]
+
+# check if any reads are single-end
+any(beta_vulgaris$spots_with_mates == 0)
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = beta_vulgaris[(beta_vulgaris$spots_with_mates > 0),"Run"], genome = "beta_vulgaris"))
+
+seReads = rbind(seReads, data.frame(samples = beta_vulgaris[(beta_vulgaris$spots_with_mates == 0),"Run"], genome = "beta_vulgaris"))
+
+```
+
+## Brachypodium distachyon
+```{r}
+# load data for species
+brachypodium_distachyon = read.csv("../workflow/data/SRArunInfo/SraRunInfo_brachypodium_distachyon_PRJNA505390.csv")
+
+# check for technical replicates
+any(duplicated(brachypodium_distachyon$Experiment))
+any(duplicated(brachypodium_distachyon$SampleName))
+any(duplicated(brachypodium_distachyon$BioSample))
+
+brachypodium_distachyon[order(brachypodium_distachyon$bases, decreasing = TRUE),]
+```
+
+## Brassica rapa and Brassica oleraceae
+```{r}
+brassica = read.csv("../workflow/data/SRArunInfo/SraRunInfo_PRJNA312457.csv")
+
+# split data into the two species
+brassica_oleracea = brassica[(brassica$ScientificName == "Brassica oleracea"),]
+brassica_rapa = brassica[(brassica$ScientificName == "Brassica rapa"),]
+
+# check if any reads are single-end
+any(brassica_rapa$spots_with_mates == 0)
+any(brassica_oleracea$spots_with_mates == 0)
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = brassica_oleracea[,"Run"], genome = "brassica_oleracea"))
+
+peReads = rbind(peReads, data.frame(samples = brassica_rapa[,"Run"], genome = "brassica_rapa"))
+
+```
+
+## Capsella grandiflora
+```{r}
+capsella_grandiflora = read.csv("../workflow/data/SRArunInfo/SraRunInfo_capsella_grandiflora_PRJEB39830.csv")
+
+# subset only WGS reads
+capsella_grandiflora = capsella_grandiflora[(capsella_grandiflora$LibraryStrategy == "WGS"),]
+
+# check if any reads are single-end
+any(capsella_grandiflora$spots_with_mates == 0)
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = capsella_grandiflora[,"Run"], genome = "capsella_grandiflora"))
+
+```
+## Capsella rubella
+```{r}
+# load data
+capsella_rubella = read.csv("../workflow/data/SRArunInfo/SraRunInfo_capsella_rubella_PRJEB6689.csv")
+
+# subset only this relevant species
+capsella_rubella = capsella_rubella[(capsella_rubella$ScientificName == "Capsella rubella"),]
+
+# check for technical replicates
+any(duplicated(capsella_rubella$Experiment))
+any(duplicated(capsella_rubella$SampleName))
+any(duplicated(capsella_rubella$BioSample))
+
+# check if any reads are single-end
+any(capsella_rubella$spots_with_mates == 0)
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = capsella_rubella[(capsella_rubella$spots_with_mates > 0),"Run"], genome = "capsella_rubella"))
+
+seReads = rbind(seReads, data.frame(samples = capsella_rubella[(capsella_rubella$spots_with_mates == 0),"Run"], genome = "capsella_rubella"))
+
+```
+## Chenopodium quinoa
+```{r}
+# load data
+chenopodium_quinoa = read.csv("../workflow/data/SRArunInfo/SraRunInfo_chenopodium_quinoa_PRJNA673789.csv")
+
+# check for technical replicates
+any(duplicated(chenopodium_quinoa$Experiment))
+any(duplicated(chenopodium_quinoa$SampleName))
+any(duplicated(chenopodium_quinoa$BioSample))
+
+# check if any reads are single-end
+any(chenopodium_quinoa$spots_with_mates == 0)
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = chenopodium_quinoa[,"Run"], genome = "chenopodium_quinoa"))
+```
+
+## Cicer arietinum
+```{r}
+# load data
+cicer_arietinum = read.csv("../workflow/data/SRArunInfo/SraRunInfo_cicer_arietinum_PRJNA657888.csv")
+
+# subset only this relevant species
+cicer_arietinum = cicer_arietinum[(cicer_arietinum$ScientificName == "Cicer arietinum"),]
+
+# check for technical replicates
+any(duplicated(cicer_arietinum$Experiment))
+any(duplicated(cicer_arietinum$SampleName))
+any(duplicated(cicer_arietinum$BioSample))
+
+# check if any reads are single-end
+any(cicer_arietinum$spots_with_mates == 0)
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = cicer_arietinum[,"Run"], genome = "cicer_arietinum"))
+```
+
+## Citrullus lanatus
+```{r}
+# load data
+citrullus_lanatus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_citrullus_lanatus_PRJNA527790.csv")
+
+# subset only this relevant species
+citrullus_lanatus = citrullus_lanatus[(citrullus_lanatus$ScientificName == "Citrullus lanatus"),]
+
+# check for technical replicates
+any(duplicated(citrullus_lanatus$Experiment))
+any(duplicated(citrullus_lanatus$SampleName))
+any(duplicated(citrullus_lanatus$BioSample))
+
+# check if any reads are single-end
+any(citrullus_lanatus$spots_with_mates == 0)
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = citrullus_lanatus[,"Run"], genome = "citrullus_lanatus"))
+```
+## Cucumis sativus
+```{r}
+# load data
+cucumis_sativus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_cucumis_sativus_PRJNA171718.csv")
+
+# check for technical replicates
+any(duplicated(cucumis_sativus$Experiment))
+any(duplicated(cucumis_sativus$SampleName))
+any(duplicated(cucumis_sativus$BioSample))
+
+# check if any reads are single-end
+any(cucumis_sativus$spots_with_mates == 0)
+
+# add reads to growing list
+seReads = rbind(seReads, data.frame(samples = cucumis_sativus[(cucumis_sativus$spots_with_mates == 0),"Run"], genome = "cucumis_sativus"))
+```
+
+## Glycine soja
+```{r}
+# load data
+glycine_soja = read.csv("../workflow/data/SRArunInfo/SraRunInfo_glycine_soja_PRJNA597660.csv")
+
+# check for technical replicates
+any(duplicated(glycine_soja$Experiment))
+any(duplicated(glycine_soja$SampleName))
+any(duplicated(glycine_soja$BioSample))
+
+# check if any reads are single-end
+any(glycine_soja$spots_with_mates == 0)
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = glycine_soja[,"Run"], genome = "glycine_soja"))
+```
+
+## Gossypium barbadense
+```{r}
+gossypium_barbadense = read.csv("../workflow/data/SRArunInfo/SraRunInfo_gossypium_barbadense_PRJNA720818.csv")
+
+# check for technical replicates
+any(duplicated(gossypium_barbadense$Experiment))
+any(duplicated(gossypium_barbadense$SampleName))
+any(duplicated(gossypium_barbadense$BioSample))
+
+# check if any reads are single-end
+any(gossypium_barbadense$spots_with_mates == 0)
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = gossypium_barbadense[,"Run"], genome = "gossypium_barbadense"))
+```
+
+## Gossypium hirsutum
+```{r}
+gossypium_hirsutum = read.csv("../workflow/data/SRArunInfo/SraRunInfo_gossypium_hirsutum_PRJNA680449.csv")
+
+# subset only WGS reads
+# For accession with two technical replicates, remove the smaller replicate
+gossypium_hirsutum = gossypium_hirsutum[(gossypium_hirsutum$LibraryStrategy == "WGS" & gossypium_hirsutum$ScientificName == "Gossypium hirsutum" & gossypium_hirsutum$Platform == "ILLUMINA" & gossypium_hirsutum$LibrarySelection == "RANDOM" & gossypium_hirsutum$Run != "SRR14469961"),]
+
+# check for technical replicates
+any(duplicated(gossypium_hirsutum$Experiment))
+any(duplicated(gossypium_hirsutum$SampleName))
+any(duplicated(gossypium_hirsutum$BioSample))
+
+# check if any reads are single-end
+any(gossypium_hirsutum$spots_with_mates == 0)
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = gossypium_hirsutum[,"Run"], genome = "gossypium_hirsutum"))
+```
+
+## Hordeum vulgare
+```{r}
+hordeum_vulgare = read.csv("../workflow/data/SRArunInfo/SraRunInfo_hordeum_vulgare_PRJEB36577.csv")
+
+# check for technical replicates
+any(duplicated(hordeum_vulgare$Experiment))
+any(duplicated(hordeum_vulgare$SampleName))
+any(duplicated(hordeum_vulgare$BioSample))
+
+# check if any reads are single-end
+any(hordeum_vulgare$spots_with_mates == 0)
+
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(lib in unique(hordeum_vulgare$LibraryName)){
+  techreps = hordeum_vulgare[(hordeum_vulgare$LibraryName == lib),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = runs, genome = "hordeum_vulgare"))
+```
+
+## Lactuca sativa
+```{r}
+lactuca_sativa = read.csv("../workflow/data/SRArunInfo/SraRunInfo_lactuca_sativa_PRJNA693894.csv")
+
+# subset relevant reads
+lactuca_sativa = lactuca_sativa[(lactuca_sativa$LibraryStrategy == "WGS" & lactuca_sativa$ScientificName == "Lactuca sativa"),]
+
+# check for technical replicates
+any(duplicated(lactuca_sativa$Experiment))
+any(duplicated(lactuca_sativa$SampleName))
+any(duplicated(lactuca_sativa$BioSample))
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = lactuca_sativa[,"Run"], genome = "lactuca_sativa"))
+
+```
+
+## Lotus japonicus
+### Paper says 136 accessions, but I found 137 in the SRA
+```{r}
+lotus_japonicus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_lotus_japonicus_PRJEB27969.csv")
+
+# subset relevant reads
+lotus_japonicus = lotus_japonicus[(lotus_japonicus$bases != 0),]
+
+# check for technical replicates
+any(duplicated(lotus_japonicus$Experiment))
+any(duplicated(lotus_japonicus$SampleName))
+any(duplicated(lotus_japonicus$BioSample))
+
+# add reads to list
+peReads = rbind(peReads, data.frame(samples = lotus_japonicus[,"Run"], genome = "lotus_japonicus"))
+```
+
+## Manihot esculenta
+```{r}
+manihot_esculenta = read.csv("../workflow/data/SRArunInfo/SraRunInfo_manihot_esculenta_PRJNA234389.csv")
+
+# subset relevant reads
+manihot_esculenta = manihot_esculenta[(manihot_esculenta$LibraryStrategy == "WGS" & manihot_esculenta$ScientificName == "Manihot esculenta" & manihot_esculenta$Platform == "ILLUMINA"),]
+
+# check for technical replicates
+any(duplicated(manihot_esculenta$Experiment))
+any(duplicated(manihot_esculenta$SampleName))
+any(duplicated(manihot_esculenta$BioSample))
+
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(biosample in unique(manihot_esculenta$BioSample)){
+  techreps = manihot_esculenta[(manihot_esculenta$BioSample == biosample),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+manihot_esculenta = manihot_esculenta[(manihot_esculenta$Run %in% runs),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = manihot_esculenta[(manihot_esculenta$spots_with_mates > 0),"Run"], genome = "manihot_esculenta"))
+
+seReads = rbind(seReads, data.frame(samples = manihot_esculenta[(manihot_esculenta$spots_with_mates == 0),"Run"], genome = "manihot_esculenta"))
+
+```
+
+## Medicago truncatula
+```{r}
+medicago_truncatula = read.csv("../workflow/data/SRArunInfo/SraRunInfo_medicago_truncatula_SRA026748.csv")
+
+# subset relevant reads
+any(duplicated(medicago_truncatula$BioSample))
+length(unique(medicago_truncatula$SampleName))
+
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(biosample in unique(medicago_truncatula$SampleName)){
+  techreps = medicago_truncatula[(medicago_truncatula$SampleName == biosample),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+medicago_truncatula = medicago_truncatula[(medicago_truncatula$Run %in% runs),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = medicago_truncatula[,"Run"], genome = "medicago_truncatula"))
+
+```
+
+## Mimulus guttatus
+```{r}
+mimulus_guttatus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_mimulus_guttatus_PRJNA344904.csv")
+
+# check for technical replicates
+any(duplicated(mimulus_guttatus$Experiment))
+any(duplicated(mimulus_guttatus$SampleName))
+any(duplicated(mimulus_guttatus$BioSample))
+
+# for each technical replicate, just take the sample with the most bases
+# runs = NULL
+# for(biosample in unique(mimulus_guttatus$SampleName)){
+#   techreps = mimulus_guttatus[(mimulus_guttatus$SampleName == biosample),]
+#   techreps = techreps[order(techreps$bases, decreasing = T),]
+#   runs = c(runs, techreps[1,"Run"])
+# }
+# 
+# mimulus_guttatus = mimulus_guttatus[(mimulus_guttatus$Run %in% runs),]
+
+
+# subset relevant runs
+# create sample names vector based on info in paper
+samples = gsub("^", "SAMN0", 5852485:5852522)
+mimulus_guttatus= mimulus_guttatus[(mimulus_guttatus$BioSample %in% samples),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = mimulus_guttatus[,"Run"], genome = "mimulus_guttatus"))
+
+```
+## Olea europaea
+```{r}
+olea_europaea = read.csv("../workflow/data/SRArunInfo/SraRunInfo_olea_europaea_PRJEB35540.csv")
+
+# species has duplicate biosamples but I don't think they're actually technical replicates
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = olea_europaea[,"Run"], genome = "olea_europaea"))
+```
+
+## Oryza sativa
+```{r}
+oryza_sativa = read.csv("../workflow/data/SRArunInfo/SraRunInfo_oryza_sativa_PRJEB6180.csv")
+
+# how many genotypes are there?
+length(unique(oryza_sativa$BioSample))
+
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(biosample in unique(oryza_sativa$BioSample)){
+  techreps = oryza_sativa[(oryza_sativa$SampleName == biosample),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+oryza_sativa = oryza_sativa[(oryza_sativa$Run %in% runs),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = oryza_sativa[(oryza_sativa$spots_with_mates > 0),"Run"], genome = "oryza_sativa"))
+
+seReads = rbind(seReads, data.frame(samples = oryza_sativa[(oryza_sativa$spots_with_mates == 0),"Run"], genome = "oryza_sativa"))
+
+```
+
+## Panicum virgatum
+```{r}
+panicum_virgatum = read.csv("../workflow/data/SRArunInfo/SraRunInfo_panicum_virgatum_PRJNA622568.csv")
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = panicum_virgatum[(panicum_virgatum$spots_with_mates > 0),"Run"], genome = "panicum_virgatum"))
+
+```
+
+## Phaseolus vulgaris
+```{r}
+phaseolus_vulgaris = read.csv("../workflow/data/SRArunInfo/SraRunInfo_phaseolus_vulgaris_PRJNA515107.csv")
+
+# subset relevant reads, need random library selection
+phaseolus_vulgaris = phaseolus_vulgaris[(phaseolus_vulgaris$LibrarySelection == "RANDOM"),]
+
+# check for technical replicates
+any(duplicated(phaseolus_vulgaris$Experiment))
+any(duplicated(phaseolus_vulgaris$SampleName))
+any(duplicated(phaseolus_vulgaris$BioSample))
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = phaseolus_vulgaris[(phaseolus_vulgaris$spots_with_mates > 0),"Run"], genome = "phaseolus_vulgaris"))
+
+```
+
+## Populus trichocarpa
+```{r}
+populus_trichocarpa = read.csv("../workflow/data/SRArunInfo/SraRunInfo_populus_trichocarpa_PRJNA276056.csv")
+
+# subset relevant reads
+populus_trichocarpa = populus_trichocarpa[(populus_trichocarpa$ScientificName == "Populus trichocarpa"),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = populus_trichocarpa[(populus_trichocarpa$spots_with_mates > 0),"Run"], genome = "populus_trichocarpa"))
+
+seReads = rbind(seReads, data.frame(samples = populus_trichocarpa[(populus_trichocarpa$spots_with_mates == 0),"Run"], genome = "populus_trichocarpa"))
+```
+
+## Prunus persica
+```{r}
+prunus_persica = read.csv("../workflow/data/SRArunInfo/SraRunInfo_prunus_persica_PRJNA388029.csv")
+
+# check for technical replicates
+any(duplicated(prunus_persica$Experiment))
+any(duplicated(prunus_persica$SampleName))
+any(duplicated(prunus_persica$BioSample))
+
+# Some of these accessions are not Pruus persica, load table S1 from publication to filter
+prunus_persica_supp = read.csv("../workflow/data/SRArunInfo/doi10.1186s13059-019-1648-9_prunus_persica_TableS1_2022-10-20.csv")
+
+ids = prunus_persica_supp$ID[(prunus_persica_supp$Botanical.varieties == "P. persica L.")]
+
+prunus_persica = prunus_persica[(prunus_persica$SampleName %in% ids),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = prunus_persica[(prunus_persica$spots_with_mates > 0),"Run"], genome = "prunus_persica"))
+
+seReads = rbind(seReads, data.frame(samples = prunus_persica[(prunus_persica$spots_with_mates == 0),"Run"], genome = "prunus_persica"))
+
+```
+
+## Setaria italica
+```{r}
+setaria_italica = read.csv("../workflow/data/SRArunInfo/SraRunInfo_setaria_italica_PRJEB1234.csv")
+
+# remove Setaria virdis lines, though maybe I could keep them later?
+setaria_italica = setaria_italica[(setaria_italica$ScientificName == "Setaria italica"),]
+
+# check for technical replicates
+any(duplicated(setaria_italica$Experiment))
+any(duplicated(setaria_italica$SampleName))
+any(duplicated(setaria_italica$BioSample))
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = setaria_italica[(setaria_italica$spots_with_mates > 0),"Run"], genome = "setaria_italica"))
+
+```
+
+## Setaria viridis
+```{r}
+setaria_viridis = read.csv("../workflow/data/SRArunInfo/SraRunInfo_setaria_viridis_PRJNA633413.csv")
+
+setaria_viridis = setaria_viridis[(setaria_viridis$ScientificName == "Setaria viridis"),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = setaria_viridis[(setaria_viridis$spots_with_mates > 0),"Run"], genome = "setaria_viridis"))
+
+```
+
+## Solanum lycopersicum
+```{r}
+solanum_lycopersicum = read.csv("../workflow/data/SRArunInfo/SraRunInfo_solanum_lycopersicum_PRJNA259308.csv")
+
+# check for technical replicates
+any(duplicated(solanum_lycopersicum$Experiment))
+any(duplicated(solanum_lycopersicum$SampleName))
+any(duplicated(solanum_lycopersicum$BioSample))
+
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(biosample in unique(solanum_lycopersicum$BioSample)){
+  techreps = solanum_lycopersicum[(solanum_lycopersicum$BioSample == biosample),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+solanum_lycopersicum = solanum_lycopersicum[(solanum_lycopersicum$Run %in% runs),]
+
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = solanum_lycopersicum[(solanum_lycopersicum$spots_with_mates > 0),"Run"], genome = "solanum_lycopersicum"))
+
+seReads = rbind(seReads, data.frame(samples = solanum_lycopersicum[(solanum_lycopersicum$spots_with_mates == 0),"Run"], genome = "solanum_lycopersicum"))
+
+```
+## Sorghum bicolor
+```{r}
+sorghum_bicolor = read.csv("../workflow/data/SRArunInfo/SraRunInfo_sorghum_bicolor_PRJEB50066.csv")
+
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(biosample in unique(sorghum_bicolor$BioSample)){
+  techreps = sorghum_bicolor[(sorghum_bicolor$BioSample == biosample),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+sorghum_bicolor = sorghum_bicolor[(sorghum_bicolor$Run %in% runs),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = sorghum_bicolor[(sorghum_bicolor$spots_with_mates > 0),"Run"], genome = "sorghum_bicolor"))
+
+seReads = rbind(seReads, data.frame(samples = sorghum_bicolor[(sorghum_bicolor$spots_with_mates == 0),"Run"], genome = "sorghum_bicolor"))
+
+```
+
+## Spinacia oleracea
+```{r}
+spinacia_oleracea = read.csv("../workflow/data/SRArunInfo/SraRunInfo_spinacia_oleracea_PRJNA598728.csv")
+
+spinacia_oleracea = spinacia_oleracea[(spinacia_oleracea$ScientificName == "Spinacia oleracea"),]
+
+# check for technical replicates
+any(duplicated(spinacia_oleracea$Experiment))
+any(duplicated(spinacia_oleracea$SampleName))
+any(duplicated(spinacia_oleracea$BioSample))
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = spinacia_oleracea[(spinacia_oleracea$spots_with_mates > 0),"Run"], genome = "spinacia_oleracea"))
+
+seReads = rbind(seReads, data.frame(samples = spinacia_oleracea[(spinacia_oleracea$spots_with_mates == 0),"Run"], genome = "spinacia_oleracea"))
+
+```
+## Spirodela polyrhiza
+```{r}
+spirodela_polyrhiza = read.csv("../workflow/data/SRArunInfo/SraRunInfo_spirodela_polyrhiza_PRJNA552613.csv")
+
+# check for technical replicates
+any(duplicated(spirodela_polyrhiza$Experiment))
+any(duplicated(spirodela_polyrhiza$SampleName))
+any(duplicated(spirodela_polyrhiza$BioSample))
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = spirodela_polyrhiza[(spirodela_polyrhiza$spots_with_mates > 0),"Run"], genome = "spirodela_polyrhiza"))
+
+seReads = rbind(seReads, data.frame(samples = spirodela_polyrhiza[(spirodela_polyrhiza$spots_with_mates == 0),"Run"], genome = "spirodela_polyrhiza"))
+
+```
+
+## Vitis vinifera
+```{r}
+vitis_vinifera = read.csv("../workflow/data/SRArunInfo/SraRunInfo_vitis_vinifera_PRJNA373967.csv")
+
+# subset WGS reads
+vitis_vinifera = vitis_vinifera[(vitis_vinifera$LibraryStrategy == "WGS" & vitis_vinifera$ScientificName == "Vitis vinifera"),]
+
+# check for technical replicates
+any(duplicated(vitis_vinifera$Experiment))
+any(duplicated(vitis_vinifera$SampleName))
+any(duplicated(vitis_vinifera$BioSample))
+
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(biosample in unique(vitis_vinifera$BioSample)){
+  techreps = vitis_vinifera[(vitis_vinifera$BioSample == biosample),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+vitis_vinifera = vitis_vinifera[(vitis_vinifera$Run %in% runs),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = vitis_vinifera[(vitis_vinifera$spots_with_mates > 0),"Run"], genome = "vitis_vinifera"))
+
+seReads = rbind(seReads, data.frame(samples = vitis_vinifera[(vitis_vinifera$spots_with_mates == 0),"Run"], genome = "vitis_vinifera"))
+
+```
+
+# Summarize read counts
+```{r}
+table(peReads$genome)
+table(seReads$genome)
+
+length(unique(c(peReads$genome,seReads$genome)))
+
+nrow(peReads) + nrow(seReads)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Manually check top few bioprojects for each species to see if they're WGS data
 ```{r}
