@@ -36,16 +36,20 @@ wildcard_constraints:
 rule all:
 	input:
 		expand("filtered_variantAndInvariant_{chrom}.frq.count", chrom=chroms.index),
-#		"multiqc_report.html",
+		"multiqc_report.html",
 		expand("out_{chrom}.frq", chrom=chroms.index),
 		expand("out_{chrom}.ldepth.mean", chrom=chroms.index),
 		expand("out_{chrom}.lqual", chrom=chroms.index),
-		expand("out_{chrom}.lmiss", chrom=chroms.index)
+		expand("out_{chrom}.lmiss", chrom=chroms.index),
+		expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index),
+		expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
 
 include: "rules/download_pe.smk"
 include: "rules/download_se.smk"
 include: "rules/fastp_se.smk"
 include: "rules/fastp_pe.smk"
+include: "rules/kmc_pe.smk"
+include: "rules/kmc_se.smk"
 include: "rules/multiqc.smk"
 include: "rules/bwa_index.smk"
 include: "rules/bwa_mem_se.smk"
