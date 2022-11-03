@@ -42,7 +42,8 @@ rule all:
 		expand("out_{chrom}.lqual", chrom=chroms.index),
 		expand("out_{chrom}.lmiss", chrom=chroms.index),
 		expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index),
-		expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
+		expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index),
+		"data/fourfoldDegenerateSites.bed"
 
 include: "rules/download_pe.smk"
 include: "rules/download_se.smk"
@@ -60,6 +61,7 @@ include: "rules/samtools_index.smk"
 include: "rules/samtools_faidx.smk"
 include: "rules/picard_create_sequence_dictionary.smk"
 include: "rules/subset_genome.smk"
+include: "rules/degenotate.smk"
 include: "rules/gatk_haplotype_caller.smk"
 include: "rules/gatk_combine_gvcfs.smk"
 include: "rules/gatk_genotype_gvcfs.smk"

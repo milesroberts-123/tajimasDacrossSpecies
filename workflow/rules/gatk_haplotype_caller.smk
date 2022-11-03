@@ -5,7 +5,7 @@ rule gatk_haplotype_caller:
 		genome="data/genome.fa",
 		reads="sorted_marked_reads/{sample}.bam",
 		readsIndex="sorted_marked_reads/{sample}.bam.bai",
-		regions="data/regions.bed"
+		regions="data/fourfoldDegenerateSites.bed"
 	output:
 		temp("calls/{sample}.g.vcf.gz")
 	envmodules:
