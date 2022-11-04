@@ -17,6 +17,9 @@ rule kmc_pe:
 		"GCC/10.3.0 KMC/3.1.2rc1-Python-3.9.5"
 	shell:
 		"""
+		# create working directory for kmc
+		mkdir tmp_{wildcards.samplePe}
+
 		# Count kmers for read1 and read2
         	echo Counting kmers...
         	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read1} temporary1_{wildcards.samplePe} tmp_{wildcards.samplePe}
@@ -30,4 +33,7 @@ rule kmc_pe:
         	# Dump to text file
         	echo Dumping kmers to text file...
         	kmc_tools transform union_1_2_{wildcards.samplePe} dump {output}
+		
+		# delete working directory
+		rm -r tmp_{wildcards.samplePe}
 		"""
