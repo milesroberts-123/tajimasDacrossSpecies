@@ -1,7 +1,7 @@
 rule kmc_pe:
 	input:
-		read1="trimmed_reads/{samplePe}_1_trim.fastq.gz",
-		read2="trimmed_reads/{samplePe}_2_trim.fastq.gz"
+		read1="filtered_reads/{samplePe}_1_filt.fastq.gz",
+		read2="filtered_reads/{samplePe}_2_filt.fastq.gz"
 	output:
 		"{samplePe}_pe_kmers.txt"
 	log:

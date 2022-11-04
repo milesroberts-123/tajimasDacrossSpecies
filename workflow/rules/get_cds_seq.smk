@@ -1,9 +1,11 @@
-rules get_cds_seq:
+rule get_cds_seq:
 	input:
 		fasta="data/genome.fa",
 		gff="data/genome.gff3"
 	output:
 		"cds.fa"
+	log:
+		"logs/get_cds_seq.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=750
