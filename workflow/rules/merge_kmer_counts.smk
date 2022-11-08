@@ -1,6 +1,8 @@
 rule merge_kmer_counts:
 	input:
-		expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index) + expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
+		"kmerSubset.txt",
+		expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index),
+		expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
 	output:
 		"meanBCD.txt"
 	threads: 50
