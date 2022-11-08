@@ -8,7 +8,7 @@ rule degenotate:
 		"logs/degenotate.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=4000
+		mem_mb_per_cpu=16000
 	shell:
 		"""
 		# remove lengthy titles so fasta headers match gff exactly

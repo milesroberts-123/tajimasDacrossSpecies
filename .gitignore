@@ -14,5 +14,7 @@
 **.html
 core.**
 **/multiqc_report_data
+**.fa
+**.gff
 
 !speciesList.txt

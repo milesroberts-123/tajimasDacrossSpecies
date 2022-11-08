@@ -9,10 +9,12 @@ rule build_coding_kmer_database:
 	params:
 		kmerLength=25
 	resources:
-		mem_mb_per_cpu=1000
+		mem_mb_per_cpu=4000
+	envmodules:
+                "GCC/10.3.0 KMC/3.1.2rc1-Python-3.9.5"
 	shell:
 		"""
-		# create wd
+		# create wd, but remove it first if it already exists
 		mkdir tmp_codingKmerDatabase
 
 		# count kmers
