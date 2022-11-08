@@ -14,6 +14,7 @@ kmerCounts = mclapply(kmerFiles, read.table, header = F)
 # merge key with kmer counts
 kmerCountsMerged = Reduce(function(dtf1, dtf2) merge(dtf1, dtf2, by = "V1", all.x = TRUE), kmerCounts)
 
+gsub("_kmers.txt", "", kmerFiles)
 # normalize kmer counts in each sample to sum to 1
 myNormalize = function(x){
 	x/sum(x)
@@ -35,7 +36,7 @@ indices = list()
 k = 1
 for(i in 1:(ncol(kmerCountsMergedNorm) - 1)){
   for(j in (i+1):ncol(kmerCountsMergedNorm)){
-    indices[[k]] = c(i,j)
+    indices[[k]] = names(kmerCountsMergedNorm)[c(i, j)]
     k = k + 1
   }
 }
@@ -43,4 +44,8 @@ for(i in 1:(ncol(kmerCountsMergedNorm) - 1)){
 # calculate dissimilarity
 dissim = unlist(mclapply(indices, brayCurtisDissimilarity, data = kmerCountsMergedNorm))
 
-write.table(mean(dissim), outputFile, row.names = F, col.names = F)
+# Extract the pairs used for calculating dissimilarity
+pairs = unlist(lapply(indices, paste, collapse = "-"))
+
+# write output of dissimilarity calculations 
+write.table(data.frame(pairs = pairs, dissim = dissim), outputFile, row.names = F, col.names = F)

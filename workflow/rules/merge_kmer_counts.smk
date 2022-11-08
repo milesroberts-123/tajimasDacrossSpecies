@@ -4,7 +4,7 @@ rule merge_kmer_counts:
 		expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index),
 		expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
 	output:
-		"meanBCD.txt"
+		"bcd.txt"
 	threads: 50
 	resources:
 		mem_mb_per_cpu=2000
