@@ -7,6 +7,8 @@ rule samtools_faidx:
 	log:
 		"logs/samtools_faidx.log"
 	threads: 1
+	resources:
+		mem_mb_per_cpu=8000
 	envmodules:
 		"GCC/9.3.0 SAMtools/1.11"
 	shell:
