@@ -2,12 +2,14 @@ rule build_coding_kmer_database:
 	input:
 		"cds.fa"
 	output:
-		"codingKmerDatabase"
+		"codingKmerDatabase.kmc_pre",
+		"codingKmerDatabase.kmc_suf"
 	log:
 		"logs/build_coding_kmer_database.log"
 	threads: 1
 	params:
-		kmerLength=25
+		kmerLength=25,
+		outputPrefix="codingKmerDatabase"
 	resources:
 		mem_mb_per_cpu=4000
 	envmodules:
@@ -18,7 +20,7 @@ rule build_coding_kmer_database:
 		mkdir -p tmp_codingKmerDatabase
 
 		# count kmers
-		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs1 -fm {input} {output} tmp_codingKmerDatabase
+		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs1 -fm {input} {params.outputPrefix} tmp_codingKmerDatabase
 
 		# remove wd
 		rm -r tmp_codingKmerDatabase
