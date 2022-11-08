@@ -17,5 +17,7 @@ core.**
 **.fa
 **.gff
 **.errlog
+**.kmc_pre
+**.kmc_suf
 
 !speciesList.txt
