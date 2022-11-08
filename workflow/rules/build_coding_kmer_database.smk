@@ -15,7 +15,7 @@ rule build_coding_kmer_database:
 	shell:
 		"""
 		# create wd, but remove it first if it already exists
-		mkdir tmp_codingKmerDatabase
+		mkdir -p tmp_codingKmerDatabase
 
 		# count kmers
 		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs1 -fm {input} {output} tmp_codingKmerDatabase
