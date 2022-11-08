@@ -2,8 +2,8 @@ rule kmc_tools_filter_pe:
 	input:
 		read1="trimmed_reads/{samplePe}_1_trim.fastq.gz",
 		read2="trimmed_reads/{samplePe}_2_trim.fastq.gz",
-		"codingKmerDatabase.kmc_pre",
-		"codingKmerDatabase.kmc_suf"
+		prefix="codingKmerDatabase.kmc_pre",
+		suffix="codingKmerDatabase.kmc_suf"
 	output:
 		read1="filtered_reads/{samplePe}_1_filt.fastq.gz",
 		read2="filtered_reads/{samplePe}_2_filt.fastq.gz"

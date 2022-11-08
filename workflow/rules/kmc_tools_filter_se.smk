@@ -1,8 +1,8 @@
 rule kmc_tools_filter_se:
 	input:
 		read="trimmed_reads/{sampleSe}_trim.fastq.gz",
-		"codingKmerDatabase.kmc_pre",
-		"codingKmerDatabase.kmc_suf"
+		prefix="codingKmerDatabase.kmc_pre",
+		suffix="codingKmerDatabase.kmc_suf"
 	output:
 		"filtered_reads/{sampleSe}_filt.fastq.gz"
 	log:
