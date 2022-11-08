@@ -16,5 +16,6 @@ core.**
 **/multiqc_report_data
 **.fa
 **.gff
+**.errlog
 
 !speciesList.txt

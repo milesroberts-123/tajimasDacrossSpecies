@@ -16,7 +16,8 @@ rule degenotate:
 		#scripts/seqkit replace -s -p [^ATGC] -r N {input.genome} | scripts/seqkit replace -p " .*" -r "" > data/genome_shortTitles_noAmbig.fa
  
 		# run degenotate, remove any extra information in fasta header after initial key
-		scripts/degenotate/degenotate.py -d " " -a {input.annot} -g {input.genome} -o data/degenotateOutput
+		# if previous run failed, overwrite that failed run
+		scripts/degenotate/degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o data/degenotateOutput
 		
 		# subset out four-fold degenerate sites
 		awk '(($5 == 4))' data/degenotateOutput/degeneracy-all-sites.bed > {output}
