@@ -44,7 +44,8 @@ rule all:
 		#expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index),
 		#expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index),
 		"data/fourfoldDegenerateSites.bed",
-		"kmerSubset.txt"
+		"kmerSubset.txt",
+		"meanBCD.txt"
 
 include: "rules/download_pe.smk"
 include: "rules/download_se.smk"
@@ -57,6 +58,7 @@ include: "rules/kmc_tools_filter_se.smk"
 include: "rules/kmc_pe.smk"
 include: "rules/kmc_se.smk"
 include: "rules/random_kmer_subset.smk"
+include: "rules/merge_kmer_counts.smk"
 include: "rules/multiqc.smk"
 include: "rules/bwa_index.smk"
 include: "rules/bwa_mem_se.smk"

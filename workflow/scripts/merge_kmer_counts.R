@@ -5,8 +5,11 @@ library(parallel)
 # get file names passed to script as arguments
 args = commandArgs(trailingOnly=TRUE)
 
+kmerFiles = args[1:(length(args)-1)]
+outputFile = args[length(args)]
+
 # read key and all kmer count files into memory
-kmerCounts = mclapply(args, read.table, header = F)
+kmerCounts = mclapply(kmerFiles, read.table, header = F)
 
 # merge key with kmer counts
 kmerCountsMerged = Reduce(function(dtf1, dtf2) merge(dtf1, dtf2, by = "V1", all.x = TRUE), kmerCounts)
@@ -40,4 +43,4 @@ for(i in 1:(ncol(kmerCountsMergedNorm) - 1)){
 # calculate dissimilarity
 dissim = unlist(mclapply(indices, brayCurtisDissimilarity, data = kmerCountsMergedNorm))
 
-print(mean(dissim))
+write.table(mean(dissim), outputFile, row.names = F, col.names = F)
