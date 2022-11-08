@@ -12,5 +12,7 @@ rule kmc_tools_filter_se:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=8000
+	envmodules:
+		"GCC/10.3.0 KMC/3.1.2rc1-Python-3.9.5"
 	shell:
 		"kmc_tools filter {params.databasePrefix} {input.read} -cx1 {output}"
