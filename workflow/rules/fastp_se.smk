@@ -10,7 +10,7 @@ rule fastp_se:
 		mem_mb_per_cpu=4000
 	params:
 		qualityScore=20,
-		minReadLength=25
+		minReadLength=30
 	log:
 		"logs/fastp/{sampleSe}.log"
 	shell:

@@ -7,7 +7,7 @@ rule kmc_se:
 		"logs/kmc_se/{sampleSe}.log"
 	threads: 8
 	params:
-		kmerLength=25,
+		kmerLength=30,
 		minKmerCount=1,
 		maxKmerCount=100
 	resources:

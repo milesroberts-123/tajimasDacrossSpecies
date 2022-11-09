@@ -6,9 +6,9 @@ rule build_coding_kmer_database:
 		"codingKmerDatabase.kmc_suf"
 	log:
 		"logs/build_coding_kmer_database.log"
-	threads: 1
+	threads: 4
 	params:
-		kmerLength=25,
+		kmerLength=30,
 		outputPrefix="codingKmerDatabase"
 	resources:
 		mem_mb_per_cpu=4000

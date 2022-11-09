@@ -8,7 +8,7 @@ rule kmc_pe:
 		"logs/kmc_pe/{samplePe}.log"
 	threads: 8
 	params:
-		kmerLength=25,
+		kmerLength=30,
 		minKmerCount=1,
 		maxKmerCount=100
 	resources:
