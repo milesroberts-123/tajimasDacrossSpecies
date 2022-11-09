@@ -22,5 +22,10 @@ core.**
 **.kmc_suf
 **kmers.txt
 kmerSubset.txt
-
+bcd.txt
+mergedKmerMatrix.txt
+**.lmiss
+**.lqual
+**.frq
+**.mean
 !speciesList.txt
