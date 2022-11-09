@@ -15,7 +15,7 @@ rule vcftools_filter_variant_sites:
 		# filter variants
 		vcftools --gzvcf {input} \
 			--remove-filtered-all \
-			--min-meanDP 10 \
+			--min-meanDP 5 \
 			--max-meanDP 75 \
 			--max-missing 0.8 \
 			--recode \

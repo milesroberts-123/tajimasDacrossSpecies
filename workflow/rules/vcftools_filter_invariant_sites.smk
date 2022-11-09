@@ -16,7 +16,7 @@ rule vcftools_filter_invariant_sites:
 		vcftools --gzvcf {input} \
 			--remove-filtered-all \
 			--remove-indels \
-			--min-meanDP 10 \
+			--min-meanDP 5 \
 			--max-meanDP 75 \
 			--max-missing 0.8 \
 			--recode \
