@@ -5,7 +5,7 @@ rule merge_kmer_counts:
 		expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
 	output:
 		"bcd.txt"
-	threads: 50
+	threads: 10
 	resources:
 		mem_mb_per_cpu=2000
 	envmodules:

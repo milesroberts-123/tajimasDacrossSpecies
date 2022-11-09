@@ -16,8 +16,8 @@ kmerCountsMerged = Reduce(function(dtf1, dtf2) merge(dtf1, dtf2, by = "V1", all.
 
 # add sample names to header
 names(kmerCountsMerged)[1] = "kmer"
-names(kmerCountsMerged) = gsub("_pe_kmers.txt", "", kmerFiles[-1])
-names(kmerCountsMerged) = gsub("_se_kmers.txt", "", kmerFiles[-1])
+names(kmerCountsMerged) = gsub("_pe_kmers.txt", "", names(kmerCountsMerged))
+names(kmerCountsMerged) = gsub("_se_kmers.txt", "", names(kmerCountsMerged))
 
 # print out sample of matrix
 print("Kmer matrix looks like this:")
@@ -27,7 +27,7 @@ kmerCountsMerged[1:5,1:5]
 # convert inputs to numeric
 myNormalize = function(x){
 	x = as.numeric(x)
-	x/sum(x)
+	x/sum(x, na.rm = T)
 }
 
 kmerCountsMergedNorm = apply(kmerCountsMerged[-1,], myNormalize, MARGIN = 2)
