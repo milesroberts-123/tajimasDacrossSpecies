@@ -4,7 +4,7 @@ rule kmc_tools_filter_se:
 		prefix="codingKmerDatabase.kmc_pre",
 		suffix="codingKmerDatabase.kmc_suf"
 	output:
-		"filtered_reads/{sampleSe}_filt.fastq.gz"
+		"filtered_reads/{sampleSe}_filt.fastq"
 	log:
 		"logs/kmc_tools_filter_se/{sampleSe}.log"
 	params:

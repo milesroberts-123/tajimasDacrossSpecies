@@ -1,6 +1,6 @@
 rule kmc_se:
 	input:
-		"filtered_reads/{sampleSe}_filt.fastq.gz",
+		"filtered_reads/{sampleSe}_filt.fastq",
 	output:
 		"{sampleSe}_se_kmers.txt"
 	log:

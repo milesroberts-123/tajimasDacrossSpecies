@@ -5,8 +5,8 @@ rule kmc_tools_filter_pe:
 		prefix="codingKmerDatabase.kmc_pre",
 		suffix="codingKmerDatabase.kmc_suf"
 	output:
-		read1="filtered_reads/{samplePe}_1_filt.fastq.gz",
-		read2="filtered_reads/{samplePe}_2_filt.fastq.gz"
+		read1="filtered_reads/{samplePe}_1_filt.fastq",
+		read2="filtered_reads/{samplePe}_2_filt.fastq"
 	log:
 		"logs/kmc_tools_filter_se/{samplePe}.log"
 	params:
