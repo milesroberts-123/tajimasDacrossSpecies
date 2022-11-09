@@ -31,4 +31,7 @@ rule gatk_variant_filtration_variant_sites:
 			--filter-expression "MQRankSum < -12.5" \
 			--filter-name "ReadPosRankSum" \
 			--filter-expression "ReadPosRankSum < -8.0" &> {log}
+		
+		# remove temp index
+		rm variant_{wildcards.chrom}.vcf.gz.tbi
 		"""

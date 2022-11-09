@@ -25,4 +25,7 @@ rule vcftools_filter_invariant_sites:
 
 		# index filtered variants
 		tabix {output}
+
+		# remove temporary index
+		rm annotated_invariant_{wildcards.chrom}.vcf.gz.tbi
 		"""

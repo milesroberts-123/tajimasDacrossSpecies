@@ -17,4 +17,8 @@ rule bcftools_concat:
 			--allow-overlaps \
 			{input} \
 			-O z -o {output} &> {log}
+
+		# remove temporary index
+		rm filtered_variant_{wildcards.chrom}.vcf.gz.tbi
+		rm filtered_invariant_{wildcards.chrom}.vcf.gz.tbi
 		"""

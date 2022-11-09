@@ -15,4 +15,7 @@ rule kmc_tools_filter_se:
 	envmodules:
 		"GCC/10.3.0 KMC/3.1.2rc1-Python-3.9.5"
 	shell:
-		"kmc_tools filter {params.databasePrefix} {input.read} -cx10 {output}"
+		"""
+		# filter reads by kmers
+		kmc_tools filter {params.databasePrefix} {input.read} -cx10 {output}
+		"""

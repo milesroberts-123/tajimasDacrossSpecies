@@ -26,4 +26,7 @@ rule separate_variant_invariant_sites:
 			--recode --stdout | bgzip -c > {output.variantSites}
 
 		tabix {output.variantSites} # index sites
+		
+		# remove temporary indices
+		rm jointGenotypes_{wildcards.chrom}.vcf.gz.tbi
 		"""

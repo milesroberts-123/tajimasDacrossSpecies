@@ -19,4 +19,7 @@ rule gatk_genotype_gvcfs:
    			-V {input.allCalls} \
    			-O {output} \
    			--include-non-variant-sites &> {log}
+		
+		# remove temp index
+		rm combinedCalls_{wildcards.chrom}.g.vcf.gz.tbi
 		"""

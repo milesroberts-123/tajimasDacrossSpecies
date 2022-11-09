@@ -34,6 +34,12 @@ rule kmc_pe:
         	echo Dumping kmers to text file...
         	kmc_tools transform union_1_2_{wildcards.samplePe} dump {output}
 		
-		# delete working directory
+		# delete working directory, temporary files
 		rm -r tmp_{wildcards.samplePe}
+		rm temporary1_{wildcards.samplePe}.kmc_pre
+		rm temporary1_{wildcards.samplePe}.kmc_suf
+		rm temporary2_{wildcards.samplePe}.kmc_pre
+		rm temporary2_{wildcards.samplePe}.kmc_suf
+		rm union_1_2_{wildcards.samplePe}.kmc_pre
+		rm union_1_2_{wildcards.samplePe}.kmc_suf
 		"""

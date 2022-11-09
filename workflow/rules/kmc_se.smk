@@ -31,6 +31,10 @@ rule kmc_se:
 		echo Dumping kmers to text file...
 		kmc_tools transform sorted_{wildcards.sampleSe} dump {output}
 		
-		# remove working directory
+		# remove working directory, temporary files
 		rm -r tmp_{wildcards.sampleSe}
+		rm sorted_{wildcards.sampleSe}.kmc_pre
+		rm sorted_{wildcards.sampleSe}.kmc_suf
+		rm temporary_{wildcards.sampleSe}.kmc_pre
+		rm temporary_{wildcards.sampleSe}.kmc_suf
 		"""

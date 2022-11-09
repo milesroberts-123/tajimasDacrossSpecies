@@ -24,4 +24,7 @@ rule vcftools_filter_variant_sites:
 
 		# index filtered variants
 		tabix {output}
+
+		# remove temporary index
+		rm annotated_variant_{wildcards.chrom}.vcf.gz.tbi
 		"""

@@ -19,4 +19,7 @@ rule gatk_variant_filtration_invariant_sites:
 			-V {input.invariantSites} \
 			--filter-name "QUALabove100" \
 			--filter-expression "QUAL > 100.0" &> {log}
+
+		# remove temp index
+		rm invariant_{wildcards.chrom}.vcf.gz.tbi
 		"""

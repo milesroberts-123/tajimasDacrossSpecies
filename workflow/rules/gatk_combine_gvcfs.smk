@@ -16,4 +16,12 @@ rule gatk_combine_gvcfs:
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:
-		"gatk CombineGVCFs -R {input.genome} $(echo {input.calls} | sed 's/calls/-V calls/g') -L {params.chromosome} -O {output} &> {log}"
+		"""
+		gatk CombineGVCFs \
+		-R {input.genome} $(echo {input.calls} | sed 's/calls/-V calls/g') \
+		-L {params.chromosome} \
+		-O {output} &> {log}
+		
+		# remove temporary indices
+		rm calls/*.vcf.gz.tbi
+		"""
