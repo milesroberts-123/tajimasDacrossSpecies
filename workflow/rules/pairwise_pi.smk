@@ -11,5 +11,7 @@ rule pairwise_pi:
 	threads: 5
 	resources:
 		mem_mb_per_cpu=2000
+	envmodules:
+		"iccifort/2019.5.281 impi/2018.5.288 R/4.0.0"
 	shell:
 		"Rscript scripts/pairwise-pi.R {params.ploidy} {output} {input.indvs} {input.genos}"
