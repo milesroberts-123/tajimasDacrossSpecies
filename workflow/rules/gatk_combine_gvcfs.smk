@@ -21,7 +21,4 @@ rule gatk_combine_gvcfs:
 		-R {input.genome} $(echo {input.calls} | sed 's/calls/-V calls/g') \
 		-L {params.chromosome} \
 		-O {output} &> {log}
-		
-		# remove temporary indices
-		rm calls/*.vcf.gz.tbi
 		"""
