@@ -18,7 +18,7 @@ rule kmc_pe:
 	shell:
 		"""
 		# create working directory for kmc
-		mkdir tmp_{wildcards.samplePe}
+		mkdir -p tmp_{wildcards.samplePe}
 
 		# Count kmers for read1 and read2
         	echo Counting kmers...

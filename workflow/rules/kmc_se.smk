@@ -17,7 +17,7 @@ rule kmc_se:
 	shell:
 		"""
 		# create working directory for kmc
-		mkdir tmp_{wildcards.sampleSe}
+		mkdir -p tmp_{wildcards.sampleSe}
 
 		# Count kmers
 		echo Counting kmers...
