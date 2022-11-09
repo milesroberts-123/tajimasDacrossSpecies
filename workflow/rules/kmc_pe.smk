@@ -10,7 +10,7 @@ rule kmc_pe:
 	params:
 		kmerLength=30,
 		minKmerCount=1,
-		maxKmerCount=100
+		maxKmerCount=1000000
 	resources:
 		mem_mb_per_cpu=2000
 	envmodules:
