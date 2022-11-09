@@ -14,13 +14,25 @@ kmerCounts = mclapply(kmerFiles, read.table, header = F)
 # merge key with kmer counts
 kmerCountsMerged = Reduce(function(dtf1, dtf2) merge(dtf1, dtf2, by = "V1", all.x = TRUE), kmerCounts)
 
-gsub("_kmers.txt", "", kmerFiles)
+# add sample names to header
+names(kmerCountsMerged)[1] = "kmer"
+names(kmerCountsMerged) = gsub("pe_kmers.txt", "", kmerFiles)
+names(kmerCountsMerged) = gsub("se_kmers.txt", "", kmerFiles)
+
+# print out sample of matrix
+print("Kmer matrix looks like this:")
+kmerCountsMerged[1:5,1:5]
+
 # normalize kmer counts in each sample to sum to 1
 myNormalize = function(x){
 	x/sum(x)
 }
 
 kmerCountsMergedNorm = apply(kmerCountsMerged[-1,], myNormalize, MARGIN = 2)
+
+# print out sample of matrix
+print("Kmer matrix looks like this after normalization:")
+kmerCountsMergedNorm[1:5,1:5]
 
 # calculate dissimilarity between kmer profiles
 # x = indices of two columns/samples to compare
@@ -48,4 +60,7 @@ dissim = unlist(mclapply(indices, brayCurtisDissimilarity, data = kmerCountsMerg
 pairs = unlist(lapply(indices, paste, collapse = "-"))
 
 # write output of dissimilarity calculations 
-write.table(data.frame(pairs = pairs, dissim = dissim), outputFile, row.names = F, col.names = F)
+write.table(data.frame(pairs = pairs, dissim = dissim), outputFile, row.names = F, quote = F)
+
+# write normalized k-mer matrix
+write.table(kmerCountsMergedNorm, "mergedKmerMatrix.txt", row.names = F, quote = F)

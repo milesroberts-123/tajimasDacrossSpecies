@@ -20,5 +20,7 @@ core.**
 **.errlog
 **.kmc_pre
 **.kmc_suf
+**kmers.txt
+kmerSubset.txt
 
 !speciesList.txt
