@@ -27,4 +27,4 @@ snakemake --unlock --cores 1
 # subtract one job and one core from max to account for this submission command
 # rerun-incomplete in case previous snakemake instances failed and left incomplete files
 echo Running snakemake...
-snakemake --cluster "sbatch --time 2-00:00:00 --partition=josephsnodes --account=josephsnodes --cpus-per-task={threads} --mem-per-cpu={resources.mem_mb_per_cpu}" --jobs 999 --cores 511 --use-envmodules --rerun-incomplete
+snakemake --cluster "sbatch --time 2-00:00:00 --partition=josephsnodes --account=josephsnodes --cpus-per-task={threads} --mem-per-cpu={resources.mem_mb_per_cpu}" --jobs 999 --cores 999 --use-envmodules --rerun-incomplete --retries 3
