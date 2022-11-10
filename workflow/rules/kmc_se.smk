@@ -21,15 +21,15 @@ rule kmc_se:
 
 		# Count kmers
 		echo Counting kmers...
-		kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe}
+		kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe} &> {log}
         	
 		# Sort kmer databases
 		echo Sorting kmer databases...
-		kmc_tools transform temporary_{wildcards.sampleSe} sort sorted_{wildcards.sampleSe}
+		kmc_tools transform temporary_{wildcards.sampleSe} sort sorted_{wildcards.sampleSe} &>> {log}
 
 		# Dump to text file
 		echo Dumping kmers to text file...
-		kmc_tools transform sorted_{wildcards.sampleSe} dump {output}
+		kmc_tools transform sorted_{wildcards.sampleSe} dump {output} &>> {log}
 		
 		# remove working directory, temporary files
 		rm -r tmp_{wildcards.sampleSe}

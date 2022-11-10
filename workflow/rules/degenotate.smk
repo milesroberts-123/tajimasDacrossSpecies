@@ -4,8 +4,6 @@ rule degenotate:
 		annot="data/genome.gff3"
 	output:
 		"data/fourfoldDegenerateSites.bed"
-	log:
-		"logs/degenotate.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000

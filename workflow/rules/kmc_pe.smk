@@ -21,18 +21,18 @@ rule kmc_pe:
 		mkdir -p tmp_{wildcards.samplePe}
 
 		# Count kmers for read1 and read2
-        	echo Counting kmers...
-        	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read1} temporary1_{wildcards.samplePe} tmp_{wildcards.samplePe}
-        	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read2} temporary2_{wildcards.samplePe} tmp_{wildcards.samplePe}
+		echo Counting kmers...
+        	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read1} temporary1_{wildcards.samplePe} tmp_{wildcards.samplePe} &> {log}
+        	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read2} temporary2_{wildcards.samplePe} tmp_{wildcards.samplePe} &>> {log}
         	
 		# Unionize kmer databases
         	echo Merging kmer databases...
-        	kmc_tools simple temporary1_{wildcards.samplePe} temporary2_{wildcards.samplePe} union union_1_2_{wildcards.samplePe}
+        	kmc_tools simple temporary1_{wildcards.samplePe} temporary2_{wildcards.samplePe} union union_1_2_{wildcards.samplePe} &>> {log}
         	
 		# No need to sort unionized kmer database, union function gives sorted output
         	# Dump to text file
         	echo Dumping kmers to text file...
-        	kmc_tools transform union_1_2_{wildcards.samplePe} dump {output}
+        	kmc_tools transform union_1_2_{wildcards.samplePe} dump {output} &>> {log}
 		
 		# delete working directory, temporary files
 		rm -r tmp_{wildcards.samplePe}

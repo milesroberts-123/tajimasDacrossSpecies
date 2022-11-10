@@ -17,5 +17,5 @@ rule kmc_tools_filter_se:
 	shell:
 		"""
 		# filter reads by kmers
-		kmc_tools filter {params.databasePrefix} {input.read} -cx10 {output}
+		kmc_tools filter {params.databasePrefix} {input.read} -cx10 {output} &> {log}
 		"""

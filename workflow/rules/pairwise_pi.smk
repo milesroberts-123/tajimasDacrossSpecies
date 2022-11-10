@@ -14,4 +14,4 @@ rule pairwise_pi:
 	envmodules:
 		"iccifort/2019.5.281 impi/2018.5.288 R/4.0.0"
 	shell:
-		"Rscript scripts/pairwise-pi.R {params.ploidy} {output} {input.indvs} {input.genos}"
+		"Rscript scripts/pairwise-pi.R {params.ploidy} {output} {input.indvs} {input.genos} &> {log}"
