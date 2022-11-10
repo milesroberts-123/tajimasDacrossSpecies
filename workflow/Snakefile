@@ -13,6 +13,16 @@ chroms = pd.read_table("data/chroms.txt", sep="\t", dtype={"chroms": str}).set_i
 wildcard_constraints:
 	sampleSe="[A-Za-z0-9]+"
 
+# function to define thread count per rule
+# 1 thread per gigabyte of input data + 1
+def get_thread_count(wildcards, input):
+    return (input.size//1000000000 + 1)
+
+# function to define memory limit
+# 1 GB per thread, but increase limit linearly if job fails
+def get_mem_mb(wildcards, threads, attempt):
+    return threads * 1000 * attempt
+
 #rule all:
 #	input:
 		#expand("{sampleSe}.fastq.gz", sampleSe=samplesSe.index),

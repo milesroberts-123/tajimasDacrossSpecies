@@ -8,9 +8,9 @@ rule random_kmer_subset:
 	params:
 		kmersKept=10000000,
 		countThresh=1
-	threads: 8
+	threads: get_thread_count
 	resources:
-		mem_mb_per_cpu=8000
+		mem_mb_per_cpu=get_mem_mb
 	shell:
 		"""
 		# 1. concatenate kmer count files

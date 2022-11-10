@@ -8,9 +8,9 @@ rule pairwise_pi:
 		"logs/pairwise_pi.log"
 	params:
 		ploidy=2
-	threads: 5
+	threads: get_thread_count
 	resources:
-		mem_mb_per_cpu=2000
+		mem_mb_per_cpu=get_mem_mb
 	envmodules:
 		"iccifort/2019.5.281 impi/2018.5.288 R/4.0.0"
 	shell:
