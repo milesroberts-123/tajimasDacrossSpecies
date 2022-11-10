@@ -20,8 +20,8 @@ def get_thread_count(wildcards, input):
 
 # function to define memory limit
 # 1 GB per thread, but increase limit linearly if job fails
-def get_mem_mb(wildcards, threads, attempt):
-    return threads * 1000 * attempt
+def get_mem_mb(wildcards, attempt):
+    return 1000 * attempt
 
 #rule all:
 #	input:
