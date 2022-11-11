@@ -1,4 +1,7 @@
-names: multiqc
+name: multiqc
+
+channels:
+ - bioconda
 
 dependencies:
-  - multiqc=1.7 
+ - multiqc
