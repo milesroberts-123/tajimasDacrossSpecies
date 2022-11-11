@@ -1,0 +1,4 @@
+names: multiqc
+
+dependencies:
+  - multiqc=1.7 

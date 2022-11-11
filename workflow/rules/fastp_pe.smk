@@ -15,5 +15,7 @@ rule fastp_pe:
 		minReadLength=30
 	log:
 		"logs/fastp/{samplePe}.log"
+	conda:
+		"envs/fastp.yml"
 	shell:
-		"scripts/fastp --dont_eval_duplication --thread {threads} -q {params.qualityScore} -l {params.minReadLength} -h {output.htmlReport} -j {output.jsonReport} -i {input.read1} -I {input.read2} -o {output.read1} -O {output.read2} &> {log}"
+		"fastp --dont_eval_duplication --thread {threads} -q {params.qualityScore} -l {params.minReadLength} -h {output.htmlReport} -j {output.jsonReport} -i {input.read1} -I {input.read2} -o {output.read1} -O {output.read2} &> {log}"

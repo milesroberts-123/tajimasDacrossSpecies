@@ -8,6 +8,8 @@ rule download_se:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=750
+	conda:
+		"envs/download.yml"
 	envmodules:
 		"SRA-Toolkit/2.10.7-centos_linux64"
 	shell:

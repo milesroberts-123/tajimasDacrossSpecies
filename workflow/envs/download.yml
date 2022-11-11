@@ -1,0 +1,4 @@
+name: download
+
+dependencies:
+  - sra-tools=2.10.7
