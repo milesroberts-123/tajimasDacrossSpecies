@@ -16,4 +16,4 @@ rule fastp_se:
 	conda:
 		"../envs/fastp.yml"
 	shell:
-		"fastp --dont_eval_duplication --thread {threads} -q {params.qualityScore} -l {params.minReadLength} -h {output.htmlReport} -j {output.jsonReport} -i {input.read} -o {output.read} &> {log}"
+		"scripts/fastp --dont_eval_duplication --thread {threads} -q {params.qualityScore} -l {params.minReadLength} -h {output.htmlReport} -j {output.jsonReport} -i {input.read} -o {output.read} &> {log}"

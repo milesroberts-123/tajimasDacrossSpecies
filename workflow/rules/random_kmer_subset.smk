@@ -18,5 +18,6 @@ rule random_kmer_subset:
 		# 3. extract just kmers
 		# 4. remove duplicate kmers
 		# 5. get a random subset of kmers for downstream analyses
-		cat {input} | awk '(($2 > {params.countThresh}))' | cut -f1 | sort --parallel={threads} -S 80% -u  | shuf -n {params.kmersKept} 1> {output} 2> {log}
+		# 6. sort random k-mer subset so that merging is easier
+		cat {input} | awk '(($2 > {params.countThresh}))' | cut -f1 | sort --parallel={threads} -S 80% -u  | shuf -n {params.kmersKept} | sort 1> {output} 2> {log}
 		"""
