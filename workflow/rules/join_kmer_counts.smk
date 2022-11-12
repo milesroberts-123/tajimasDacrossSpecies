@@ -1,8 +1,7 @@
 rule join_kmer_counts:
 	input:
-		"kmerSubset.txt",
-		expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index),
-		expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
+		key="kmerSubset.txt",
+		kmerCounts=expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index) + expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
 	output:
 		"mergedKmerCounts.txt"
 	log:
@@ -12,25 +11,18 @@ rule join_kmer_counts:
 		mem_mb_per_cpu=64000
 	shell:
 		"""
-		#Define recursive join function that works on multiple files
-		#code from: https://unix.stackexchange.com/questions/364735/merge-multiple-files-with-join
-		xjoin() {{
-			local f
+		# build header for merged kmer matrix
+		echo {input.key} {input.kmerCounts} | sed 's/_se_kmers.txt//g' | sed 's/_pe_kmers.txt//g' | sed 's/Subset.txt//' > {output}
 
-			if [ "$#" -lt 2 ]; then
-				echo "xjoin: need at least 2 files" >&2
-				return 1
-			elif [ "$#" -lt 3 ]; then
-				join -a 1 -a 2 -e'0' -o auto "$1" "$2"
-			else
-				f=$1
-				shift
-				join -a 1 -a 2 -e'0' -o auto "$f" <(xjoin "$@")
-			fi
-		}}
+		# build large join command and output join command to a script
+		echo {input.kmerCounts} | sed 's/ / | join -j 1 -a 1 -e "0" -o auto - /g' | sed 's/$/ >> {output}/' | sed 's/^/join -j 1 -a 1 -e "0" -o auto {input.key} /' > myScript.sh
+		
+		# make join command executable
+		chmod +x myScript.sh
 
-		# Perform join on multiple files
-		# add header to file first, then append joined results
-		echo {input} | sed 's/_se_kmers.txt//g' | sed 's/_pe_kmers.txt//g' | sed 's/Subset.txt//' > {output}
-		xjoin {input} >> {output}
+		# execute join script
+		./myScript.sh
+		
+		# delete join script once it's complete
+		rm myScript.sh
 		"""
