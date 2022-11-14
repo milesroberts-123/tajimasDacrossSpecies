@@ -12,7 +12,7 @@ rule cbind_kmer_counts:
 	shell:
 		"""
 		# paste in k-mer key to first column, save as bash script
-		echo "paste <(cut -f1 {input.key}) \" > myScript.sh
+		echo "paste <(cut -f1 {input.key}) \\" > myScript.sh
 
 		# write code to paste in kmer counts
 		echo {input.kmerCounts}| sed 's/^/<(cut -f2 /' | sed 's/.txt/.txt) <(cut -f2/g' | sed 's/<(cut -f2$//' >> myScript.sh
