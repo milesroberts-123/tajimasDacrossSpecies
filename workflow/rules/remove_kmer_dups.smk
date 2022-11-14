@@ -4,7 +4,7 @@ rule remove_kmer_dups:
 	output:
 		"kmerListNoDups.txt"
 	log:
-		"logs/random_kmer_subset.log"
+		"logs/remove_kmer_dups.log"
 	params:
 		kmersKept=10000000
 	threads: get_thread_count
