@@ -17,7 +17,7 @@ rule cbind_kmer_counts:
 		echo $HEADER > headers.txt
 
 		# paste in k-mer key to first column, save as bash script
-		echo 'paste {input.key} \\' > {output.cbindScript}
+		echo 'paste -d " " {input.key} \\' > {output.cbindScript}
 
 		# write code to paste in kmer counts
 		echo {input.kmerCounts}| sed 's/^/<(cut -d" " -f2 /' | sed 's/.txt/.txt) <(cut -d" " -f2/g' | sed 's/<(cut -d" " -f2$//' >> {output.cbindScript}
