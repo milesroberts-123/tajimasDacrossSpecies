@@ -2,7 +2,7 @@ rule random_kmer_subset:
 	input:
 		"kmerListNoDups.txt"
 	output:
-		"kmerRandomSubset.txt"
+		temp("kmerRandomSubset.txt")
 	log:
 		"logs/random_kmer_subset.log"
 	params:

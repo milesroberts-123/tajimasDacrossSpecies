@@ -2,7 +2,7 @@ rule kmc_se:
 	input:
 		"filtered_reads/{sampleSe}_filt.fastq",
 	output:
-		"{sampleSe}_se_kmers.txt"
+		temp("{sampleSe}_se_kmers.txt")
 	log:
 		"logs/kmc_se/{sampleSe}.log"
 	threads: 8

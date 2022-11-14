@@ -8,7 +8,7 @@ rule join_kmer_counts_pe:
 		"logs/join_kmer_counts_pe/{samplePe}.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=8000
 	shell:
 		"""
 		# build header for merged kmer matrix

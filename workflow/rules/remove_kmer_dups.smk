@@ -2,7 +2,7 @@ rule remove_kmer_dups:
 	input:
 		"kmerList.txt"
 	output:
-		"kmerListNoDups.txt"
+		temp("kmerListNoDups.txt")
 	log:
 		"logs/remove_kmer_dups.log"
 	params:

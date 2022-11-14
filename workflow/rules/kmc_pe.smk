@@ -3,7 +3,7 @@ rule kmc_pe:
 		read1="filtered_reads/{samplePe}_1_filt.fastq",
 		read2="filtered_reads/{samplePe}_2_filt.fastq"
 	output:
-		"{samplePe}_pe_kmers.txt"
+		temp("{samplePe}_pe_kmers.txt")
 	log:
 		"logs/kmc_pe/{samplePe}.log"
 	threads: 8

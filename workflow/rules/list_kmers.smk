@@ -2,7 +2,7 @@ rule list_kmers:
 	input:
 		expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index) + expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
 	output:
-		"kmerList.txt"
+		temp("kmerList.txt")
 	log:
 		"logs/list_kmers.log"
 	params:
