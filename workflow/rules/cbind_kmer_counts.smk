@@ -16,10 +16,10 @@ rule cbind_kmer_counts:
 		HEADER=$(echo "kmer {input.kmerCounts}" | sed 's/_se_mergedKmerCounts.txt//g' | sed 's/_pe_mergedKmerCounts.txt//g') 
 
 		# paste in k-mer key to first column, save as bash script
-		echo 'paste <(cut -f1 {input.key}) \\' > {output.cbindScript}
+		echo 'paste {input.key} \\' > {output.cbindScript}
 
 		# write code to paste in kmer counts
-		echo {input.kmerCounts}| sed 's/^/<(cut -f2 /' | sed 's/.txt/.txt) <(cut -f2/g' | sed 's/<(cut -f2$//' >> {output.cbindScript}
+		echo {input.kmerCounts}| sed 's/^/<(cut -d" " -f2 /' | sed 's/.txt/.txt) <(cut -d" " -f2/g' | sed 's/<(cut -d" " -f2$//' >> {output.cbindScript}
 		
 		# make script executable
 		chmod +x {output.cbindScript}
