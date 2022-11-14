@@ -1,15 +1,15 @@
-rule random_kmer_subset:
+rule remove_kmer_dups:
 	input:
-		"kmerListNoDups.txt"
+		"kmerList.txt"
 	output:
-		"kmerRandomSubset.txt"
+		"kmerListNoDups.txt"
 	log:
 		"logs/random_kmer_subset.log"
 	params:
 		kmersKept=10000000
-	threads: 1
+	threads: get_thread_count
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=get_mem_mb
 	shell:
 		"""
 		# 1. concatenate kmer count files
@@ -18,5 +18,5 @@ rule random_kmer_subset:
 		# 4. remove duplicate kmers
 		# 5. get a random subset of kmers for downstream analyses
 		# 6. sort random k-mer subset so that merging is easier
-		shuf -n {params.kmersKept} | sort 1> {output} 2> {log}
+		sort --parallel={threads} -S 80% -u {input} 1> {output} 2> {log}
 		"""
