@@ -18,5 +18,5 @@ rule random_kmer_subset:
 		# 4. remove duplicate kmers
 		# 5. get a random subset of kmers for downstream analyses
 		# 6. sort random k-mer subset so that merging is easier
-		shuf -n {params.kmersKept} | sort 1> {output} 2> {log}
+		shuf -n {params.kmersKept} {input} | sort 1> {output} 2> {log}
 		"""
