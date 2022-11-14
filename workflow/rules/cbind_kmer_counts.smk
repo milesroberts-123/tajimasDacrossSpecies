@@ -14,6 +14,7 @@ rule cbind_kmer_counts:
 		"""
 		# Extract file names and create header for merged matrix
 		HEADER=$(echo "kmer {input.kmerCounts}" | sed 's/_se_mergedKmerCounts.txt//g' | sed 's/_pe_mergedKmerCounts.txt//g') 
+		echo $HEADER > headers.txt
 
 		# paste in k-mer key to first column, save as bash script
 		echo 'paste {input.key} \\' > {output.cbindScript}
@@ -28,5 +29,7 @@ rule cbind_kmer_counts:
 		./{output.cbindScript} 1> {output.matrix} 2> {log}
 
 		# Add header to output
-		sed -i '1i "$HEADER"' {output.matrix}
+		# sed -i '1i "$HEADER"' {output.matrix}
+		cat headers.txt {output.matrix} > tmpMyMatrix
+		mv tmpMyMatrix {output.matrix}
 		"""
