@@ -5,18 +5,17 @@ rule remove_kmer_dups:
 		temp("kmerListNoDups.txt")
 	log:
 		"logs/remove_kmer_dups.log"
-	params:
-		kmersKept=10000000
-	threads: get_thread_count
+	threads: 1
 	resources:
-		mem_mb_per_cpu=get_mem_mb
+		mem_mb_per_cpu=128000
 	shell:
 		"""
 		# 1. concatenate kmer count files
 		# 2. remove kmers that occur less than countThresh times because they're due to sequencing errors
 		# 3. extract just kmers
-		# 4. remove duplicate kmers
+		# 4. remove duplicate kmers, no need to sort beforehand
 		# 5. get a random subset of kmers for downstream analyses
 		# 6. sort random k-mer subset so that merging is easier
-		sort --parallel={threads} -S 80% -u {input} 1> {output} 2> {log}
+		# sort --parallel={threads} -S 80% -u {input} 1> {output} 2> {log}
+		awk '!a[$0]++' {input} 1> {output} 2> {log}
 		"""
