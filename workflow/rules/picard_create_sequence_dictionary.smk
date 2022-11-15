@@ -10,6 +10,8 @@ rule picard_create_sequence_dictionary:
 		mem_mb_per_cpu=4000
 	log:
 		"logs/picard_create_sequence_dictionary.log"
+	conda:
+		"../envs/picard.yml"
 	shell:
 		"""
 		java -jar $EBROOTPICARD/picard.jar CreateSequenceDictionary \

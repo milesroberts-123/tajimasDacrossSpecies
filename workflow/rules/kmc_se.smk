@@ -12,6 +12,8 @@ rule kmc_se:
 		maxKmerCount=2000000 # should be double the max for counting in paired-end samples so that single-end and paired-end samples can achieve the same max k-mer count
 	resources:
 		mem_mb_per_cpu=2000
+        conda:
+                "../envs/kmc.yml"
 	envmodules:
 		"GCC/10.3.0 KMC/3.1.2rc1-Python-3.9.5"
 	shell:

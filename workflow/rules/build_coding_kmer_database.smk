@@ -12,6 +12,8 @@ rule build_coding_kmer_database:
 		outputPrefix="codingKmerDatabase"
 	resources:
 		mem_mb_per_cpu=4000
+	conda:
+		"../envs/kmc.yml"
 	envmodules:
                 "GCC/10.3.0 KMC/3.1.2rc1-Python-3.9.5"
 	shell:

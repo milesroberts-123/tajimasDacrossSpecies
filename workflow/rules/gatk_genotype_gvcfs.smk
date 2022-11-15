@@ -10,6 +10,8 @@ rule gatk_genotype_gvcfs:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=50000
+        conda:
+                "../envs/gatk.yml"
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:

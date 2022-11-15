@@ -1,0 +1,7 @@
+name: samtools
+
+channels:
+ - bioconda
+
+dependencies:
+ - samtools=1.11

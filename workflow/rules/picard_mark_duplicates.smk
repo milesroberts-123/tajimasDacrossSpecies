@@ -11,10 +11,12 @@ rule picard_mark_duplicates:
 		mem_mb_per_cpu=32000
 	log:
 		"logs/picard_mark_duplicates/{sample}.log"
+	conda:
+		"../envs/picard.yml"
 	shell:
 		"""
 		java -jar $EBROOTPICARD/picard.jar MarkDuplicates \
-      			I={input} \
+			I={input} \
 			O={output.markedDups} \
 			M={output.dupMetrics} &> {log}
 		"""

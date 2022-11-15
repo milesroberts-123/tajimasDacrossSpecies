@@ -12,6 +12,8 @@ rule bwa_index:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=4000
+	conda:
+		"../envs/bwa_mem.yml"
 	envmodules:
 		"GCC/5.4.0-2.26 OpenMPI/1.10.3 BWA/0.7.17"
 	shell:

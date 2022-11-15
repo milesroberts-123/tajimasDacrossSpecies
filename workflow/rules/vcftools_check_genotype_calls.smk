@@ -11,6 +11,8 @@ rule vcftools_check_genotype_calls:
 	threads: 1
         resources:
                 mem_mb_per_cpu=8000
+	conda:
+		"../envs/vcftools.yml"
 	log:
 		"logs/vcftools_check_genotype_calls/vcftools_check_genotype_calls_{chrom}.log"
 	shell:

@@ -1,0 +1,7 @@
+name: picard
+
+channels:
+ - bioconda
+
+dependencies:
+ - picard=2.22.1

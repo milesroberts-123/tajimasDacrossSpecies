@@ -1,0 +1,7 @@
+name: vcftools
+
+channels:
+ - bioconda
+
+dependencies:
+ - perl-vcftools-vcf=0.1.15

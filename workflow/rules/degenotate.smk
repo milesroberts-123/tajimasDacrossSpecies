@@ -7,6 +7,8 @@ rule degenotate:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
+	conda:
+		"../envs/python.yml"
 	shell:
 		"""
 		# remove lengthy titles so fasta headers match gff exactly

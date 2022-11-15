@@ -9,6 +9,8 @@ rule get_cds_seq:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=750
+	conda:
+		"../envs/bedtools.yml"
 	envmodules:
 		"GCC/10.2.0 BEDTools/2.30.0"
 	shell:
