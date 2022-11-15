@@ -13,8 +13,8 @@ rule gatk_haplotype_caller:
 	threads: 4
 	resources:
 		mem_mb_per_cpu=4000
-        conda:
-                "../envs/gatk.yml"
+	conda:
+		"../envs/gatk.yml"
 	log:
 		"logs/gatk_haplotype_caller/{sample}.log"
 	shell:

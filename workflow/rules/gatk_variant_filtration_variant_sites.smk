@@ -9,8 +9,8 @@ rule gatk_variant_filtration_variant_sites:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
-        conda:
-                "../envs/gatk.yml"
+	conda:
+		"../envs/gatk.yml"
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:

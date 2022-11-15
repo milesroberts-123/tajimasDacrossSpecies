@@ -11,8 +11,8 @@ rule pairwise_pi:
 	threads: get_thread_count
 	resources:
 		mem_mb_per_cpu=get_mem_mb
-        conda:
-                "../envs/R.yml"
+	conda:
+		"../envs/R.yml"
 	envmodules:
 		"iccifort/2019.5.281 impi/2018.5.288 R/4.0.0"
 	shell:
