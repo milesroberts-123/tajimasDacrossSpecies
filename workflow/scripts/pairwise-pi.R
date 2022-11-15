@@ -57,6 +57,10 @@ bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 print("Adding column names...")
 colnames(bigmat) = indvs$V1
 
+# replace -1 with NA
+print("Replacing -1 with NA...")
+bigmat[bigmat == -1] = NA
+
 # Get list of column pairs to loop over for calculating dissimilarity
 print("Generating list of pairwise comparisons...")
 
