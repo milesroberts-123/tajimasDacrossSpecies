@@ -61,7 +61,7 @@ myNormalize = function(x,data){
 	y/sum(y)
 }
 
-kmerCounts = mclapply(2:ncol(kmerCounts), myNormalize, data = kmerCounts)
+kmerCounts = mclapply(2:ncol(kmerCounts), myNormalize, data = kmerCounts, mc.cores = threadCount)
 
 # cbind normalized counts into one frame
 print("Column-binding normalized counts...")
@@ -101,7 +101,7 @@ head(indices)
 
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
-dissim = unlist(mclapply(indices, brayCurtisDissimilarity, data = kmerCounts))
+dissim = unlist(mclapply(indices, brayCurtisDissimilarity, data = kmerCounts, mc.cores = threadCount))
 
 print("Some example dissimilarity values:")
 head(dissim)

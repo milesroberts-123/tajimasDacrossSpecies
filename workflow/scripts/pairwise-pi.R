@@ -9,6 +9,7 @@ args = commandArgs(trailingOnly=TRUE)
 
 ploidy = args[1] # ploidy
 outputFile = args[2] # name of output file
+threadCount = args[3] # number of cores to use
 indvs = args[grepl("012.indv", args)] # list of individuals in genotype matrices
 mats = args[grepl(".012$", args)] # genotype matrices
 
@@ -18,6 +19,9 @@ print(ploidy)
 
 print("Output file name:")
 print(outputFile)
+
+print("Thread count:")
+print(threadCount)
 
 print("Individual ids:")
 print(indvs)
@@ -31,8 +35,8 @@ print(mats)
 
 # load genotype matrices and individual lists
 print("Loading genotype matrices...")
-mats = mclapply(mats, read.table, header = F)
-indvs = mclapply(indvs, read.table, header = F)
+mats = mclapply(mats, read.table, header = F, mc.cores = threadCount)
+indvs = mclapply(indvs, read.table, header = F, mc.cores = threadCount)
 
 # check that all lists of individuals are identical
 print("binding lists of individuals...")
@@ -48,7 +52,7 @@ all(apply(indvs, allSame, MARGIN = 1))
 
 # transpose
 print("Transposing matrices...")
-mats = mclapply(mats, t)
+mats = mclapply(mats, t, mc.cores = threadCount)
 
 # remove top row from each matrix
 print("Removing header from each matrix...")
@@ -56,7 +60,7 @@ remtop = function(x){
   x[-1,]
 }
 
-mats = mclapply(mats, remtop)
+mats = mclapply(mats, remtop, mc.cores = threadCount)
 
 # bind all matrices into one matrix
 print("Binding matrices together...")
@@ -115,7 +119,7 @@ heterozygosity = function(y, data, p){
 
 # calculate pairwise pi
 print("Calculating pairwise pi...")
-pis = unlist(mclapply(indices, heterozygosity, data = bigmat, p = 2))
+pis = unlist(mclapply(indices, heterozygosity, data = bigmat, p = 2, mc.cores = threadCount))
 
 print("Some example pairwise pi values:")
 head(pis)
