@@ -1,5 +1,6 @@
 **/logs
 **/data
+**/doc
 **/.snakemake
 **/results
 **/calls

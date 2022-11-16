@@ -48,6 +48,9 @@ kmerCounts = as.data.frame(fread(kmerFile, nThread = threadCount))
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
+# save header to add back later
+myHeader = colnames(kmerCounts)[-1]
+
 # normalize kmer counts in each sample to sum to 1
 # convert inputs to numeric
 print("Normalizing kmer counts to sum to 1 within each sample...")
@@ -58,19 +61,19 @@ myNormalize = function(x,data){
 	y/sum(y)
 }
 
-kmerCountsNorm = mclapply(1:(ncol(kmerCounts) - 1), myNormalize, data = kmerCounts[,-1])
+kmerCounts = mclapply(2:ncol(kmerCounts), myNormalize, data = kmerCounts)
 
 # cbind normalized counts into one frame
 print("Column-binding normalized counts...")
-kmerCountsNorm = do.call("cbind", kmerCountsNorm)
+kmerCounts = do.call("cbind", kmerCounts)
 
 # add headers back to matrix
 print("Adding headers back to column-bound counts...")
-colnames(kmerCountsNorm) = colnames(kmerCounts)[-1]
+colnames(kmerCounts) = myHeader
 
 # print out sample of matrix
 print("Kmer matrix looks like this after normalization:")
-kmerCountsNorm[1:min(5,nrow(kmerCountsNorm)),1:min(5,ncol(kmerCountsNorm))]
+kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 
 # calculate dissimilarity between kmer profiles
 # x = indices of two columns/samples to compare
@@ -86,9 +89,9 @@ print("Generating list of pairwise comparisons...")
 
 indices = list()
 k = 1
-for(i in 1:(ncol(kmerCountsNorm) - 1)){
-  for(j in (i+1):ncol(kmerCountsNorm)){
-    indices[[k]] = colnames(kmerCountsNorm)[c(i, j)]
+for(i in 1:(ncol(kmerCounts) - 1)){
+  for(j in (i+1):ncol(kmerCounts)){
+    indices[[k]] = colnames(kmerCounts)[c(i, j)]
     k = k + 1
   }
 }
@@ -98,7 +101,7 @@ head(indices)
 
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
-dissim = unlist(mclapply(indices, brayCurtisDissimilarity, data = kmerCountsNorm))
+dissim = unlist(mclapply(indices, brayCurtisDissimilarity, data = kmerCounts))
 
 print("Some example dissimilarity values:")
 head(dissim)
@@ -116,4 +119,4 @@ write.table(data.frame(pairs = pairs, dissim = dissim), bcdOutputFile, row.names
 
 # write normalized k-mer matrix
 print("Writing normalized k-mer matrix...")
-write.table(kmerCountsNorm, normCountsOutputFile, row.names = F, quote = F)
+write.table(kmerCounts, normCountsOutputFile, row.names = F, quote = F)

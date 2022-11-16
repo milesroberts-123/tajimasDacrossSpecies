@@ -12,6 +12,19 @@ outputFile = args[2] # name of output file
 indvs = args[grepl("012.indv", args)] # list of individuals in genotype matrices
 mats = args[grepl(".012$", args)] # genotype matrices
 
+# print arguments passed to script
+print("Ploidy of organism:")
+print(ploidy)
+
+print("Output file name:")
+print(outputFile)
+
+print("Individual ids:")
+print(indvs)
+
+print("Genotype matrices:")
+print(mats)
+
 #setwd("/mnt/ufs18/home-010/robe1195/Josephs_Lab_Projects/tajimasDacrossSpecies/workflow")
 #mats = list.files(pattern = "*.012$")
 #indvs = list.files(pattern = "*.012.indv")
