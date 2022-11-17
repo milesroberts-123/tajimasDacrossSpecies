@@ -12,7 +12,7 @@ library(data.table)
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
 
-ploidy = args[1] # ploidy
+ploidy = as.numeric(args[1]) # ploidy
 outputFile = args[2] # name of output file
 threadCount = as.numeric(args[3]) # number of cores to use
 indvs = args[grepl("012.indv", args)] # list of individuals in genotype matrices
@@ -132,7 +132,7 @@ heterozygosity = function(y, data, p){
 
 # calculate pairwise pi
 print("Calculating pairwise pi...")
-pis = unlist(mclapply(indices, heterozygosity, data = bigmat, p = 2, mc.cores = threadCount))
+pis = unlist(mclapply(indices, heterozygosity, data = bigmat, p = ploidy, mc.cores = threadCount))
 
 print("Some example pairwise pi values:")
 head(pis)
