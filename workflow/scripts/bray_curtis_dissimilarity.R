@@ -1,4 +1,7 @@
+rm(list = ls())
+
 # check if parallel package is installed
+print("Loading packages...")
 if (!require(parallel)) install.packages('parallel')
 library(parallel)
 
@@ -6,6 +9,7 @@ if (!require(parallel)) install.packages('data.table')
 library(data.table)
 
 # get file names passed to script as arguments
+print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
 
 #kmerFiles = args[1:(length(args)-1)]
@@ -28,7 +32,7 @@ print(threadCount)
 # read key and all kmer count files into memory
 print("Reading files into memory...")
 #kmerCounts = mclapply(kmerFiles, read.table, header = F)
-kmerCounts = as.data.frame(fread(kmerFile, nThread = threadCount))
+kmerCounts = fread(kmerFile, nThread = threadCount, header = F, data.table = F)
 
 # merge key with kmer counts
 #print("Merging input files in the order passed to script...")
@@ -51,6 +55,13 @@ kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 # save header to add back later
 myHeader = colnames(kmerCounts)[-1]
 
+# remove kmer column to save on memory
+print("Removing k-mer column to save on memory...")
+kmerCounts = kmerCounts[,-1]
+
+print("Kmer matrix looks like this:")
+kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
+
 # normalize kmer counts in each sample to sum to 1
 # convert inputs to numeric
 print("Normalizing kmer counts to sum to 1 within each sample...")
@@ -61,18 +72,20 @@ myNormalize = function(x,data){
 	y/sum(y)
 }
 
-kmerCounts = mclapply(2:ncol(kmerCounts), myNormalize, data = kmerCounts, mc.cores = threadCount)
+kmerCounts = mclapply(1:ncol(kmerCounts), myNormalize, data = kmerCounts, mc.cores = threadCount)
 
 # cbind normalized counts into one frame
 print("Column-binding normalized counts...")
 kmerCounts = do.call("cbind", kmerCounts)
 
+print("Kmer matrix looks like this:")
+kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
+
 # add headers back to matrix
 print("Adding headers back to column-bound counts...")
 colnames(kmerCounts) = myHeader
 
-# print out sample of matrix
-print("Kmer matrix looks like this after normalization:")
+print("Kmer matrix looks like this:")
 kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 
 # calculate dissimilarity between kmer profiles

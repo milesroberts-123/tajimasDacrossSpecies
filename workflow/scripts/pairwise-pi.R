@@ -1,15 +1,20 @@
 rm(list = ls())
 
 # check if parallel package is installed
+print("Loading packages...")
 if (!require(parallel)) install.packages('parallel')
 library(parallel)
 
+if (!require(parallel)) install.packages('data.table')
+library(data.table)
+
 # get file names passed to script as arguments
+print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
 
 ploidy = args[1] # ploidy
 outputFile = args[2] # name of output file
-threadCount = args[3] # number of cores to use
+threadCount = as.numeric(args[3]) # number of cores to use
 indvs = args[grepl("012.indv", args)] # list of individuals in genotype matrices
 mats = args[grepl(".012$", args)] # genotype matrices
 
@@ -35,8 +40,10 @@ print(mats)
 
 # load genotype matrices and individual lists
 print("Loading genotype matrices...")
-mats = mclapply(mats, read.table, header = F, mc.cores = threadCount)
-indvs = mclapply(indvs, read.table, header = F, mc.cores = threadCount)
+#mats = mclapply(mats, read.table, header = F, mc.cores = threadCount)
+#indvs = mclapply(indvs, read.table, header = F, mc.cores = threadCount)
+mats = lapply(mats, fread, nThread = threadCount, header = F, data.table = F)
+indvs = lapply(indvs, fread, nThread = threadCount, header = F, data.table = F)
 
 # check that all lists of individuals are identical
 print("binding lists of individuals...")
@@ -67,16 +74,22 @@ print("Binding matrices together...")
 bigmat = as.data.frame(do.call("rbind", mats))
 rownames(bigmat) = NULL
 
-print("A subset of the rbind matrix:")
+print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
 # add sample names
 print("Adding column names...")
 colnames(bigmat) = indvs$V1
 
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
 # replace -1 with NA
 print("Replacing -1 with NA...")
 bigmat[bigmat == -1] = NA
+
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
 # Get list of column pairs to loop over for calculating dissimilarity
 print("Generating list of pairwise comparisons...")
