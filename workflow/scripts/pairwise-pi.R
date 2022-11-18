@@ -84,6 +84,13 @@ colnames(bigmat) = indvs$V1
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
+# subsample dataframe to speed up calculations
+print("Sampling dataframe...")
+bigmat = bigmat[sample(1:nrow(bigmat), 100000, replace = F),]
+
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
 # replace -1 with NA
 print("Replacing -1 with NA...")
 bigmat[bigmat == -1] = NA
@@ -106,10 +113,17 @@ for(i in 1:(ncol(bigmat) - 1)){
 print("Some example indices:")
 head(indices)
 
+print("Total number of pair-wise distances to calculate:")
+length(indices)
+
 # function to calculate pi
-heterozygosity = function(y, data, p){
+heterozygosity = function(y, idxs, data, p){
+  
+  # get pair of indices
+  idx = idxs[[y]]
+
   # subset pair of columns
-  subset = data[,y]
+  subset = data[,idx]
   
   # number of non-missing genotype calls = number of individuals with non-missing genotypes * ploidy
   n = rowSums(!is.na(subset))*p
@@ -127,12 +141,20 @@ heterozygosity = function(y, data, p){
   
   # return average heterozygosity per site (i.e. pi)
   # sum of heterozygosities / number of non-missing sites
-  sum(het, na.rm = T)/length(n[(n != 0)])
+  result = sum(het, na.rm = T)/length(n[(n != 0)])
+
+  # output progress update
+  if(y %% 1000 == 0){
+    print(paste(y, "pairwise pi's calculated", sep = " "))
+  }
+
+  return(result)
+
 }
 
 # calculate pairwise pi
 print("Calculating pairwise pi...")
-pis = unlist(mclapply(indices, heterozygosity, data = bigmat, p = ploidy, mc.cores = threadCount))
+pis = unlist(mclapply(1:length(indices), heterozygosity, idxs = indices, data = bigmat, p = ploidy, mc.cores = threadCount))
 
 print("Some example pairwise pi values:")
 head(pis)

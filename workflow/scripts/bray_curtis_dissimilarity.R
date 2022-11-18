@@ -32,7 +32,7 @@ print(threadCount)
 # read key and all kmer count files into memory
 print("Reading files into memory...")
 #kmerCounts = mclapply(kmerFiles, read.table, header = F)
-kmerCounts = fread(kmerFile, nThread = threadCount, header = F, data.table = F)
+kmerCounts = fread(kmerFile, nThread = threadCount, header = T, data.table = F)
 
 # merge key with kmer counts
 #print("Merging input files in the order passed to script...")
@@ -89,12 +89,22 @@ print("Kmer matrix looks like this:")
 kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 
 # calculate dissimilarity between kmer profiles
-# x = indices of two columns/samples to compare
+# y = index for pair of individuals to compare
+# idxs = list of pairs
 # data = dataframe of normalized k-mer counts
-brayCurtisDissimilarity=function(x, data){
-  coly = data[,x[1]]
-  colz = data[,x[2]]
-  1 - (2*sum(pmin(coly,colz)))/sum(coly+colz)
+brayCurtisDissimilarity=function(y, idxs, data){
+
+  idx = idxs[[y]]
+  coly = data[,idx[1]]
+  colz = data[,idx[2]]
+  result = 1 - (2*sum(pmin(coly,colz)))/sum(coly+colz)
+
+  if(y %% 1000 == 0){
+    print(paste(y, "pairwise dissimilarities calculated", sep = " "))
+  }
+
+  return(result)
+
 }
 
 # Get list of column pairs to loop over for calculating dissimilarity
@@ -114,7 +124,7 @@ head(indices)
 
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
-dissim = unlist(mclapply(indices, brayCurtisDissimilarity, data = kmerCounts, mc.cores = threadCount))
+dissim = unlist(mclapply(1:length(indices), brayCurtisDissimilarity, idxs = indices, data = kmerCounts, mc.cores = threadCount))
 
 print("Some example dissimilarity values:")
 head(dissim)
