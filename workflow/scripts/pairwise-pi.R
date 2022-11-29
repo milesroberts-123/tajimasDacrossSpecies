@@ -77,6 +77,10 @@ rownames(bigmat) = NULL
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
+# remove mats object, no longer needed
+print("Removing intermediate object...")
+rm(mats)
+
 # add sample names
 print("Adding column names...")
 colnames(bigmat) = indvs$V1
@@ -84,16 +88,38 @@ colnames(bigmat) = indvs$V1
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
-# subsample dataframe to speed up calculations
-print("Sampling dataframe...")
-bigmat = bigmat[sample(1:nrow(bigmat), 100000, replace = F),]
+# remove indvs, no longer needed
+print("Removing intermediate object...")
+rm(indvs)
 
-print("A subset of the matrix:")
-bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+# subsample dataframe to speed up calculations
+# print("Sampling dataframe...")
+# bigmat = bigmat[sample(1:nrow(bigmat), 100000, replace = F),]
+
+# print("A subset of the matrix:")
+# bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
 # replace -1 with NA
 print("Replacing -1 with NA...")
 bigmat[bigmat == -1] = NA
+
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
+# extract just variant sites
+print("Number of variant + invariant sites...")
+nrow(bigmat)
+
+print("Extracting just variant sites...")
+
+variantSites = function(x){
+  sd(x, na.rm = T) > 0 | all(x == 1, na.rm = T)
+}
+
+bigmat = bigmat[apply(bigmat, 1, variantSites),]
+
+print("Number of polymorphic sites:")
+nrow(bigmat)
 
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
@@ -117,20 +143,28 @@ print("Total number of pair-wise distances to calculate:")
 length(indices)
 
 # function to calculate pi
-heterozygosity = function(y, idxs, data, p){
+heterozygosity = function(y, idxs, data, p, outputFileName, coreCount){
   
   # get pair of indices
   idx = idxs[[y]]
 
   # subset pair of columns
   subset = data[,idx]
-  
-  # number of non-missing genotype calls = number of individuals with non-missing genotypes * ploidy
-  n = rowSums(!is.na(subset))*p
+  rm(data) # remove intermediate object
+
+  # remove sites with missing data
+  subset = subset[(rowSums(is.na(subset)) == 0),]
+
+  # number of segregating sites
+  S = nrow(subset)
+
+  # number of sequenced chromosomes per site = number of individuals * ploidy
+  n = 2*p
   
   # alternate allele frequency = number of alternate allele calls/number of non-missing genotype calls
-  alt_frq = rowSums(subset, na.rm = T)/n
-  
+  alt_frq = rowSums(subset)/n
+  rm(subset) # remove intermediate object
+
   # reference allele frequency = 1 - alternative allele frequency
   ref_frq = 1 - alt_frq
   
@@ -140,36 +174,46 @@ heterozygosity = function(y, idxs, data, p){
   het = (1 - (alt_frq^2 + ref_frq^2))*(n/(n - 1))
   
   # return average heterozygosity per site (i.e. pi)
-  # sum of heterozygosities / number of non-missing sites
-  result = sum(het, na.rm = T)/length(n[(n != 0)])
+  # sum of heterozygosities / number of segregating sites
+  H = sum(het)
+  result = H/S
 
   # output progress update
-  if(y %% 1000 == 0){
-    print(paste(y, "pairwise pi's calculated", sep = " "))
-  }
+  #if(y %% 1000 == 0){
+  #  print(paste(y, "pairwise pi's calculated", sep = " "))
+  #}
 
-  return(result)
+  # write output to separate files, one file per core
+  subFile = y %% coreCount
 
+  line = paste(paste(idx, collapse = "-"), result, H, S, sep = " ")
+  #system(paste("echo '",line,"'", " >> ", outputFileName, sep = ""), show.output.on.console = F)
+  #write(line, file = outputFileName, append = TRUE)
+  write(line, file = paste(subFile, "_", outputFileName, sep = ""), append = TRUE)
+
+  #return(result)
 }
 
 # calculate pairwise pi
 print("Calculating pairwise pi...")
-pis = unlist(mclapply(1:length(indices), heterozygosity, idxs = indices, data = bigmat, p = ploidy, mc.cores = threadCount))
+#pis = unlist(mclapply(1:length(indices), heterozygosity, idxs = indices, data = bigmat, p = ploidy, mc.cores = threadCount))
 
-print("Some example pairwise pi values:")
-head(pis)
+mclapply(1:length(indices), heterozygosity, idxs = indices, data = bigmat, p = ploidy, outputFileName = outputFile, coreCount = threadCount, mc.cores = threadCount, mc.silent = T)
+
+#print("Some example pairwise pi values:")
+#head(pis)
 
 # check all pi values are valid
-print("Are all pi values between zero and one?")
-all(pis <= 1 & pis >= 0)
+#print("Are all pi values between zero and one?")
+#all(pis <= 1 & pis >= 0)
 
 # Extract the pairs used for calculating pairwise pi
-print("Adding names of genotypes compared to each pairwise comparison...")
-mypairs = unlist(lapply(indices, paste, collapse = "-"))
+#print("Adding names of genotypes compared to each pairwise comparison...")
+#mypairs = unlist(lapply(indices, paste, collapse = "-"))
 
-print("Some example pair ids:")
-head(mypairs)
+#print("Some example pair ids:")
+#head(mypairs)
 
 # write output of pi calculations 
-print("Writing pairwise pi calculations...")
-write.table(data.frame(pairs = mypairs, pi = pis), outputFile, row.names = F, quote = F)
+#print("Writing pairwise pi calculations...")
+#write.table(data.frame(pairs = mypairs, pi = pis), outputFile, row.names = F, quote = F)
