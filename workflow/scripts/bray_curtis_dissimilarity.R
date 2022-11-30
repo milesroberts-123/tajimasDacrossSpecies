@@ -95,8 +95,12 @@ kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 brayCurtisDissimilarity=function(y, idxs, data){
 
   idx = idxs[[y]]
+  rm(idxs)
+
   coly = data[,idx[1]]
   colz = data[,idx[2]]
+  rm(data)
+
   result = 1 - (2*sum(pmin(coly,colz)))/sum(coly+colz)
 
   if(y %% 1000 == 0){
