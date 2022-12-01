@@ -13,7 +13,7 @@ print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
 
 kmerFile = args[1]
-bcdOutputFile = args[2]
+dissimOutput = args[2]
 normCountsOutputFile = args[3]
 threadCount = as.numeric(args[4])
 
@@ -21,7 +21,7 @@ print("Input file:")
 print(kmerFile)
 
 print("Output files:")
-print(bcdOutputFile)
+print(dissimOutput)
 print(normCountsOutputFile)
 
 print("Thread count:")
@@ -35,9 +35,6 @@ kmerCounts = fread(kmerFile, nThread = threadCount, header = T, data.table = F)
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
-# save header to add back later
-myHeader = colnames(kmerCounts)[-1]
-
 # remove kmer column to save on memory
 print("Removing k-mer column to save on memory...")
 kmerCounts = kmerCounts[,-1]
@@ -45,52 +42,54 @@ kmerCounts = kmerCounts[,-1]
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
-# normalize kmer counts in each sample to sum to 1
-# convert inputs to numeric
-print("Normalizing kmer counts to sum to 1 within each sample...")
-
-myNormalize = function(x,data){
-	y = data[,x]
-	y = as.numeric(y)
-	y/sum(y)
-}
-
-kmerCounts = mclapply(1:ncol(kmerCounts), myNormalize, data = kmerCounts, mc.cores = threadCount)
-
-# cbind normalized counts into one frame
-print("Column-binding normalized counts...")
-kmerCounts = do.call("cbind", kmerCounts)
+# replace numbers above 1 with 1 to save memory
+print("Replace numbers > 1 with 1 to save memory...")
+kmerCounts[(kmerCounts > 1)] = 1
 
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
-
-# add headers back to matrix
-print("Adding headers back to column-bound counts...")
-colnames(kmerCounts) = myHeader
-
-print("Kmer matrix looks like this:")
-kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 
 # calculate dissimilarity between kmer profiles
 # y = index for pair of individuals to compare
 # idxs = list of pairs
 # data = dataframe of normalized k-mer counts
-brayCurtisDissimilarity=function(y, idxs, data){
+jaccardDissimilarity=function(y, idxs, data, outputFileName, coreCount){
 
   idx = idxs[[y]]
   rm(idxs)
 
-  coly = data[,idx[1]]
-  colz = data[,idx[2]]
+  kmerCols = data[,idx]
   rm(data)
 
-  result = 1 - (2*sum(pmin(coly,colz)))/sum(coly+colz)
+  # determine, for each k-mer whether its 
+  # outside union (0)
+  # inside union (1 or 2)
+  # inside intersection (2)
+  kmerCols = rowSums(kmerCols)
 
-  if(y %% 1000 == 0){
-    print(paste(y, "pairwise dissimilarities calculated", sep = " "))
-  }
+  # remove k-mers outside union
+  kmerCols = kmerCols[(kmerCols != 0)]
 
-  return(result)
+  # remaining k-mers are in union
+  kmerUnion = length(kmerCols)
+
+  # k-mers marked by 2 are in intersection
+  kmerInter = length(kmerCols[(kmerCols == 2)])
+
+  # dissimilarity = 1 - similarity
+  result = 1 - (kmerInter/kmerUnion)
+
+  # write output to separate files, one file per core
+  subFile = y %% coreCount
+
+  line = paste(paste(idx, collapse = "-"), result, kmerInter, kmerUnion, sep = " ")
+  write(line, file = paste(subFile, "_", outputFileName, sep = ""), append = TRUE)
+
+  #if(y %% 1000 == 0){
+  #  print(paste(y, "pairwise dissimilarities calculated", sep = " "))
+  #}
+
+  #return(result)
 
 }
 
@@ -114,21 +113,7 @@ length(indices)
 
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
-dissim = unlist(mclapply(1:length(indices), brayCurtisDissimilarity, idxs = indices, data = kmerCounts, mc.cores = threadCount))
-
-print("Some example dissimilarity values:")
-head(dissim)
-
-# Extract the pairs used for calculating dissimilarity
-print("Adding names of genotypes compared to each pairwise comparison...")
-pairs = unlist(lapply(indices, paste, collapse = "-"))
-
-print("Some example pair ids:")
-head(pairs)
-
-# write output of dissimilarity calculations 
-print("Writing dissimilarity calculations...")
-write.table(data.frame(pairs = pairs, dissim = dissim), bcdOutputFile, row.names = F, quote = F)
+mclapply(1:length(indices), jaccardDissimilarity, idxs = indices, data = kmerCounts, outputFileName = dissimOutput, coreCount = threadCount, mc.cores = threadCount, mc.silent = TRUE)
 
 # write normalized k-mer matrix
 print("Writing normalized k-mer matrix...")

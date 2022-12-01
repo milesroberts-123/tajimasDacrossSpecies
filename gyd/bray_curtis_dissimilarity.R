@@ -12,6 +12,8 @@ library(data.table)
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
 
+#kmerFiles = args[1:(length(args)-1)]
+#outputFile = args[length(args)]
 kmerFile = args[1]
 bcdOutputFile = args[2]
 normCountsOutputFile = args[3]
@@ -29,7 +31,22 @@ print(threadCount)
 
 # read key and all kmer count files into memory
 print("Reading files into memory...")
+#kmerCounts = mclapply(kmerFiles, read.table, header = F)
 kmerCounts = fread(kmerFile, nThread = threadCount, header = T, data.table = F)
+
+# merge key with kmer counts
+#print("Merging input files in the order passed to script...")
+#kmerCountsMerged = Reduce(function(dtf1, dtf2) merge(dtf1, dtf2, by = "V1", all.x = TRUE), kmerCounts)
+
+# add sample names to header
+#print("Adding names to merged matrix...")
+#names(kmerCountsMerged) = c("kmer", kmerFiles[-1])
+#names(kmerCountsMerged) = gsub("_pe_kmers.txt", "", names(kmerCountsMerged))
+#names(kmerCountsMerged) = gsub("_se_kmers.txt", "", names(kmerCountsMerged))
+
+# replace NA's with zeros
+#print("Replacing NA's with zeros in merged matrix...")
+#kmerCountsMerged[is.na(kmerCountsMerged)] = 0
 
 # print out sample of matrix
 print("Kmer matrix looks like this:")
@@ -108,9 +125,6 @@ for(i in 1:(ncol(kmerCounts) - 1)){
 
 print("Some example indices:")
 head(indices)
-
-print("Number of pairwise comparisons:")
-length(indices)
 
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")

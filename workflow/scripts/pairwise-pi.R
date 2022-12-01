@@ -59,7 +59,12 @@ all(apply(indvs, allSame, MARGIN = 1))
 
 # transpose
 print("Transposing matrices...")
-mats = mclapply(mats, t, mc.cores = threadCount)
+
+print("Number of cores to use:")
+transposeCores = min(threadCount, length(mats))
+print(transposeCores)
+
+mats = mclapply(mats, t, mc.cores = transposeCores)
 
 # remove top row from each matrix
 print("Removing header from each matrix...")
@@ -67,7 +72,7 @@ remtop = function(x){
   x[-1,]
 }
 
-mats = mclapply(mats, remtop, mc.cores = threadCount)
+mats = mclapply(mats, remtop, mc.cores = transposeCores)
 
 # bind all matrices into one matrix
 print("Binding matrices together...")
