@@ -57,6 +57,7 @@ rule all:
 		#"data/fourfoldDegenerateSites.bed",
 		#"kmerSubset.txt",
 		"bcd.txt",
+		"jac.txt",
 		"pairwise-pi.txt"
 
 include: "rules/download_pe.smk"
@@ -76,6 +77,7 @@ include: "rules/join_kmer_counts_se.smk"
 include: "rules/join_kmer_counts_pe.smk"
 include: "rules/cbind_kmer_counts.smk"
 include: "rules/bray_curtis_dissimilarity.smk"
+include: "rules/jaccard_dissimilarity.smk"
 include: "rules/multiqc.smk"
 include: "rules/bwa_index.smk"
 include: "rules/bwa_mem_se.smk"
