@@ -4,6 +4,8 @@
 ```{r}
 rm(list = ls())
 
+library(data.table)
+
 # if (!require("BiocManager", quietly = TRUE))
 #     install.packages("BiocManager")
 # 
@@ -20,7 +22,7 @@ seReads = NULL
 ## Amaranthus hypochondriacus
 ```{r}
 # load data for species
-amaranthus_hypochondriacus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_amaranthus_hypochondriacus_PRJEB30531.csv")
+amaranthus_hypochondriacus = fread("../workflow/data/SRArunInfo/SraRunInfo_amaranthus_hypochondriacus_PRJEB30531.csv.gz", data.table = F)
 
 # subset to only appropriate reads
 amaranthus_hypochondriacus = amaranthus_hypochondriacus[(amaranthus_hypochondriacus$ScientificName == "Amaranthus hypochondriacus"),]
@@ -38,7 +40,7 @@ peReads = rbind(peReads, data.frame(samples = amaranthus_hypochondriacus[,"Run"]
 ## Ananas comosus
 ```{r}
 # load data for species
-ananas_comosus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_ananas_comosus_PRJNA389669.csv")
+ananas_comosus = fread("../workflow/data/SRArunInfo/SraRunInfo_ananas_comosus_PRJNA389669.csv.gz", data.table = F)
 
 # remove outgroups
 ananas_comosus = ananas_comosus[grepl("Ananas",ananas_comosus$ScientificName),]
@@ -57,7 +59,7 @@ peReads = rbind(peReads, data.frame(samples = ananas_comosus[,"Run"], genome = "
 ## Arabidopsis halleri
 ```{r}
 # load data for species
-arabidopsis_halleri = read.csv("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_halleri_PRJDB3777.csv")
+arabidopsis_halleri = fread("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_halleri_PRJDB3777.csv.gz", data.table = F)
 
 # just use hiseq2000 reads so that you don't have to merge technical reps
 arabidopsis_halleri = arabidopsis_halleri[(arabidopsis_halleri$Model == "Illumina HiSeq 2000"),]
@@ -72,7 +74,7 @@ peReads = rbind(peReads, data.frame(samples = arabidopsis_halleri[,"Run"], genom
 ## Arabidopsis thaliana
 ```{r}
 # load data for species
-arabidopsis_thaliana = read.csv("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_thaliana_PRJNA273563.csv")
+arabidopsis_thaliana = fread("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_thaliana_PRJNA273563.csv.gz", data.table = F)
 
 # add reads to growing list
 peReads = rbind(peReads, data.frame(samples = arabidopsis_thaliana[(arabidopsis_thaliana$spots_with_mates > 0),"Run"], genome = "arabidopsis_thaliana"))
@@ -83,7 +85,7 @@ seReads = rbind(seReads, data.frame(samples = arabidopsis_thaliana[(arabidopsis_
 ## Beta vulgaris
 ```{r}
 # load data for species
-beta_vulgaris = read.csv("../workflow/data/SRArunInfo/SraRunInfo_beta_vulgaris_PRJNA815240.csv")
+beta_vulgaris = fread("../workflow/data/SRArunInfo/SraRunInfo_beta_vulgaris_PRJNA815240.csv.gz", data.table = F)
 
 # remove close relatives
 beta_vulgaris = beta_vulgaris[grepl("Beta vulgaris",beta_vulgaris$ScientificName),]
@@ -98,22 +100,58 @@ seReads = rbind(seReads, data.frame(samples = beta_vulgaris[(beta_vulgaris$spots
 
 ```
 
+## Boechera stricta
+```{r}
+boechera_stricta_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_boechera_stricta_1_2022-12-01.csv.gz", data.table = F)
+boechera_stricta_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_boechera_stricta_2_2022-12-01.csv.gz", data.table = F)
+
+# subset second dataset by values in this publication
+# https://doi.org/10.1093/gbe/evac043
+# SRP134283-SRP134373, SRP134393-SRP134433, SRP134436-SRP134479, SRP134481-SRP134572, and SRP134581-SRP134671
+sraprojects = paste("SRP", c(134283:134373, 134393:134433, 134436:134479, 134481:134572, 134581:134671), sep = "")
+
+boechera_stricta_2 = boechera_stricta_2[(boechera_stricta_2$SRAStudy %in% sraprojects),]
+
+# remove technical replicates from dataset 2
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(LibraryName in unique(boechera_stricta_2$LibraryName)){
+  techreps = boechera_stricta_2[(boechera_stricta_2$LibraryName == LibraryName),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+boechera_stricta_2 = boechera_stricta_2[(boechera_stricta_2$Run %in% runs),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = boechera_stricta_1[(boechera_stricta_1$spots_with_mates > 0),"Run"], genome = "boechera_stricta"))
+
+peReads = rbind(peReads, data.frame(samples = boechera_stricta_2[(boechera_stricta_2$spots_with_mates > 0),"Run"], genome = "boechera_stricta"))
+
+```
+
 ## Brachypodium distachyon
 ```{r}
 # load data for species
-brachypodium_distachyon = read.csv("../workflow/data/SRArunInfo/SraRunInfo_brachypodium_distachyon_PRJNA505390.csv")
+brachypodium_distachyon = fread("../workflow/data/SRArunInfo/SraRunInfo_brachypodium_distachyon_PRJNA605320.csv.gz", data.table = F)
+
+# isolate only WGS datasets
+brachypodium_distachyon = brachypodium_distachyon[(brachypodium_distachyon$LibraryStrategy == "WGS"),]
 
 # check for technical replicates
 any(duplicated(brachypodium_distachyon$Experiment))
 any(duplicated(brachypodium_distachyon$SampleName))
 any(duplicated(brachypodium_distachyon$BioSample))
+any(duplicated(brachypodium_distachyon$LibraryName))
 
-brachypodium_distachyon[order(brachypodium_distachyon$bases, decreasing = TRUE),]
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = brachypodium_distachyon[(brachypodium_distachyon$spots_with_mates > 0),"Run"], genome = "brachypodium_distachyon"))
+
 ```
 
 ## Brassica rapa and Brassica oleraceae
 ```{r}
-brassica = read.csv("../workflow/data/SRArunInfo/SraRunInfo_PRJNA312457.csv")
+brassica = fread("../workflow/data/SRArunInfo/SraRunInfo_PRJNA312457.csv.gz", data.table = F)
 
 # split data into the two species
 brassica_oleracea = brassica[(brassica$ScientificName == "Brassica oleracea"),]
@@ -132,7 +170,7 @@ peReads = rbind(peReads, data.frame(samples = brassica_rapa[,"Run"], genome = "b
 
 ## Capsella grandiflora
 ```{r}
-capsella_grandiflora = read.csv("../workflow/data/SRArunInfo/SraRunInfo_capsella_grandiflora_PRJEB39830.csv")
+capsella_grandiflora = fread("../workflow/data/SRArunInfo/SraRunInfo_capsella_grandiflora_PRJEB39830.csv.gz", data.table = F)
 
 # subset only WGS reads
 capsella_grandiflora = capsella_grandiflora[(capsella_grandiflora$LibraryStrategy == "WGS"),]
@@ -147,7 +185,7 @@ peReads = rbind(peReads, data.frame(samples = capsella_grandiflora[,"Run"], geno
 ## Capsella rubella
 ```{r}
 # load data
-capsella_rubella = read.csv("../workflow/data/SRArunInfo/SraRunInfo_capsella_rubella_PRJEB6689.csv")
+capsella_rubella = fread("../workflow/data/SRArunInfo/SraRunInfo_capsella_rubella_PRJEB6689.csv.gz", data.table = F)
 
 # subset only this relevant species
 capsella_rubella = capsella_rubella[(capsella_rubella$ScientificName == "Capsella rubella"),]
@@ -169,7 +207,7 @@ seReads = rbind(seReads, data.frame(samples = capsella_rubella[(capsella_rubella
 ## Chenopodium quinoa
 ```{r}
 # load data
-chenopodium_quinoa = read.csv("../workflow/data/SRArunInfo/SraRunInfo_chenopodium_quinoa_PRJNA673789.csv")
+chenopodium_quinoa = fread("../workflow/data/SRArunInfo/SraRunInfo_chenopodium_quinoa_PRJNA673789.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(chenopodium_quinoa$Experiment))
@@ -186,7 +224,7 @@ peReads = rbind(peReads, data.frame(samples = chenopodium_quinoa[,"Run"], genome
 ## Cicer arietinum
 ```{r}
 # load data
-cicer_arietinum = read.csv("../workflow/data/SRArunInfo/SraRunInfo_cicer_arietinum_PRJNA657888.csv")
+cicer_arietinum = fread("../workflow/data/SRArunInfo/SraRunInfo_cicer_arietinum_PRJNA657888.csv.gz", data.table = F)
 
 # subset only this relevant species
 cicer_arietinum = cicer_arietinum[(cicer_arietinum$ScientificName == "Cicer arietinum"),]
@@ -206,7 +244,7 @@ peReads = rbind(peReads, data.frame(samples = cicer_arietinum[,"Run"], genome = 
 ## Citrullus lanatus
 ```{r}
 # load data
-citrullus_lanatus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_citrullus_lanatus_PRJNA527790.csv")
+citrullus_lanatus = fread("../workflow/data/SRArunInfo/SraRunInfo_citrullus_lanatus_PRJNA527790.csv.gz", data.table = F)
 
 # subset only this relevant species
 citrullus_lanatus = citrullus_lanatus[(citrullus_lanatus$ScientificName == "Citrullus lanatus"),]
@@ -225,7 +263,7 @@ peReads = rbind(peReads, data.frame(samples = citrullus_lanatus[,"Run"], genome 
 ## Cucumis sativus
 ```{r}
 # load data
-cucumis_sativus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_cucumis_sativus_PRJNA171718.csv")
+cucumis_sativus = fread("../workflow/data/SRArunInfo/SraRunInfo_cucumis_sativus_PRJNA171718.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(cucumis_sativus$Experiment))
@@ -242,7 +280,7 @@ seReads = rbind(seReads, data.frame(samples = cucumis_sativus[(cucumis_sativus$s
 ## Glycine soja
 ```{r}
 # load data
-glycine_soja = read.csv("../workflow/data/SRArunInfo/SraRunInfo_glycine_soja_PRJNA597660.csv")
+glycine_soja = fread("../workflow/data/SRArunInfo/SraRunInfo_glycine_soja_PRJNA597660.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(glycine_soja$Experiment))
@@ -258,7 +296,7 @@ peReads = rbind(peReads, data.frame(samples = glycine_soja[,"Run"], genome = "gl
 
 ## Gossypium barbadense
 ```{r}
-gossypium_barbadense = read.csv("../workflow/data/SRArunInfo/SraRunInfo_gossypium_barbadense_PRJNA720818.csv")
+gossypium_barbadense = fread("../workflow/data/SRArunInfo/SraRunInfo_gossypium_barbadense_PRJNA720818.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(gossypium_barbadense$Experiment))
@@ -274,7 +312,7 @@ peReads = rbind(peReads, data.frame(samples = gossypium_barbadense[,"Run"], geno
 
 ## Gossypium hirsutum
 ```{r}
-gossypium_hirsutum = read.csv("../workflow/data/SRArunInfo/SraRunInfo_gossypium_hirsutum_PRJNA680449.csv")
+gossypium_hirsutum = fread("../workflow/data/SRArunInfo/SraRunInfo_gossypium_hirsutum_PRJNA680449.csv.gz", data.table = F)
 
 # subset only WGS reads
 # For accession with two technical replicates, remove the smaller replicate
@@ -294,7 +332,7 @@ peReads = rbind(peReads, data.frame(samples = gossypium_hirsutum[,"Run"], genome
 
 ## Hordeum vulgare
 ```{r}
-hordeum_vulgare = read.csv("../workflow/data/SRArunInfo/SraRunInfo_hordeum_vulgare_PRJEB36577.csv")
+hordeum_vulgare = fread("../workflow/data/SRArunInfo/SraRunInfo_hordeum_vulgare_PRJEB36577.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(hordeum_vulgare$Experiment))
@@ -318,7 +356,7 @@ peReads = rbind(peReads, data.frame(samples = runs, genome = "hordeum_vulgare"))
 
 ## Lactuca sativa
 ```{r}
-lactuca_sativa = read.csv("../workflow/data/SRArunInfo/SraRunInfo_lactuca_sativa_PRJNA693894.csv")
+lactuca_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_lactuca_sativa_PRJNA693894.csv.gz", data.table = F)
 
 # subset relevant reads
 lactuca_sativa = lactuca_sativa[(lactuca_sativa$LibraryStrategy == "WGS" & lactuca_sativa$ScientificName == "Lactuca sativa"),]
@@ -336,7 +374,7 @@ peReads = rbind(peReads, data.frame(samples = lactuca_sativa[,"Run"], genome = "
 ## Lotus japonicus
 ### Paper says 136 accessions, but I found 137 in the SRA
 ```{r}
-lotus_japonicus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_lotus_japonicus_PRJEB27969.csv")
+lotus_japonicus = fread("../workflow/data/SRArunInfo/SraRunInfo_lotus_japonicus_PRJEB27969.csv.gz", data.table = F)
 
 # subset relevant reads
 lotus_japonicus = lotus_japonicus[(lotus_japonicus$bases != 0),]
@@ -352,7 +390,7 @@ peReads = rbind(peReads, data.frame(samples = lotus_japonicus[,"Run"], genome = 
 
 ## Manihot esculenta
 ```{r}
-manihot_esculenta = read.csv("../workflow/data/SRArunInfo/SraRunInfo_manihot_esculenta_PRJNA234389.csv")
+manihot_esculenta = fread("../workflow/data/SRArunInfo/SraRunInfo_manihot_esculenta_PRJNA234389.csv.gz", data.table = F)
 
 # subset relevant reads
 manihot_esculenta = manihot_esculenta[(manihot_esculenta$LibraryStrategy == "WGS" & manihot_esculenta$ScientificName == "Manihot esculenta" & manihot_esculenta$Platform == "ILLUMINA"),]
@@ -381,7 +419,7 @@ seReads = rbind(seReads, data.frame(samples = manihot_esculenta[(manihot_esculen
 
 ## Medicago truncatula
 ```{r}
-medicago_truncatula = read.csv("../workflow/data/SRArunInfo/SraRunInfo_medicago_truncatula_SRA026748.csv")
+medicago_truncatula = fread("../workflow/data/SRArunInfo/SraRunInfo_medicago_truncatula_SRA026748.csv.gz", data.table = F)
 
 # subset relevant reads
 any(duplicated(medicago_truncatula$BioSample))
@@ -404,7 +442,7 @@ peReads = rbind(peReads, data.frame(samples = medicago_truncatula[,"Run"], genom
 
 ## Mimulus guttatus
 ```{r}
-mimulus_guttatus = read.csv("../workflow/data/SRArunInfo/SraRunInfo_mimulus_guttatus_PRJNA344904.csv")
+mimulus_guttatus = fread("../workflow/data/SRArunInfo/SraRunInfo_mimulus_guttatus_PRJNA344904.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(mimulus_guttatus$Experiment))
@@ -433,7 +471,7 @@ peReads = rbind(peReads, data.frame(samples = mimulus_guttatus[,"Run"], genome =
 ```
 ## Olea europaea
 ```{r}
-olea_europaea = read.csv("../workflow/data/SRArunInfo/SraRunInfo_olea_europaea_PRJEB35540.csv")
+olea_europaea = fread("../workflow/data/SRArunInfo/SraRunInfo_olea_europaea_PRJEB35540.csv.gz", data.table = F)
 
 # species has duplicate biosamples but I don't think they're actually technical replicates
 
@@ -443,7 +481,7 @@ peReads = rbind(peReads, data.frame(samples = olea_europaea[,"Run"], genome = "o
 
 ## Oryza sativa
 ```{r}
-oryza_sativa = read.csv("../workflow/data/SRArunInfo/SraRunInfo_oryza_sativa_PRJEB6180.csv")
+oryza_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_sativa_PRJEB6180.csv.gz", data.table = F)
 
 # how many genotypes are there?
 length(unique(oryza_sativa$BioSample))
@@ -467,7 +505,7 @@ seReads = rbind(seReads, data.frame(samples = oryza_sativa[(oryza_sativa$spots_w
 
 ## Panicum virgatum
 ```{r}
-panicum_virgatum = read.csv("../workflow/data/SRArunInfo/SraRunInfo_panicum_virgatum_PRJNA622568.csv")
+panicum_virgatum = fread("../workflow/data/SRArunInfo/SraRunInfo_panicum_virgatum_PRJNA622568.csv.gz", data.table = F)
 
 # add reads to growing list
 peReads = rbind(peReads, data.frame(samples = panicum_virgatum[(panicum_virgatum$spots_with_mates > 0),"Run"], genome = "panicum_virgatum"))
@@ -476,7 +514,7 @@ peReads = rbind(peReads, data.frame(samples = panicum_virgatum[(panicum_virgatum
 
 ## Phaseolus vulgaris
 ```{r}
-phaseolus_vulgaris = read.csv("../workflow/data/SRArunInfo/SraRunInfo_phaseolus_vulgaris_PRJNA515107.csv")
+phaseolus_vulgaris = fread("../workflow/data/SRArunInfo/SraRunInfo_phaseolus_vulgaris_PRJNA515107.csv.gz", data.table = F)
 
 # subset relevant reads, need random library selection
 phaseolus_vulgaris = phaseolus_vulgaris[(phaseolus_vulgaris$LibrarySelection == "RANDOM"),]
@@ -493,7 +531,7 @@ peReads = rbind(peReads, data.frame(samples = phaseolus_vulgaris[(phaseolus_vulg
 
 ## Populus trichocarpa
 ```{r}
-populus_trichocarpa = read.csv("../workflow/data/SRArunInfo/SraRunInfo_populus_trichocarpa_PRJNA276056.csv")
+populus_trichocarpa = fread("../workflow/data/SRArunInfo/SraRunInfo_populus_trichocarpa_PRJNA276056.csv.gz", data.table = F)
 
 # subset relevant reads
 populus_trichocarpa = populus_trichocarpa[(populus_trichocarpa$ScientificName == "Populus trichocarpa"),]
@@ -506,7 +544,7 @@ seReads = rbind(seReads, data.frame(samples = populus_trichocarpa[(populus_trich
 
 ## Prunus persica
 ```{r}
-prunus_persica = read.csv("../workflow/data/SRArunInfo/SraRunInfo_prunus_persica_PRJNA388029.csv")
+prunus_persica = fread("../workflow/data/SRArunInfo/SraRunInfo_prunus_persica_PRJNA388029.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(prunus_persica$Experiment))
@@ -514,9 +552,9 @@ any(duplicated(prunus_persica$SampleName))
 any(duplicated(prunus_persica$BioSample))
 
 # Some of these accessions are not Pruus persica, load table S1 from publication to filter
-prunus_persica_supp = read.csv("../workflow/data/SRArunInfo/doi10.1186s13059-019-1648-9_prunus_persica_TableS1_2022-10-20.csv")
+prunus_persica_supp = fread("../workflow/data/SRArunInfo/doi10.1186s13059-019-1648-9_prunus_persica_TableS1_2022-10-20.csv.gz", data.table = F)
 
-ids = prunus_persica_supp$ID[(prunus_persica_supp$Botanical.varieties == "P. persica L.")]
+ids = prunus_persica_supp$ID[(prunus_persica_supp$"Botanical varieties" == "P. persica L.")]
 
 prunus_persica = prunus_persica[(prunus_persica$SampleName %in% ids),]
 
@@ -529,7 +567,7 @@ seReads = rbind(seReads, data.frame(samples = prunus_persica[(prunus_persica$spo
 
 ## Setaria italica
 ```{r}
-setaria_italica = read.csv("../workflow/data/SRArunInfo/SraRunInfo_setaria_italica_PRJEB1234.csv")
+setaria_italica = fread("../workflow/data/SRArunInfo/SraRunInfo_setaria_italica_PRJEB1234.csv.gz", data.table = F)
 
 # remove Setaria virdis lines, though maybe I could keep them later?
 setaria_italica = setaria_italica[(setaria_italica$ScientificName == "Setaria italica"),]
@@ -546,7 +584,7 @@ peReads = rbind(peReads, data.frame(samples = setaria_italica[(setaria_italica$s
 
 ## Setaria viridis
 ```{r}
-setaria_viridis = read.csv("../workflow/data/SRArunInfo/SraRunInfo_setaria_viridis_PRJNA633413.csv")
+setaria_viridis = fread("../workflow/data/SRArunInfo/SraRunInfo_setaria_viridis_PRJNA633413.csv.gz", data.table = F)
 
 setaria_viridis = setaria_viridis[(setaria_viridis$ScientificName == "Setaria viridis"),]
 
@@ -557,7 +595,7 @@ peReads = rbind(peReads, data.frame(samples = setaria_viridis[(setaria_viridis$s
 
 ## Solanum lycopersicum
 ```{r}
-solanum_lycopersicum = read.csv("../workflow/data/SRArunInfo/SraRunInfo_solanum_lycopersicum_PRJNA259308.csv")
+solanum_lycopersicum = fread("../workflow/data/SRArunInfo/SraRunInfo_solanum_lycopersicum_PRJNA259308.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(solanum_lycopersicum$Experiment))
@@ -583,7 +621,7 @@ seReads = rbind(seReads, data.frame(samples = solanum_lycopersicum[(solanum_lyco
 ```
 ## Sorghum bicolor
 ```{r}
-sorghum_bicolor = read.csv("../workflow/data/SRArunInfo/SraRunInfo_sorghum_bicolor_PRJEB50066.csv")
+sorghum_bicolor = fread("../workflow/data/SRArunInfo/SraRunInfo_sorghum_bicolor_PRJEB50066.csv.gz", data.table = F)
 
 # for each technical replicate, just take the sample with the most bases
 runs = NULL
@@ -604,7 +642,7 @@ seReads = rbind(seReads, data.frame(samples = sorghum_bicolor[(sorghum_bicolor$s
 
 ## Spinacia oleracea
 ```{r}
-spinacia_oleracea = read.csv("../workflow/data/SRArunInfo/SraRunInfo_spinacia_oleracea_PRJNA598728.csv")
+spinacia_oleracea = fread("../workflow/data/SRArunInfo/SraRunInfo_spinacia_oleracea_PRJNA598728.csv.gz", data.table = F)
 
 spinacia_oleracea = spinacia_oleracea[(spinacia_oleracea$ScientificName == "Spinacia oleracea"),]
 
@@ -621,7 +659,7 @@ seReads = rbind(seReads, data.frame(samples = spinacia_oleracea[(spinacia_olerac
 ```
 ## Spirodela polyrhiza
 ```{r}
-spirodela_polyrhiza = read.csv("../workflow/data/SRArunInfo/SraRunInfo_spirodela_polyrhiza_PRJNA552613.csv")
+spirodela_polyrhiza = fread("../workflow/data/SRArunInfo/SraRunInfo_spirodela_polyrhiza_PRJNA552613.csv.gz", data.table = F)
 
 # check for technical replicates
 any(duplicated(spirodela_polyrhiza$Experiment))
@@ -637,7 +675,7 @@ seReads = rbind(seReads, data.frame(samples = spirodela_polyrhiza[(spirodela_pol
 
 ## Vitis vinifera
 ```{r}
-vitis_vinifera = read.csv("../workflow/data/SRArunInfo/SraRunInfo_vitis_vinifera_PRJNA373967.csv")
+vitis_vinifera = fread("../workflow/data/SRArunInfo/SraRunInfo_vitis_vinifera_PRJNA373967.csv.gz", data.table = F)
 
 # subset WGS reads
 vitis_vinifera = vitis_vinifera[(vitis_vinifera$LibraryStrategy == "WGS" & vitis_vinifera$ScientificName == "Vitis vinifera"),]
@@ -701,7 +739,7 @@ nrow(peReads) + nrow(seReads)
 # Split SRA run data into single-end and paired end
 ## Arabidopsis thaliana
 ```{r}
-athalSraRunInfo = read.csv("../workflow/data/SraRunInfo_arabidopsis_thaliana.csv")
+athalSraRunInfo = fread("../workflow/data/SraRunInfo_arabidopsis_thaliana.csv.gz", data.table = F)
 
 # separate paired end and single-end data
 # if spot_with_mates == 0 in sra run info, then data is single-end

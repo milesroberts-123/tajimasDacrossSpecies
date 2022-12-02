@@ -1,5 +1,5 @@
 **/logs
-**/data
+#**/data
 **/doc
 **/.snakemake
 **/results
@@ -17,7 +17,7 @@
 core.**
 **/multiqc_report_data
 **.fa
-**.gff
+**.gff3
 **.errlog
 **.kmc_pre
 **.kmc_suf
