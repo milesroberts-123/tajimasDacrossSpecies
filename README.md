@@ -4,6 +4,10 @@
 
 [Input files for workflow](#input-files-for-workflow)
 
+[Dependencies](#dependencies)
+
+[Notes](#notes)
+
 # Summary
 
 This workflow takes a list of SRA run numbers, separated before-hand as either paired-end or single-end, along with the assembly and annotation of their corresponding reference genomes. It then trims the reads with fastp and executes two different genotype calling pipelines:
@@ -27,16 +31,32 @@ This workflow is designed to:
 * retain invariant sites during SNP calling
 
 # Input files for workflow
+
+This how I eventually want the input data for the workflow to be organized
 ```
 workflow/data/
-	annotations/ # gffs of genome sequences, genus_species.gff
-	assemblies/ # fasta files of genome sequences, genus_species.fa
-	chromosomes/ # text files with chromosome names, used for parallelization of genotype calling, genus_species_chroms.txt	
-	samples_pe.tsv # paired-end samples
-	samples_se.tsv # single-end samples
+	annotations/ # gffs of genome sequences, naming convention: genus_species.gff3
+	assemblies/ # fasta files of genome sequences, naming convention: genus_species.fa
+	chromosomes/ # text files with chromosome names, used for parallelization of genotype calling, naming convention: genus_species_chroms.txt	
+	samples_pe.tsv # tab-separated text file listing paired-end samples
+	samples_se.tsv # tab-separated text file listing single-end samples
 ```
 
-# Search method for genotype data (2022-10-05)
+# Dependencies
+
+These are in `/workflow/scripts/` and include
+
+* degenotate
+
+* fastp
+
+To get degenotate, clone degenotate github repo into `workflow/scripts`, you can then update degenotate by doing into the degenotate folder and  using the `git fetch` then `git pull` commands
+
+Go to the fastp github repo and download the latest linux binary, add this to the scripts folder and make it executable with `chmod +x fastp`
+ 
+# Notes
+
+## search methods for genotype data
 
 My search for plant genotype data was restricted to only species with reference genomes on phytozome. I then would type each species name into the SRA search bar and restrict matches to the Organism field (example: Arabidopsis lyrata[Organism]) and then further filter for samples sourced from DNA. I would then download the Run info from the search and then look at the bioprojects with the highest number of SRA samples.
 
