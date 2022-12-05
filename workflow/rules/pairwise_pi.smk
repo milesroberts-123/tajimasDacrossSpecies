@@ -8,9 +8,9 @@ rule pairwise_pi:
 		"logs/pairwise_pi.log"
 	params:
 		ploidy=2
-	threads: 10
+	threads: 5
 	resources:
-		mem_mb_per_cpu=32000
+		mem_mb_per_cpu=16000
 	conda:
 		"../envs/R.yml"
 	envmodules:

@@ -6,9 +6,9 @@ rule jaccard_dissimilarity:
 		"mergedKmerCountsNorm_01.txt"
 	log:
 		"logs/jaccard_dissimilarity.log"
-	threads: 10
+	threads: 5
 	resources:
-		mem_mb_per_cpu=32000
+		mem_mb_per_cpu=16000
 	conda:
 		"../envs/R.yml"
 	envmodules:
