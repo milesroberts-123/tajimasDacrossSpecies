@@ -277,6 +277,46 @@ any(cucumis_sativus$spots_with_mates == 0)
 seReads = rbind(seReads, data.frame(samples = cucumis_sativus[(cucumis_sativus$spots_with_mates == 0),"Run"], genome = "cucumis_sativus"))
 ```
 
+## Glycine max
+```{r}
+# load data
+glycine_max_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_glycine_max_PRJNA681974.csv.gz", data.table = F)
+glycine_max_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_glycine_max_PRJNA257011.csv.gz", data.table = F)
+glycine_max_3 = fread("../workflow/data/SRArunInfo/SraRunInfo_glycine_max_PRJNA552939.csv.gz", data.table = F)
+
+# remove glycine soja accessions
+glycine_max_2 = glycine_max_2[(glycine_max_2$ScientificName == "Glycine max"),]
+
+# check for technical replicates
+any(duplicated(glycine_max_1$Experiment))
+any(duplicated(glycine_max_1$SampleName))
+any(duplicated(glycine_max_1$BioSample))
+any(duplicated(glycine_max_1$LibraryName))
+
+any(duplicated(glycine_max_2$Experiment))
+any(duplicated(glycine_max_2$SampleName))
+any(duplicated(glycine_max_2$BioSample))
+any(duplicated(glycine_max_2$LibraryName))
+
+any(duplicated(glycine_max_3$Experiment))
+any(duplicated(glycine_max_3$SampleName))
+any(duplicated(glycine_max_3$BioSample))
+any(duplicated(glycine_max_3$LibraryName))
+
+# bind studies together
+glycine_max = rbind(glycine_max_1, glycine_max_2, glycine_max_3)
+
+# Check for duplicates
+any(duplicated(glycine_max$Experiment))
+any(duplicated(glycine_max$SampleName))
+any(duplicated(glycine_max$BioSample))
+any(duplicated(glycine_max$LibraryName))
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = glycine_max[(glycine_max$spots_with_mates > 0),"Run"], genome = "glycine_max"))
+
+```
+
 ## Glycine soja
 ```{r}
 # load data
@@ -657,6 +697,7 @@ peReads = rbind(peReads, data.frame(samples = spinacia_oleracea[(spinacia_olerac
 seReads = rbind(seReads, data.frame(samples = spinacia_oleracea[(spinacia_oleracea$spots_with_mates == 0),"Run"], genome = "spinacia_oleracea"))
 
 ```
+
 ## Spirodela polyrhiza
 ```{r}
 spirodela_polyrhiza = fread("../workflow/data/SRArunInfo/SraRunInfo_spirodela_polyrhiza_PRJNA552613.csv.gz", data.table = F)

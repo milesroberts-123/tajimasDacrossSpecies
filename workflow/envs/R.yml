@@ -4,5 +4,5 @@ channels:
  - conda-forge
 
 dependencies:
- - r-base=4.0.0
+ - r-base=4.1.0
  - r-data.table=1.14.4
