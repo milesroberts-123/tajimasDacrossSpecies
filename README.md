@@ -33,13 +33,16 @@ This workflow is designed to:
 # Input files for workflow
 
 This how I eventually want the input data for the workflow to be organized
+
 ```
 workflow/data/
 	annotations/ # gffs of genome sequences, naming convention: genus_species.gff3
 	assemblies/ # fasta files of genome sequences, naming convention: genus_species.fa
 	chromosomes/ # text files with chromosome names, used for parallelization of genotype calling, naming convention: genus_species_chroms.txt	
+	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples_pe.tsv and samples_se.tsv before workflow begins
 	samples_pe.tsv # tab-separated text file listing paired-end samples
 	samples_se.tsv # tab-separated text file listing single-end samples
+	speciesList.csv # list of species included in my analysis
 ```
 
 # Dependencies

@@ -75,7 +75,7 @@ kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 # y = index for pair of individuals to compare
 # idxs = list of pairs
 # data = dataframe of normalized k-mer counts
-brayCurtisDissimilarity=function(y, idxs, data, outputFileName, corCount){
+brayCurtisDissimilarity=function(y, idxs, data, outputFileName, coreCount){
 
   idx = idxs[[y]]
   rm(idxs)
