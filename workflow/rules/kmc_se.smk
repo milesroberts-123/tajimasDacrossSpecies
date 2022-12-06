@@ -39,7 +39,7 @@ rule kmc_se:
 
                 # find k-mers in sample that do not match coding sequences
                 echo Finding k-mers in sample that do not match coding sequences...
-                comm -13 {input.cdsDatabase} tmp_{output} | sort > uniq_{output}
+                comm -13 {input.cdsDatabase} tmp_{output} > uniq_{output}
 
                 # subset just k-mers that aren't in coding sequence database
                 join uniq_{output} raw_{output} > {output}

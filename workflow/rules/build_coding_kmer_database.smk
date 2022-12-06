@@ -27,7 +27,7 @@ rule build_coding_kmer_database:
 		kmc_tools transform {params.outputPrefix} dump tmp_{output}
 
 		# remove first column from text file
-		cut -f1 tmp_{output} > {output}
+		cut -f1 tmp_{output} | sort > {output}
 
 		# remove wd
 		rm tmp_{output}
