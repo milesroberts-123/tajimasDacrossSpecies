@@ -6,7 +6,7 @@ rule list_kmers:
 	log:
 		"logs/list_kmers.log"
 	params:
-		countThresh=1
+		countThresh=5
 	threads: 1
 	resources:
 		mem_mb_per_cpu=4000

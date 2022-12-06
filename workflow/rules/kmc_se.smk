@@ -1,6 +1,7 @@
 rule kmc_se:
 	input:
-		"filtered_reads/{sampleSe}_filt.fastq",
+		cdsDatabase="codingKmerDatabase.txt",
+		read="trimmed_reads/{sampleSe}_trim.fastq.gz"
 	output:
 		temp("{sampleSe}_se_kmers.txt")
 	log:
@@ -23,7 +24,7 @@ rule kmc_se:
 
 		# Count kmers
 		echo Counting kmers...
-		kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe} &> {log}
+		kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe} &> {log}
         	
 		# Sort kmer databases
 		echo Sorting kmer databases...
@@ -31,7 +32,17 @@ rule kmc_se:
 
 		# Dump to text file
 		echo Dumping kmers to text file...
-		kmc_tools transform sorted_{wildcards.sampleSe} dump {output} &>> {log}
+		kmc_tools transform sorted_{wildcards.sampleSe} dump raw_{output} &>> {log}
+
+		# create temp list of k-mers in sample
+                cut -f1 raw_{output} > tmp_{output}
+
+                # find k-mers in sample that do not match coding sequences
+                echo Finding k-mers in sample that do not match coding sequences...
+                comm -13 {input.cdsDatabase} tmp_{output} | sort > uniq_{output}
+
+                # subset just k-mers that aren't in coding sequence database
+                join uniq_{output} raw_{output} > {output}
 		
 		# remove working directory, temporary files
 		rm -r tmp_{wildcards.sampleSe}
@@ -39,4 +50,7 @@ rule kmc_se:
 		rm sorted_{wildcards.sampleSe}.kmc_suf
 		rm temporary_{wildcards.sampleSe}.kmc_pre
 		rm temporary_{wildcards.sampleSe}.kmc_suf
+		#rm raw_{output}
+		#rm tmp_{output}
+		#rm uniq_{output}
 		"""

@@ -2,8 +2,7 @@ rule build_coding_kmer_database:
 	input:
 		"cds.fa"
 	output:
-		"codingKmerDatabase.kmc_pre",
-		"codingKmerDatabase.kmc_suf"
+		"codingKmerDatabase.txt"
 	log:
 		"logs/build_coding_kmer_database.log"
 	threads: 4
@@ -19,11 +18,20 @@ rule build_coding_kmer_database:
 	shell:
 		"""
 		# create wd, but remove it first if it already exists
-		mkdir -p tmp_codingKmerDatabase
+		mkdir -p tmp_{params.outputPrefix}
 
 		# count kmers
-		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs1 -fm {input} {params.outputPrefix} tmp_codingKmerDatabase
+		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs1 -fm {input} {params.outputPrefix} tmp_{params.outputPrefix}
+
+		# dump kmers to text file
+		kmc_tools transform {params.outputPrefix} dump tmp_{output}
+
+		# remove first column from text file
+		cut -f1 tmp_{output} > {output}
 
 		# remove wd
+		rm tmp_{output}
 		rm -r tmp_codingKmerDatabase
+		rm {params.outputPrefix}.kmc_pre
+		rm {params.outputPrefix}.kmc_suf
 		"""
