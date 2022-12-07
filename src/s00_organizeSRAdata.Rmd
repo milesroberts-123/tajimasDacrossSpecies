@@ -525,11 +525,10 @@ oryza_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_sativa_PRJEB6
 
 # how many genotypes are there?
 length(unique(oryza_sativa$BioSample))
-
 # for each technical replicate, just take the sample with the most bases
 runs = NULL
 for(biosample in unique(oryza_sativa$BioSample)){
-  techreps = oryza_sativa[(oryza_sativa$SampleName == biosample),]
+  techreps = oryza_sativa[(oryza_sativa$BioSample == biosample),]
   techreps = techreps[order(techreps$bases, decreasing = T),]
   runs = c(runs, techreps[1,"Run"])
 }
@@ -540,6 +539,38 @@ oryza_sativa = oryza_sativa[(oryza_sativa$Run %in% runs),]
 peReads = rbind(peReads, data.frame(samples = oryza_sativa[(oryza_sativa$spots_with_mates > 0),"Run"], genome = "oryza_sativa"))
 
 seReads = rbind(seReads, data.frame(samples = oryza_sativa[(oryza_sativa$spots_with_mates == 0),"Run"], genome = "oryza_sativa"))
+
+```
+
+
+## Panicum halli
+```{r}
+# To get run numbers for panicum halli
+# Copy bioprojects from table S1 in this publication: https://doi.org/10.1038/s41467-018-07669-x
+# to a list in doc/panicum_halli_search.txt
+# then use regular expressions to make a query to be used with ENTREZ
+# cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
+# esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
+panicum_halli = fread("../workflow/data/SRArunInfo/SraRunInfo_panicum_halli.csv.gz", data.table = F)
+
+# check for technical replicates
+any(duplicated(panicum_halli$Experiment))
+any(duplicated(panicum_halli$SampleName))
+any(duplicated(panicum_halli$BioSample))
+
+runs = NULL
+for(biosample in unique(panicum_halli$BioSample)){
+  techreps = panicum_halli[(panicum_halli$BioSample == biosample),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+panicum_halli = panicum_halli[(panicum_halli$Run %in% runs),]
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = panicum_halli[(panicum_halli$spots_with_mates > 0),"Run"], genome = "panicum_halli"))
+
+seReads = rbind(seReads, data.frame(samples = panicum_halli[(panicum_halli$spots_with_mates == 0),"Run"], genome = "panicum_halli"))
 
 ```
 
@@ -745,11 +776,14 @@ seReads = rbind(seReads, data.frame(samples = vitis_vinifera[(vitis_vinifera$spo
 
 # Summarize read counts
 ```{r}
+# breakdown of reads per species
 table(peReads$genome)
 table(seReads$genome)
 
+# number of species included thus far
 length(unique(c(peReads$genome,seReads$genome)))
 
+# total number of individuals
 nrow(peReads) + nrow(seReads)
 
 # write run numbers and metadata to workflow input
