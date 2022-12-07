@@ -751,6 +751,11 @@ table(seReads$genome)
 length(unique(c(peReads$genome,seReads$genome)))
 
 nrow(peReads) + nrow(seReads)
+
+# write run numbers and metadata to workflow input
+# need to replace write path with "../workflow/data/samples_pe.tsv" when I'm ready
+write.table(seReads, file = "samples_se.tsv", sep = "\t", quote = F, row.names = F)
+write.table(peReads, file = "samples_pe.tsv", sep = "\t", quote = F, row.names = F)
 ```
 
 
