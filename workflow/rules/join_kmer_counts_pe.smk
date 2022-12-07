@@ -3,7 +3,7 @@ rule join_kmer_counts_pe:
 		key="kmerRandomSubset.txt",
 		kmerCounts="{samplePe}_pe_kmers.txt"
 	output:
-		"{samplePe}_pe_mergedKmerCounts.txt"
+		temp("{samplePe}_pe_mergedKmerCounts.txt")
 	log:
 		"logs/join_kmer_counts_pe/{samplePe}.log"
 	threads: 1

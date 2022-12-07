@@ -19,4 +19,7 @@ rule bray_curtis_dissimilarity:
 		
 		# merge output of R script into one file
 		cat *_{output.dissim} > {output.dissim}
+
+		# remove intermediate files
+		rm *_{output.dissim}
 		"""

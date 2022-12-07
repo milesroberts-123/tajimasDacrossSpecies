@@ -16,6 +16,7 @@ kmerFile = args[1]
 dissimOutput = args[2]
 normCountsOutputFile = args[3]
 threadCount = as.numeric(args[4])
+countThresh = as.numeric(args[5])
 
 print("Input file:")
 print(kmerFile)
@@ -26,6 +27,9 @@ print(normCountsOutputFile)
 
 print("Thread count:")
 print(threadCount)
+
+print("K-mer count threshold:")
+print(countThresh)
 
 # read key and all kmer count files into memory
 print("Reading files into memory...")
@@ -42,9 +46,12 @@ kmerCounts = kmerCounts[,-1]
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
-# replace numbers above 1 with 1 to save memory
-print("Replace numbers > 1 with 1 to save memory...")
-kmerCounts[(kmerCounts > 1)] = 1
+# mark k-mers as present or absent based on their count for each genotype
+print("Replace numbers >= count threshold with 1...")
+kmerCounts[(kmerCounts >= countThresh)] = 1
+
+print("Replace numbers < count threshold with 0...")
+kmerCounts[(kmerCounts < countThresh)] = 0
 
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
