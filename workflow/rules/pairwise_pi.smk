@@ -21,4 +21,7 @@ rule pairwise_pi:
 		
 		# merge output of R script into one file
 		cat *_{output} > {output}
+
+		# remove intermediate files
+		rm *_{output}
 		"""

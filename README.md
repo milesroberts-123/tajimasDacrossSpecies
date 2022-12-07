@@ -2,9 +2,15 @@
 
 [Summary](#summary)
 
+[How to replicate my results](#How-to-replicate-my-results)
+
 [Input files for workflow](#input-files-for-workflow)
 
 [Dependencies](#dependencies)
+
+[Updating the repo](#updating-the-repo)
+
+[To do](#to-do)
 
 [Notes](#notes)
 
@@ -24,7 +30,7 @@ In addition, this workflow is designed to:
 
 * parallelize computations by splitting data by chromsome
 
-* analyze read data from multiple species simultaneously
+* analyze read data from multiple species simultaneously (in progress)
 
 * work with both paired-end and single-end data
 
@@ -33,6 +39,16 @@ In addition, this workflow is designed to:
 * retain invariant sites during SNP calling
 
 * perform steps that are often omitted from online tutorials (such as building indices of reference genomes for BWA, GATK, and Picard)
+
+# How to replicate my results
+
+The scripts in src/ should be run in their numbered order to replicate my results.
+
+```
+src/s00_organizeSRAdata.Rmd # take data in workflow/data/SRArunInfo and structure it so that it can be churned through snakemake workflow
+
+src/s01_snakemake.bash # job submission script to run the snakemake workflow on a SLURM HPCC system
+```
 
 # Input files for workflow
 
@@ -49,6 +65,8 @@ workflow/data/
 	speciesList.csv # list of species included in my analysis
 ```
 
+See `workflow/dag.svg` for an example of my snakemake workflow executed on four samples (2 paired end, 2 single end) from the same species (*Arabidopsis thaliana*)
+
 # Dependencies
 
 These are in `/workflow/scripts/` and include
@@ -60,7 +78,37 @@ These are in `/workflow/scripts/` and include
 To get degenotate, clone degenotate github repo into `workflow/scripts`, you can then update degenotate by doing into the degenotate folder and  using the `git fetch` then `git pull` commands
 
 Go to the fastp github repo and download the latest linux binary, add this to the scripts folder and make it executable with `chmod +x fastp`
+
+# Updating the repo
+
+```
+# From workflow/
+# check if workflow builds successfully
+snakemake -n
+
+# build directed acyclic graph if you added or removed steps
+snakemake --dag | dot -Tsvg > dag.svg
+
+# push changes to github
+cd ..
+
+git add --all
+
+git ls-files # check that correct files are being pushed to repo
+
+git commit -m "update"
+
+git push -u origin main
+```
  
+# To do
+
+* memory requirements of dissimilarity calculations should scale with the dataset input size
+
+* extend workflow to work with multiple species
+
+* fully separate multi-threaded and single-threaded steps
+
 # Notes
 
 ## search methods for genotype data

@@ -47,11 +47,11 @@ print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
 # mark k-mers as present or absent based on their count for each genotype
-print("Replace numbers >= count threshold with 1...")
-kmerCounts[(kmerCounts >= countThresh)] = 1
-
 print("Replace numbers < count threshold with 0...")
 kmerCounts[(kmerCounts < countThresh)] = 0
+
+print("Replace numbers >= count threshold with 1...")
+kmerCounts[(kmerCounts >= countThresh)] = 1
 
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
