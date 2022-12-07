@@ -42,7 +42,7 @@ rule kmc_se:
                 comm -13 {input.cdsDatabase} tmp_{output} > uniq_{output}
 
                 # subset just k-mers that aren't in coding sequence database
-                join uniq_{output} raw_{output} > {output}
+                join -t $'\t' uniq_{output} raw_{output} > {output}
 		
 		# remove working directory, temporary files
 		rm -r tmp_{wildcards.sampleSe}
@@ -50,7 +50,7 @@ rule kmc_se:
 		rm sorted_{wildcards.sampleSe}.kmc_suf
 		rm temporary_{wildcards.sampleSe}.kmc_pre
 		rm temporary_{wildcards.sampleSe}.kmc_suf
-		#rm raw_{output}
-		#rm tmp_{output}
-		#rm uniq_{output}
+		rm raw_{output}
+		rm tmp_{output}
+		rm uniq_{output}
 		"""
