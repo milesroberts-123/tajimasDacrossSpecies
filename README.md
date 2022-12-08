@@ -32,6 +32,8 @@ In addition, this workflow is designed to:
 
 * analyze read data from multiple species simultaneously (in progress)
 
+* merge technical replicates after read trimming (in progress)
+
 * work with both paired-end and single-end data
 
 * work either as a set of environment modules (specific to the MSU ICER HPCC), a set of conda environments, or as a Docker container
@@ -96,7 +98,7 @@ git add --all
 
 git ls-files # check that correct files are being pushed to repo
 
-git commit -m "update"
+git commit -m "my update message"
 
 git push -u origin main
 ```
@@ -105,9 +107,13 @@ git push -u origin main
 
 * memory requirements of dissimilarity calculations should scale with the dataset input size
 
-* extend workflow to work with multiple species
-
 * fully separate multi-threaded and single-threaded steps
+
+* put all read meta-data into a single file (samples.tsv) with the following columns: Run BioSample Assembly Layout
+
+* add step to merge technical replicates after fastp trimming, merge based on shared BioSample ID, get reads associated with biosample ID with input function
+
+* extend workflow to work with multiple species
 
 # Notes
 

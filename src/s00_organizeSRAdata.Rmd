@@ -567,10 +567,13 @@ for(biosample in unique(panicum_halli$BioSample)){
 
 panicum_halli = panicum_halli[(panicum_halli$Run %in% runs),]
 
+# remove pacbio reads
+panicum_halli = panicum_halli[(panicum_halli$Platform != "PACBIO_SMRT"),]
+
 # add reads to growing list
 peReads = rbind(peReads, data.frame(samples = panicum_halli[(panicum_halli$spots_with_mates > 0),"Run"], genome = "panicum_halli"))
 
-seReads = rbind(seReads, data.frame(samples = panicum_halli[(panicum_halli$spots_with_mates == 0),"Run"], genome = "panicum_halli"))
+# seReads = rbind(seReads, data.frame(samples = panicum_halli[(panicum_halli$spots_with_mates == 0),"Run"], genome = "panicum_halli"))
 
 ```
 
@@ -771,6 +774,36 @@ vitis_vinifera = vitis_vinifera[(vitis_vinifera$Run %in% runs),]
 peReads = rbind(peReads, data.frame(samples = vitis_vinifera[(vitis_vinifera$spots_with_mates > 0),"Run"], genome = "vitis_vinifera"))
 
 seReads = rbind(seReads, data.frame(samples = vitis_vinifera[(vitis_vinifera$spots_with_mates == 0),"Run"], genome = "vitis_vinifera"))
+
+```
+
+## Zea mays
+```{r}
+# load data
+zea_mays_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_zea_mays_PRJNA260788.csv.gz", data.table = F)
+zea_mays_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_zea_mays_PRJNA389800.csv.gz", data.table = F)
+zea_mays_3 = fread("../workflow/data/SRArunInfo/SraRunInfo_zea_mays_PRJNA399729.csv.gz", data.table = F)
+
+# concatenate
+zea_mays = rbind(zea_mays_1, zea_mays_2, zea_mays_3)
+
+# for each technical replicate, just take the sample with the most bases
+runs = NULL
+for(biosample in unique(zea_mays$BioSample)){
+  techreps = zea_mays[(zea_mays$BioSample == biosample),]
+  techreps = techreps[order(techreps$bases, decreasing = T),]
+  runs = c(runs, techreps[1,"Run"])
+}
+
+zea_mays = zea_mays[(zea_mays$Run %in% runs),]
+
+# confirm no duplicates
+any(duplicated(zea_mays$Experiment))
+any(duplicated(zea_mays$SampleName))
+any(duplicated(zea_mays$BioSample))
+
+# add reads to growing list
+peReads = rbind(peReads, data.frame(samples = zea_mays[(zea_mays$spots_with_mates > 0),"Run"], genome = "zea_mays"))
 
 ```
 
