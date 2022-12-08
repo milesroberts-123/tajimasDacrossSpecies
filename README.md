@@ -91,6 +91,9 @@ snakemake -n
 # build directed acyclic graph if you added or removed steps
 snakemake --dag | dot -Tsvg > dag.svg
 
+# update docker file if you changed the conda environments
+snakemake --containerize > Dockerfile
+
 # push changes to github
 cd ..
 
@@ -122,3 +125,15 @@ git push -u origin main
 My search for plant genotype data was restricted to only species with reference genomes on phytozome. I then would type each species name into the SRA search bar and restrict matches to the Organism field (example: Arabidopsis lyrata[Organism]) and then further filter for samples sourced from DNA. I would then download the Run info from the search and then look at the bioprojects with the highest number of SRA samples.
 
 To get the CSV for Boechera stricta run numbers I searched "Boechera stricta Reference Population" on the SRA.
+
+## installing updated snakemake
+
+The snakemake installation on the MSU HPCC is v4, but I want v7 so that I can use the `--containerize` functions
+
+```
+# create environment
+conda create --name snakemake
+
+# install snakemake in environment
+conda install -c bioconda snakemake
+```
