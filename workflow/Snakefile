@@ -13,6 +13,10 @@ chroms = pd.read_table("data/chroms.txt", sep="\t", dtype={"chroms": str}).set_i
 wildcard_constraints:
 	sampleSe="[A-Za-z0-9]+"
 
+# function to determine if --use-conda is enabled
+def get_conda_status(wildcards):
+	return workflow.use_conda
+
 # function to define thread count per rule
 # 1 thread per gigabyte of input data + 1, up to a max of 128
 def get_thread_count(wildcards, input):

@@ -4,6 +4,8 @@ rule multiqc:
 		expand("fastp_output/{samplePe}_pe_fastp.json", samplePe=samplesPe.index),
 	output:
 		"multiqc_report.html"
+	params:
+		condaStatus=get_conda_status
 	log:
 		"logs/multiqc.log"
 	threads: 1
@@ -14,4 +16,15 @@ rule multiqc:
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 MultiQC/1.7-Python-3.6.6"
 	shell:
-		"multiqc -f --filename multiqc_report.html fastp_output/ &> {log}"
+		"""
+		if [ "{params.condaStatus}" == "True" ]; then
+                        echo Conda environment enabled
+			echo "Multiqc installed in conda does not work because it cannot access a numpy umath module. Thus multiqc will not be run when --use-conda is True"
+			echo Will create empty {output} file to avoid snakemake error
+			touch {output}
+		else
+			echo Conda environment disabled
+			echo Multiqc module on HPCC works so run multiqc
+			multiqc -f --filename {output} fastp_output/ &> {log}
+		fi
+		"""

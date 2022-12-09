@@ -136,4 +136,7 @@ conda create --name snakemake
 
 # install snakemake in environment
 conda install -c bioconda snakemake
+
+# install mamba too, a faster replacement for conda
+conda install -n base -c conda-forge mamba
 ```

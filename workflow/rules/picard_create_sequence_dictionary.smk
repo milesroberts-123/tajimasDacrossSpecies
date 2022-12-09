@@ -3,6 +3,8 @@ rule picard_create_sequence_dictionary:
 		"data/genome.fa"
 	output:
 		"data/genome.dict"
+	params:
+		condaStatus=get_conda_status
 	envmodules:
 		"picard/2.22.1-Java-11"
 	threads: 1
@@ -14,7 +16,11 @@ rule picard_create_sequence_dictionary:
 		"../envs/picard.yml"
 	shell:
 		"""
-		java -jar $EBROOTPICARD/picard.jar CreateSequenceDictionary \
-			R={input} \
-			O={output} &> {log}
+		if [ "{params.condaStatus}" == "True" ]; then
+			echo Conda environment enabled, using conda-specific command
+			picard CreateSequenceDictionary R={input} O={output} &> {log}
+		else
+			echo Conda environment disabled, using HPCC-specific command
+			java -jar $EBROOTPICARD/picard.jar CreateSequenceDictionary R={input} O={output} &> {log}
+		fi
 		"""

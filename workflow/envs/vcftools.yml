@@ -4,4 +4,5 @@ channels:
  - bioconda
 
 dependencies:
- - perl-vcftools-vcf=0.1.15
+ - vcftools=0.1.16
+ - tabix=1.11

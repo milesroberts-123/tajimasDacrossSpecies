@@ -4,6 +4,8 @@ rule picard_mark_duplicates:
 	output:
 		markedDups=temp("sorted_marked_reads/{sample}.bam"),
 		dupMetrics="markedDups/{sample}.txt"
+	params:
+		condaStatus=get_conda_status
 	envmodules:
 		"picard/2.22.1-Java-11"
 	threads: 1
@@ -15,8 +17,11 @@ rule picard_mark_duplicates:
 		"../envs/picard.yml"
 	shell:
 		"""
-		java -jar $EBROOTPICARD/picard.jar MarkDuplicates \
-			I={input} \
-			O={output.markedDups} \
-			M={output.dupMetrics} &> {log}
+		if [ "{params.condaStatus}" == "True" ]; then
+                        echo Conda environment enabled, using conda-specific command
+			picard MarkDuplicates I={input} O={output.markedDups} M={output.dupMetrics} &> {log}
+		else
+			echo Conda environment disabled, using HPCC-specific command
+			java -jar $EBROOTPICARD/picard.jar MarkDuplicates I={input} O={output.markedDups} M={output.dupMetrics} &> {log}
+		fi
 		"""

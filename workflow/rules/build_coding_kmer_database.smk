@@ -21,7 +21,8 @@ rule build_coding_kmer_database:
 		mkdir -p tmp_{params.outputPrefix}
 
 		# count kmers
-		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs1 -fm {input} {params.outputPrefix} tmp_{params.outputPrefix}
+		# -cs needs to be 2, because a value of 1 is not supported in the conda environment for some reason
+		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs2 -fm {input} {params.outputPrefix} tmp_{params.outputPrefix}
 
 		# dump kmers to text file
 		kmc_tools transform {params.outputPrefix} dump tmp_{output}
