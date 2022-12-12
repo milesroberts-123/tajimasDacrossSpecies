@@ -10,7 +10,7 @@ rule pairwise_pi:
 		ploidy=2
 	threads: 5
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=64000
 	conda:
 		"../envs/R.yml"
 	envmodules:

@@ -1,6 +1,6 @@
 FROM condaforge/mambaforge:latest
 LABEL io.github.snakemake.containerized="true"
-LABEL io.github.snakemake.conda_env_hash="fccb0a6f646873d97b7fa14fc96aff855a35686cb0fdef368a9cc54242f841fd"
+LABEL io.github.snakemake.conda_env_hash="1e39f794b13b6570385bd395dbaee60dc9dbeb8eaddf69073cef0f8916abc7fa"
 
 # Step 1: Retrieve conda environments
 
@@ -158,16 +158,17 @@ COPY envs/samtools.yml /conda-envs/935725baedb41d73d5ce355b88e3940f/environment.
 
 # Conda environment:
 #   source: envs/vcftools.yml
-#   prefix: /conda-envs/8e096254d5519b7d85cdc94c5f2988c6
+#   prefix: /conda-envs/830a8d38017a88379bdd588e8ca60cd9
 #   name: vcftools
 #   
 #   channels:
 #    - bioconda
 #   
 #   dependencies:
-#    - perl-vcftools-vcf=0.1.15
-RUN mkdir -p /conda-envs/8e096254d5519b7d85cdc94c5f2988c6
-COPY envs/vcftools.yml /conda-envs/8e096254d5519b7d85cdc94c5f2988c6/environment.yaml
+#    - vcftools=0.1.16
+#    - tabix=1.11
+RUN mkdir -p /conda-envs/830a8d38017a88379bdd588e8ca60cd9
+COPY envs/vcftools.yml /conda-envs/830a8d38017a88379bdd588e8ca60cd9/environment.yaml
 
 # Step 2: Generate conda environments
 
@@ -183,5 +184,5 @@ RUN mamba env create --prefix /conda-envs/a5149814b913910bb219abf08307ce3a --fil
     mamba env create --prefix /conda-envs/107701487a60823e74ff554a7e31dc8d --file /conda-envs/107701487a60823e74ff554a7e31dc8d/environment.yaml && \
     mamba env create --prefix /conda-envs/1782faa8d4389cc8a49b680700f2377e --file /conda-envs/1782faa8d4389cc8a49b680700f2377e/environment.yaml && \
     mamba env create --prefix /conda-envs/935725baedb41d73d5ce355b88e3940f --file /conda-envs/935725baedb41d73d5ce355b88e3940f/environment.yaml && \
-    mamba env create --prefix /conda-envs/8e096254d5519b7d85cdc94c5f2988c6 --file /conda-envs/8e096254d5519b7d85cdc94c5f2988c6/environment.yaml && \
+    mamba env create --prefix /conda-envs/830a8d38017a88379bdd588e8ca60cd9 --file /conda-envs/830a8d38017a88379bdd588e8ca60cd9/environment.yaml && \
     mamba clean --all -y
