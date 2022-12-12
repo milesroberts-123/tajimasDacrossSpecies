@@ -1,7 +1,17 @@
 import pandas as pd
-samplesSe = pd.read_table("data/samples_se.tsv", sep="\t", dtype={"samples": str}).set_index("samples", drop=False)
-samplesPe = pd.read_table("data/samples_pe.tsv", sep="\t", dtype={"samples": str}).set_index("samples", drop=False)
 
+# load samples
+samples = pd.read_table("data/samples.tsv", sep="\t", dtype={"run": str, "replicate": str}).set_index(["run","replicate"], drop=False)
+#print(samples)
+
+# split into paired-end and single-end
+samplesPe = samples[samples["layout"] == "PE"]
+#print(samplesPe)
+
+samplesSe = samples[samples["layout"] == "SE"]
+#print(samplesSe)
+
+# load list of chromosome names
 chroms = pd.read_table("data/chroms.txt", sep="\t", dtype={"chroms": str}).set_index("chroms", drop=False)
 
 #ruleorder: download_pe > download_se
@@ -10,8 +20,11 @@ chroms = pd.read_table("data/chroms.txt", sep="\t", dtype={"chroms": str}).set_i
 
 #ruleorder: bwa_mem_pe > bwa_mem_se
 
+#ruleorder: cat_replicates_se > fastp_se > download_pe > download_se 
+
 wildcard_constraints:
-	sampleSe="[A-Za-z0-9]+"
+	sampleSe="[A-Za-z0-9]+",
+	runSe="[A-Za-z0-9]+"
 
 # function to determine if --use-conda is enabled
 def get_conda_status(wildcards):
@@ -68,6 +81,8 @@ include: "rules/download_pe.smk"
 include: "rules/download_se.smk"
 include: "rules/fastp_se.smk"
 include: "rules/fastp_pe.smk"
+include: "rules/cat_replicates_se.smk"
+include: "rules/cat_replicates_pe.smk"
 include: "rules/get_cds_seq.smk"
 include: "rules/build_coding_kmer_database.smk"
 #include: "rules/kmc_tools_filter_pe.smk"

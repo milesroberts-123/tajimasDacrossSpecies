@@ -6,7 +6,8 @@ rule bwa_mem_se:
                 bwaIndex4="data/genome.fa.pac",
                 bwaIndex5="data/genome.fa.sa",
 		genome="data/genome.fa",
-		read="trimmed_reads/{sampleSe}_trim.fastq.gz",
+		#read="trimmed_reads/{sampleSe}_trim.fastq.gz",
+		read="cat_reads/{sampleSe}_cat.fastq.gz",
 	output:
 		temp("mapped_reads/{sampleSe}_se.bam")
 	params:

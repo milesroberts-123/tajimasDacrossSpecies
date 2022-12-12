@@ -1,6 +1,6 @@
 rule list_kmers:
 	input:
-		expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index) + expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index)
+		expand("{sample}_se_kmers.txt", sample=set(samplesSe.index.get_level_values("replicate"))) + expand("{sample}_pe_kmers.txt", sample=set(samplesPe.index.get_level_values("replicate")))
 	output:
 		temp("kmerList.txt")
 	log:

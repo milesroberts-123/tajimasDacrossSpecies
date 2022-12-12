@@ -1,7 +1,7 @@
 rule multiqc:
 	input:
-		expand("fastp_output/{sampleSe}_se_fastp.json", sampleSe=samplesSe.index),
-		expand("fastp_output/{samplePe}_pe_fastp.json", samplePe=samplesPe.index),
+		expand("fastp_output/{runSe}_se_fastp.json", runSe=samplesSe.index.get_level_values("run")),
+		expand("fastp_output/{runPe}_pe_fastp.json", runPe=samplesPe.index.get_level_values("run")),
 	output:
 		"multiqc_report.html"
 	params:

@@ -1,7 +1,7 @@
 rule kmc_se:
 	input:
 		cdsDatabase="codingKmerDatabase.txt",
-		read="trimmed_reads/{sampleSe}_trim.fastq.gz"
+		read="cat_reads/{sampleSe}_cat.fastq.gz"
 	output:
 		temp("{sampleSe}_se_kmers.txt")
 	log:

@@ -1,10 +1,10 @@
 rule fastp_se:
 	input:
-		read="{sampleSe}.fastq.gz"
+		read="raw_reads/{runSe}.fastq.gz"
 	output:
-		read=temp("trimmed_reads/{sampleSe}_trim.fastq.gz"),
-		htmlReport=temp("fastp_output/{sampleSe}_fastp.html"),
-		jsonReport=temp("fastp_output/{sampleSe}_se_fastp.json")
+		read=temp("trimmed_reads/{runSe}_trim.fastq.gz"),
+		htmlReport=temp("fastp_output/{runSe}_fastp.html"),
+		jsonReport=temp("fastp_output/{runSe}_se_fastp.json")
 	threads: 4
 	resources:
 		mem_mb_per_cpu=4000
@@ -12,7 +12,7 @@ rule fastp_se:
 		qualityScore=20,
 		minReadLength=30
 	log:
-		"logs/fastp/{sampleSe}.log"
+		"logs/fastp/{runSe}.log"
 	conda:
 		"../envs/fastp.yml"
 	shell:

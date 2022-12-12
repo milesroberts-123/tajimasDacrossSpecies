@@ -2,7 +2,8 @@
 # in shell command, use bash brace expansion to add a -V flag to each input file
 rule gatk_combine_gvcfs:
 	input:
-		calls=expand("calls/{sample}_se.g.vcf.gz", sample=samplesSe.index) + expand("calls/{sample}_pe.g.vcf.gz", sample=samplesPe.index),
+		#calls=expand("calls/{sample}_se.g.vcf.gz", sample=samplesSe.index) + expand("calls/{sample}_pe.g.vcf.gz", sample=samplesPe.index),
+		calls=expand("calls/{sample}_se.g.vcf.gz", sample=set(samplesSe.index.get_level_values("replicate"))) + expand("calls/{sample}_pe.g.vcf.gz", sample=set(samplesPe.index.get_level_values("replicate"))),
 		genome="data/genome.fa"
 	output:
 		temp("combinedCalls_{chrom}.g.vcf.gz")		

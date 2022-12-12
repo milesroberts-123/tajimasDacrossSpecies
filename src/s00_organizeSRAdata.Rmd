@@ -14,8 +14,7 @@ library(data.table)
 speciesList = unique(read.csv("../workflow/data/speciesList.csv")$Species)
 
 # create empty objects for growing list of reads
-peReads = NULL
-seReads = NULL
+allReads = NULL
 ```
 
 # Compile SRA run info for each species into master list, separate paired end and single-end reads
@@ -29,12 +28,13 @@ amaranthus_hypochondriacus = amaranthus_hypochondriacus[(amaranthus_hypochondria
 
 # Check if there are any technical replicates
 any(duplicated(amaranthus_hypochondriacus$Experiment))
+any(duplicated(amaranthus_hypochondriacus$BioSample))
 
 # check if any reads are single-end
 any(amaranthus_hypochondriacus$spots_with_mates == 0)
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = amaranthus_hypochondriacus[,"Run"], genome = "amaranthus_hypochondriacus"))
+allReads = rbind(allReads, data.frame(run = amaranthus_hypochondriacus[,"Run"], replicate = amaranthus_hypochondriacus[,"BioSample"], layout = "PE", genome = "amaranthus_hypochondriacus"))
 ```
 
 ## Ananas comosus
@@ -53,7 +53,7 @@ any(duplicated(ananas_comosus$SampleName))
 any(ananas_comosus$spots_with_mates == 0)
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = ananas_comosus[,"Run"], genome = "ananas_comosus"))
+allReads = rbind(allReads, data.frame(run = ananas_comosus[,"Run"], replicate = ananas_comosus[,"BioSample"], layout = "PE" ,genome = "ananas_comosus"))
 ```
 
 ## Arabidopsis halleri
@@ -68,7 +68,7 @@ arabidopsis_halleri = arabidopsis_halleri[(arabidopsis_halleri$Model == "Illumin
 any(arabidopsis_halleri$spots_with_mates == 0)
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = arabidopsis_halleri[,"Run"], genome = "arabidopsis_halleri"))
+allReads = rbind(allReads, data.frame(run = arabidopsis_halleri[,"Run"], replicate = arabidopsis_halleri[,"BioSample"], layout = "PE", genome = "arabidopsis_halleri"))
 ```
 
 ## Arabidopsis thaliana
@@ -76,10 +76,13 @@ peReads = rbind(peReads, data.frame(samples = arabidopsis_halleri[,"Run"], genom
 # load data for species
 arabidopsis_thaliana = fread("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_thaliana_PRJNA273563.csv.gz", data.table = F)
 
-# add reads to growing list
-peReads = rbind(peReads, data.frame(samples = arabidopsis_thaliana[(arabidopsis_thaliana$spots_with_mates > 0),"Run"], genome = "arabidopsis_thaliana"))
+# assign reads as single end or paired end
+arabidopsis_thaliana$layout = NA
+arabidopsis_thaliana$layout[(arabidopsis_thaliana$spots_with_mates > 0)] = "PE"
+arabidopsis_thaliana$layout[(arabidopsis_thaliana$spots_with_mates == 0)] = "SE"
 
-seReads = rbind(seReads, data.frame(samples = arabidopsis_thaliana[(arabidopsis_thaliana$spots_with_mates == 0),"Run"], genome = "arabidopsis_thaliana"))
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = arabidopsis_thaliana[,"Run"], replicate = arabidopsis_thaliana[,"BioSample"], layout = arabidopsis_thaliana[,"layout"], genome = "arabidopsis_thaliana"))
 ```
 
 ## Beta vulgaris
@@ -93,10 +96,12 @@ beta_vulgaris = beta_vulgaris[grepl("Beta vulgaris",beta_vulgaris$ScientificName
 # check if any reads are single-end
 any(beta_vulgaris$spots_with_mates == 0)
 
-# add reads to growing list
-peReads = rbind(peReads, data.frame(samples = beta_vulgaris[(beta_vulgaris$spots_with_mates > 0),"Run"], genome = "beta_vulgaris"))
+beta_vulgaris$layout = NA
+beta_vulgaris$layout[(beta_vulgaris$spots_with_mates > 0)] = "PE"
+beta_vulgaris$layout[(beta_vulgaris$spots_with_mates == 0)] = "SE"
 
-seReads = rbind(seReads, data.frame(samples = beta_vulgaris[(beta_vulgaris$spots_with_mates == 0),"Run"], genome = "beta_vulgaris"))
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = beta_vulgaris[,"Run"], replicate = beta_vulgaris[,"BioSample"], layout = beta_vulgaris[,"layout"], genome = "beta_vulgaris"))
 
 ```
 
@@ -124,9 +129,9 @@ for(LibraryName in unique(boechera_stricta_2$LibraryName)){
 boechera_stricta_2 = boechera_stricta_2[(boechera_stricta_2$Run %in% runs),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = boechera_stricta_1[(boechera_stricta_1$spots_with_mates > 0),"Run"], genome = "boechera_stricta"))
+allReads = rbind(allReads, data.frame(samples = boechera_stricta_1[(boechera_stricta_1$spots_with_mates > 0),"Run"], genome = "boechera_stricta"))
 
-peReads = rbind(peReads, data.frame(samples = boechera_stricta_2[(boechera_stricta_2$spots_with_mates > 0),"Run"], genome = "boechera_stricta"))
+allReads = rbind(allReads, data.frame(samples = boechera_stricta_2[(boechera_stricta_2$spots_with_mates > 0),"Run"], genome = "boechera_stricta"))
 
 ```
 
@@ -145,7 +150,7 @@ any(duplicated(brachypodium_distachyon$BioSample))
 any(duplicated(brachypodium_distachyon$LibraryName))
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = brachypodium_distachyon[(brachypodium_distachyon$spots_with_mates > 0),"Run"], genome = "brachypodium_distachyon"))
+allReads = rbind(allReads, data.frame(samples = brachypodium_distachyon[(brachypodium_distachyon$spots_with_mates > 0),"Run"], genome = "brachypodium_distachyon"))
 
 ```
 
@@ -162,9 +167,9 @@ any(brassica_rapa$spots_with_mates == 0)
 any(brassica_oleracea$spots_with_mates == 0)
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = brassica_oleracea[,"Run"], genome = "brassica_oleracea"))
+allReads = rbind(allReads, data.frame(samples = brassica_oleracea[,"Run"], genome = "brassica_oleracea"))
 
-peReads = rbind(peReads, data.frame(samples = brassica_rapa[,"Run"], genome = "brassica_rapa"))
+allReads = rbind(allReads, data.frame(samples = brassica_rapa[,"Run"], genome = "brassica_rapa"))
 
 ```
 
@@ -179,7 +184,7 @@ capsella_grandiflora = capsella_grandiflora[(capsella_grandiflora$LibraryStrateg
 any(capsella_grandiflora$spots_with_mates == 0)
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = capsella_grandiflora[,"Run"], genome = "capsella_grandiflora"))
+allReads = rbind(allReads, data.frame(samples = capsella_grandiflora[,"Run"], genome = "capsella_grandiflora"))
 
 ```
 ## Capsella rubella
@@ -199,7 +204,7 @@ any(duplicated(capsella_rubella$BioSample))
 any(capsella_rubella$spots_with_mates == 0)
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = capsella_rubella[(capsella_rubella$spots_with_mates > 0),"Run"], genome = "capsella_rubella"))
+allReads = rbind(allReads, data.frame(samples = capsella_rubella[(capsella_rubella$spots_with_mates > 0),"Run"], genome = "capsella_rubella"))
 
 seReads = rbind(seReads, data.frame(samples = capsella_rubella[(capsella_rubella$spots_with_mates == 0),"Run"], genome = "capsella_rubella"))
 
@@ -218,7 +223,7 @@ any(duplicated(chenopodium_quinoa$BioSample))
 any(chenopodium_quinoa$spots_with_mates == 0)
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = chenopodium_quinoa[,"Run"], genome = "chenopodium_quinoa"))
+allReads = rbind(allReads, data.frame(samples = chenopodium_quinoa[,"Run"], genome = "chenopodium_quinoa"))
 ```
 
 ## Cicer arietinum
@@ -238,7 +243,7 @@ any(duplicated(cicer_arietinum$BioSample))
 any(cicer_arietinum$spots_with_mates == 0)
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = cicer_arietinum[,"Run"], genome = "cicer_arietinum"))
+allReads = rbind(allReads, data.frame(samples = cicer_arietinum[,"Run"], genome = "cicer_arietinum"))
 ```
 
 ## Citrullus lanatus
@@ -258,7 +263,7 @@ any(duplicated(citrullus_lanatus$BioSample))
 any(citrullus_lanatus$spots_with_mates == 0)
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = citrullus_lanatus[,"Run"], genome = "citrullus_lanatus"))
+allReads = rbind(allReads, data.frame(samples = citrullus_lanatus[,"Run"], genome = "citrullus_lanatus"))
 ```
 ## Cucumis sativus
 ```{r}
@@ -313,7 +318,7 @@ any(duplicated(glycine_max$BioSample))
 any(duplicated(glycine_max$LibraryName))
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = glycine_max[(glycine_max$spots_with_mates > 0),"Run"], genome = "glycine_max"))
+allReads = rbind(allReads, data.frame(samples = glycine_max[(glycine_max$spots_with_mates > 0),"Run"], genome = "glycine_max"))
 
 ```
 
@@ -331,7 +336,7 @@ any(duplicated(glycine_soja$BioSample))
 any(glycine_soja$spots_with_mates == 0)
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = glycine_soja[,"Run"], genome = "glycine_soja"))
+allReads = rbind(allReads, data.frame(samples = glycine_soja[,"Run"], genome = "glycine_soja"))
 ```
 
 ## Gossypium barbadense
@@ -347,7 +352,7 @@ any(duplicated(gossypium_barbadense$BioSample))
 any(gossypium_barbadense$spots_with_mates == 0)
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = gossypium_barbadense[,"Run"], genome = "gossypium_barbadense"))
+allReads = rbind(allReads, data.frame(samples = gossypium_barbadense[,"Run"], genome = "gossypium_barbadense"))
 ```
 
 ## Gossypium hirsutum
@@ -367,7 +372,7 @@ any(duplicated(gossypium_hirsutum$BioSample))
 any(gossypium_hirsutum$spots_with_mates == 0)
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = gossypium_hirsutum[,"Run"], genome = "gossypium_hirsutum"))
+allReads = rbind(allReads, data.frame(samples = gossypium_hirsutum[,"Run"], genome = "gossypium_hirsutum"))
 ```
 
 ## Hordeum vulgare
@@ -391,7 +396,7 @@ for(lib in unique(hordeum_vulgare$LibraryName)){
 }
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = runs, genome = "hordeum_vulgare"))
+allReads = rbind(allReads, data.frame(samples = runs, genome = "hordeum_vulgare"))
 ```
 
 ## Lactuca sativa
@@ -407,7 +412,7 @@ any(duplicated(lactuca_sativa$SampleName))
 any(duplicated(lactuca_sativa$BioSample))
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = lactuca_sativa[,"Run"], genome = "lactuca_sativa"))
+allReads = rbind(allReads, data.frame(samples = lactuca_sativa[,"Run"], genome = "lactuca_sativa"))
 
 ```
 
@@ -425,7 +430,7 @@ any(duplicated(lotus_japonicus$SampleName))
 any(duplicated(lotus_japonicus$BioSample))
 
 # add reads to list
-peReads = rbind(peReads, data.frame(samples = lotus_japonicus[,"Run"], genome = "lotus_japonicus"))
+allReads = rbind(allReads, data.frame(samples = lotus_japonicus[,"Run"], genome = "lotus_japonicus"))
 ```
 
 ## Manihot esculenta
@@ -451,7 +456,7 @@ for(biosample in unique(manihot_esculenta$BioSample)){
 manihot_esculenta = manihot_esculenta[(manihot_esculenta$Run %in% runs),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = manihot_esculenta[(manihot_esculenta$spots_with_mates > 0),"Run"], genome = "manihot_esculenta"))
+allReads = rbind(allReads, data.frame(samples = manihot_esculenta[(manihot_esculenta$spots_with_mates > 0),"Run"], genome = "manihot_esculenta"))
 
 seReads = rbind(seReads, data.frame(samples = manihot_esculenta[(manihot_esculenta$spots_with_mates == 0),"Run"], genome = "manihot_esculenta"))
 
@@ -476,7 +481,7 @@ for(biosample in unique(medicago_truncatula$SampleName)){
 medicago_truncatula = medicago_truncatula[(medicago_truncatula$Run %in% runs),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = medicago_truncatula[,"Run"], genome = "medicago_truncatula"))
+allReads = rbind(allReads, data.frame(samples = medicago_truncatula[,"Run"], genome = "medicago_truncatula"))
 
 ```
 
@@ -506,7 +511,7 @@ samples = gsub("^", "SAMN0", 5852485:5852522)
 mimulus_guttatus= mimulus_guttatus[(mimulus_guttatus$BioSample %in% samples),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = mimulus_guttatus[,"Run"], genome = "mimulus_guttatus"))
+allReads = rbind(allReads, data.frame(samples = mimulus_guttatus[,"Run"], genome = "mimulus_guttatus"))
 
 ```
 ## Olea europaea
@@ -516,7 +521,7 @@ olea_europaea = fread("../workflow/data/SRArunInfo/SraRunInfo_olea_europaea_PRJE
 # species has duplicate biosamples but I don't think they're actually technical replicates
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = olea_europaea[,"Run"], genome = "olea_europaea"))
+allReads = rbind(allReads, data.frame(samples = olea_europaea[,"Run"], genome = "olea_europaea"))
 ```
 
 ## Oryza sativa
@@ -525,20 +530,23 @@ oryza_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_sativa_PRJEB6
 
 # how many genotypes are there?
 length(unique(oryza_sativa$BioSample))
-# for each technical replicate, just take the sample with the most bases
-runs = NULL
-for(biosample in unique(oryza_sativa$BioSample)){
-  techreps = oryza_sativa[(oryza_sativa$BioSample == biosample),]
-  techreps = techreps[order(techreps$bases, decreasing = T),]
-  runs = c(runs, techreps[1,"Run"])
-}
 
-oryza_sativa = oryza_sativa[(oryza_sativa$Run %in% runs),]
+# for each technical replicate, just take the sample with the most bases
+# runs = NULL
+# for(biosample in unique(oryza_sativa$BioSample)){
+#   techreps = oryza_sativa[(oryza_sativa$BioSample == biosample),]
+#   techreps = techreps[order(techreps$bases, decreasing = T),]
+#   runs = c(runs, techreps[1,"Run"])
+# }
+
+# oryza_sativa = oryza_sativa[(oryza_sativa$Run %in% runs),]
+
+oryza_sativa$layout = NA
+oryza_sativa$layout[(oryza_sativa$spots_with_mates > 0)] = "PE"
+oryza_sativa$layout[(oryza_sativa$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = oryza_sativa[(oryza_sativa$spots_with_mates > 0),"Run"], genome = "oryza_sativa"))
-
-seReads = rbind(seReads, data.frame(samples = oryza_sativa[(oryza_sativa$spots_with_mates == 0),"Run"], genome = "oryza_sativa"))
+allReads = rbind(allReads, data.frame(run = oryza_sativa[,"Run"], replicate = oryza_sativa[,"BioSample"], layout = oryza_sativa[,"layout"], genome = "oryza_sativa"))
 
 ```
 
@@ -571,7 +579,7 @@ panicum_halli = panicum_halli[(panicum_halli$Run %in% runs),]
 panicum_halli = panicum_halli[(panicum_halli$Platform != "PACBIO_SMRT"),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = panicum_halli[(panicum_halli$spots_with_mates > 0),"Run"], genome = "panicum_halli"))
+allReads = rbind(allReads, data.frame(samples = panicum_halli[(panicum_halli$spots_with_mates > 0),"Run"], genome = "panicum_halli"))
 
 # seReads = rbind(seReads, data.frame(samples = panicum_halli[(panicum_halli$spots_with_mates == 0),"Run"], genome = "panicum_halli"))
 
@@ -582,7 +590,7 @@ peReads = rbind(peReads, data.frame(samples = panicum_halli[(panicum_halli$spots
 panicum_virgatum = fread("../workflow/data/SRArunInfo/SraRunInfo_panicum_virgatum_PRJNA622568.csv.gz", data.table = F)
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = panicum_virgatum[(panicum_virgatum$spots_with_mates > 0),"Run"], genome = "panicum_virgatum"))
+allReads = rbind(allReads, data.frame(samples = panicum_virgatum[(panicum_virgatum$spots_with_mates > 0),"Run"], genome = "panicum_virgatum"))
 
 ```
 
@@ -599,7 +607,7 @@ any(duplicated(phaseolus_vulgaris$SampleName))
 any(duplicated(phaseolus_vulgaris$BioSample))
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = phaseolus_vulgaris[(phaseolus_vulgaris$spots_with_mates > 0),"Run"], genome = "phaseolus_vulgaris"))
+allReads = rbind(allReads, data.frame(samples = phaseolus_vulgaris[(phaseolus_vulgaris$spots_with_mates > 0),"Run"], genome = "phaseolus_vulgaris"))
 
 ```
 
@@ -611,7 +619,7 @@ populus_trichocarpa = fread("../workflow/data/SRArunInfo/SraRunInfo_populus_tric
 populus_trichocarpa = populus_trichocarpa[(populus_trichocarpa$ScientificName == "Populus trichocarpa"),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = populus_trichocarpa[(populus_trichocarpa$spots_with_mates > 0),"Run"], genome = "populus_trichocarpa"))
+allReads = rbind(allReads, data.frame(samples = populus_trichocarpa[(populus_trichocarpa$spots_with_mates > 0),"Run"], genome = "populus_trichocarpa"))
 
 seReads = rbind(seReads, data.frame(samples = populus_trichocarpa[(populus_trichocarpa$spots_with_mates == 0),"Run"], genome = "populus_trichocarpa"))
 ```
@@ -633,7 +641,7 @@ ids = prunus_persica_supp$ID[(prunus_persica_supp$"Botanical varieties" == "P. p
 prunus_persica = prunus_persica[(prunus_persica$SampleName %in% ids),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = prunus_persica[(prunus_persica$spots_with_mates > 0),"Run"], genome = "prunus_persica"))
+allReads = rbind(allReads, data.frame(samples = prunus_persica[(prunus_persica$spots_with_mates > 0),"Run"], genome = "prunus_persica"))
 
 seReads = rbind(seReads, data.frame(samples = prunus_persica[(prunus_persica$spots_with_mates == 0),"Run"], genome = "prunus_persica"))
 
@@ -652,7 +660,7 @@ any(duplicated(setaria_italica$SampleName))
 any(duplicated(setaria_italica$BioSample))
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = setaria_italica[(setaria_italica$spots_with_mates > 0),"Run"], genome = "setaria_italica"))
+allReads = rbind(allReads, data.frame(samples = setaria_italica[(setaria_italica$spots_with_mates > 0),"Run"], genome = "setaria_italica"))
 
 ```
 
@@ -663,7 +671,7 @@ setaria_viridis = fread("../workflow/data/SRArunInfo/SraRunInfo_setaria_viridis_
 setaria_viridis = setaria_viridis[(setaria_viridis$ScientificName == "Setaria viridis"),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = setaria_viridis[(setaria_viridis$spots_with_mates > 0),"Run"], genome = "setaria_viridis"))
+allReads = rbind(allReads, data.frame(samples = setaria_viridis[(setaria_viridis$spots_with_mates > 0),"Run"], genome = "setaria_viridis"))
 
 ```
 
@@ -688,7 +696,7 @@ solanum_lycopersicum = solanum_lycopersicum[(solanum_lycopersicum$Run %in% runs)
 
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = solanum_lycopersicum[(solanum_lycopersicum$spots_with_mates > 0),"Run"], genome = "solanum_lycopersicum"))
+allReads = rbind(allReads, data.frame(samples = solanum_lycopersicum[(solanum_lycopersicum$spots_with_mates > 0),"Run"], genome = "solanum_lycopersicum"))
 
 seReads = rbind(seReads, data.frame(samples = solanum_lycopersicum[(solanum_lycopersicum$spots_with_mates == 0),"Run"], genome = "solanum_lycopersicum"))
 
@@ -708,7 +716,7 @@ for(biosample in unique(sorghum_bicolor$BioSample)){
 sorghum_bicolor = sorghum_bicolor[(sorghum_bicolor$Run %in% runs),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = sorghum_bicolor[(sorghum_bicolor$spots_with_mates > 0),"Run"], genome = "sorghum_bicolor"))
+allReads = rbind(allReads, data.frame(samples = sorghum_bicolor[(sorghum_bicolor$spots_with_mates > 0),"Run"], genome = "sorghum_bicolor"))
 
 seReads = rbind(seReads, data.frame(samples = sorghum_bicolor[(sorghum_bicolor$spots_with_mates == 0),"Run"], genome = "sorghum_bicolor"))
 
@@ -726,7 +734,7 @@ any(duplicated(spinacia_oleracea$SampleName))
 any(duplicated(spinacia_oleracea$BioSample))
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = spinacia_oleracea[(spinacia_oleracea$spots_with_mates > 0),"Run"], genome = "spinacia_oleracea"))
+allReads = rbind(allReads, data.frame(samples = spinacia_oleracea[(spinacia_oleracea$spots_with_mates > 0),"Run"], genome = "spinacia_oleracea"))
 
 seReads = rbind(seReads, data.frame(samples = spinacia_oleracea[(spinacia_oleracea$spots_with_mates == 0),"Run"], genome = "spinacia_oleracea"))
 
@@ -742,7 +750,7 @@ any(duplicated(spirodela_polyrhiza$SampleName))
 any(duplicated(spirodela_polyrhiza$BioSample))
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = spirodela_polyrhiza[(spirodela_polyrhiza$spots_with_mates > 0),"Run"], genome = "spirodela_polyrhiza"))
+allReads = rbind(allReads, data.frame(samples = spirodela_polyrhiza[(spirodela_polyrhiza$spots_with_mates > 0),"Run"], genome = "spirodela_polyrhiza"))
 
 seReads = rbind(seReads, data.frame(samples = spirodela_polyrhiza[(spirodela_polyrhiza$spots_with_mates == 0),"Run"], genome = "spirodela_polyrhiza"))
 
@@ -771,7 +779,7 @@ for(biosample in unique(vitis_vinifera$BioSample)){
 vitis_vinifera = vitis_vinifera[(vitis_vinifera$Run %in% runs),]
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = vitis_vinifera[(vitis_vinifera$spots_with_mates > 0),"Run"], genome = "vitis_vinifera"))
+allReads = rbind(allReads, data.frame(samples = vitis_vinifera[(vitis_vinifera$spots_with_mates > 0),"Run"], genome = "vitis_vinifera"))
 
 seReads = rbind(seReads, data.frame(samples = vitis_vinifera[(vitis_vinifera$spots_with_mates == 0),"Run"], genome = "vitis_vinifera"))
 
@@ -803,31 +811,57 @@ any(duplicated(zea_mays$SampleName))
 any(duplicated(zea_mays$BioSample))
 
 # add reads to growing list
-peReads = rbind(peReads, data.frame(samples = zea_mays[(zea_mays$spots_with_mates > 0),"Run"], genome = "zea_mays"))
+allReads = rbind(allReads, data.frame(samples = zea_mays[(zea_mays$spots_with_mates > 0),"Run"], genome = "zea_mays"))
 
 ```
 
 # Summarize read counts
 ```{r}
 # breakdown of reads per species
-table(peReads$genome)
+table(allReads$genome)
 table(seReads$genome)
 
 # number of species included thus far
-length(unique(c(peReads$genome,seReads$genome)))
+length(unique(c(allReads$genome,seReads$genome)))
 
 # total number of individuals
-nrow(peReads) + nrow(seReads)
+nrow(allReads) + nrow(seReads)
+```
+
+
+# Loop over replicates, if there are both SE and PE reads for a single sample, just use the PE reads
+```{r}
+# I could either throw out read 2 of the PE reads and treat all data as single end, or I could retain just paired-end data... Not sure which is better 
+allReadsFinal = NULL
+
+for(replicate in unique(allReads$replicate)){
+  dataSubset = allReads[(allReads$replicate == replicate),]
+  if(all(c("PE", "SE") %in% dataSubset[,"layout"])){
+    dataSubset = dataSubset[(dataSubset$layout == "PE"),]
+  }
+  allReadsFinal = rbind(allReadsFinal, dataSubset)
+}
+
+# breakdown of PE vs SE for each genome
+table(allReadsFinal$genome, allReadsFinal$layout)
+
+# number of unique genotypes included
+length(unique(allReadsFinal$replicate))
+```
+
+# output read metadata for snakemake input
+```{r}
+# test dataset for merging reads into single datasets
+mergeTestSet = allReadsFinal[(allReadsFinal$replicate %in% c("SAMEA2567517", "SAMEA2567535", "SAMEA2567633", "SAMEA2567634")),]
+
+write.table(mergeTestSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # write run numbers and metadata to workflow input
 # need to replace write path with "../workflow/data/samples_pe.tsv" when I'm ready
 write.table(seReads, file = "samples_se.tsv", sep = "\t", quote = F, row.names = F)
-write.table(peReads, file = "samples_pe.tsv", sep = "\t", quote = F, row.names = F)
+write.table(allReads, file = "samples_pe.tsv", sep = "\t", quote = F, row.names = F)
+
 ```
-
-
-
-
 
 
 

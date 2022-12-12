@@ -1,8 +1,8 @@
 rule kmc_pe:
 	input:
 		cdsDatabase="codingKmerDatabase.txt",
-		read1="trimmed_reads/{samplePe}_1_trim.fastq.gz",
-		read2="trimmed_reads/{samplePe}_2_trim.fastq.gz"
+		read1="cat_reads/{samplePe}_1_cat.fastq.gz",
+		read2="cat_reads/{samplePe}_2_cat.fastq.gz"
 	output:
 		temp("{samplePe}_pe_kmers.txt")
 	log:

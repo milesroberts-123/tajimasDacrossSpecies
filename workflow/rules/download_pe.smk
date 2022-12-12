@@ -1,11 +1,11 @@
 rule download_pe:
 	input:
-		"data/samples_pe.tsv"
+		"data/samples.tsv"
 	output:
-		temp("{samplePe}_1.fastq.gz"),
-		temp("{samplePe}_2.fastq.gz")
+		temp("raw_reads/{runPe}_1.fastq.gz"),
+		temp("raw_reads/{runPe}_2.fastq.gz")
 	log:
-		"logs/fastq-dump/{samplePe}.log"
+		"logs/fastq-dump/{runPe}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=750
@@ -14,4 +14,11 @@ rule download_pe:
 	envmodules:
 		"SRA-Toolkit/2.10.7-centos_linux64"
 	shell:
-		"fastq-dump --gzip --split-e {wildcards.samplePe} &> {log}"
+		"""
+		# download data
+		fastq-dump --gzip --split-e {wildcards.runPe} &> {log}
+		
+		# move data to folder
+		mv {wildcards.runPe}_1.fastq.gz raw_reads/
+		mv {wildcards.runPe}_2.fastq.gz raw_reads/
+		"""
