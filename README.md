@@ -32,7 +32,7 @@ In addition, this workflow is designed to:
 
 * analyze read data from multiple species simultaneously (in progress)
 
-* merge technical replicates after read trimming (in progress)
+* merge technical replicates after read trimming
 
 * work with both paired-end and single-end data
 
@@ -42,13 +42,16 @@ In addition, this workflow is designed to:
 
 * perform steps that are often omitted from online tutorials (such as building indices of reference genomes for BWA, GATK, and Picard)
 
+This workflow will **not** work if:
+
+* Some replicates of a given sample are single-end, but others are paired-end. To resolve this, either throw out read two of the paired-end replicates (treating them as single end) or throw out the single-end reads (leaving only paired-end).
+
 # How to replicate my results
 
 The scripts in src/ should be run in their numbered order to replicate my results.
 
 ```
 src/s00_organizeSRAdata.Rmd # take data in workflow/data/SRArunInfo and structure it so that it can be churned through snakemake workflow
-
 src/s01_snakemake.bash # job submission script to run the snakemake workflow on a SLURM HPCC system
 ```
 
@@ -61,19 +64,17 @@ workflow/data/
 	annotations/ # gffs of genome sequences, naming convention: genus_species.gff3
 	assemblies/ # fasta files of genome sequences, naming convention: genus_species.fa
 	chromosomes/ # text files with chromosome names, used for parallelization of genotype calling, naming convention: genus_species_chroms.txt	
-	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples_pe.tsv and samples_se.tsv before workflow begins
-	samples_pe.tsv # tab-separated text file listing paired-end samples
-	samples_se.tsv # tab-separated text file listing single-end samples
-	speciesList.csv # list of species included in my analysis
+	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples.tsv using code in src/ before workflow begins
+	samples.tsv # tab-separated text file listing read metadata with these columns: run, replicate, layout, genome
 ```
 
-See `workflow/dag.svg` for an example of my snakemake workflow executed on four samples (2 paired end, 2 single end) from the same species (*Arabidopsis thaliana*)
+See `workflow/dag.svg` for an example of my snakemake workflow executed on a handful of samples.
 
 # Dependencies
 
 These are in `/workflow/scripts/` and include
 
-* degenotate
+* degenotate (I should convert this to a conda environment)
 
 * fastp
 
@@ -112,9 +113,7 @@ git push -u origin main
 
 * fully separate multi-threaded and single-threaded steps
 
-* put all read meta-data into a single file (samples.tsv) with the following columns: Run BioSample Assembly Layout
-
-* add step to merge technical replicates after fastp trimming, merge based on shared BioSample ID, get reads associated with biosample ID with input function
+* add conda environment for degenotate
 
 * extend workflow to work with multiple species
 
