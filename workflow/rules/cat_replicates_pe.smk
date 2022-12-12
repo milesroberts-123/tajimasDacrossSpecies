@@ -20,8 +20,8 @@ rule cat_replicates_pe:
 	shell:
 		"""
 		echo Concatenating read 1...
-		cat {input.read1} > {output.read1}
+		zcat {input.read1} | gzip > {output.read1}
 
 		echo Concatenating read 2...
-		cat {input.read2} > {output.read2}
+		zcat {input.read2} | gzip > {output.read2}
 		"""

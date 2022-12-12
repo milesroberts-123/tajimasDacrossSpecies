@@ -7,7 +7,6 @@ rule cat_replicates_se:
 	input: get_se_reps
 	output:
 		"cat_reads/{sampleSe}_cat.fastq.gz",
-	params:
 	log: "log/cat_replicates/{sampleSe}.log"
 	shell:
-		"cat {input} > {output}"
+		"zcat {input} | gzip > {output}"
