@@ -54,16 +54,15 @@ The scripts in src/ should be run in their numbered order to replicate my result
 
 ## prepare metadata for workflow
 
-```
-src/s00_organizeSRAdata.Rmd # take data in workflow/data/SRArunInfo and structure it so that it can be churned through snakemake workflow
-src/s01_snakemake.bash # job submission script to run the snakemake workflow on a SLURM HPCC system
-```
+The `src/s00_organizeSRAdata.Rmd` script takes data in workflow/data/SRArunInfo and structures it into `data/samples.tsv` so that it can be churned through snakemake workflow.
 
 ## Run workflow with conda envs
 
 An example script can be found in `src/s02_snakemake.bash`
 
 ## Run workflow with the MSU ICER HPCC modules
+
+Find an example script in `src/s01_snakemake.bash`
 
 **I highly recommend that you use conda environments instead!** This method for running the workflow is specific only to the ICER HPCC and will probably break if the modules on the HPCC are updated. I mainly keep this note in the readme for my own reference.
 
@@ -105,34 +104,6 @@ workflow/data/
 ```
 
 See `workflow/dag.svg` for an example of my snakemake workflow executed on a handful of samples.
-
-# Run workflow with the MSU ICER HPCC modules
-
-**I highly recommend that you use conda environments instead!** This method for running the workflow is specific only to the ICER HPCC and will probably break if the modules on the HPCC are updated. I mainly keep this note in the readme for my own reference.
-
-Nonetheless, if you want to do this you will need to add the following to `/workflow/scripts/`
-
-* [degenotate](https://github.com/harvardinformatics/degenotate)
-
-* [fastp](https://github.com/OpenGene/fastp)
-
-To get degenotate, clone degenotate github repo into `workflow/scripts`:
-
-```
-cd workflow/scripts
-
-git clone https://github.com/OpenGene/fastp.git
-```
-
-You can then update degenotate by doing into the degenotate folder and using the `git fetch` then `git pull` commands
-
-```
-git fetch
-
-git pull
-```
-
-Go to the fastp github repo and download the latest linux binary, add this to the scripts folder and make it executable with `chmod +x fastp`
 
 # Updating the repo
 
