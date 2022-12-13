@@ -1,0 +1,7 @@
+name: degenotate
+
+channels:
+ - bioconda
+
+dependencies:
+ - degenotate=1.0.0

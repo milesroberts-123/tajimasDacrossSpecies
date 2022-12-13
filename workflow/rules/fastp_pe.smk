@@ -12,10 +12,19 @@ rule fastp_pe:
 		mem_mb_per_cpu=4000
 	params:
 		qualityScore=20,
-		minReadLength=30
+		minReadLength=30,
+		condaStatus=get_conda_status
 	log:
 		"logs/fastp/{runPe}.log"
 	conda:
 		"../envs/fastp.yml"
 	shell:
-		"scripts/fastp --dont_eval_duplication --thread {threads} -q {params.qualityScore} -l {params.minReadLength} -h {output.htmlReport} -j {output.jsonReport} -i {input.read1} -I {input.read2} -o {output.read1} -O {output.read2} &> {log}"
+		"""
+		# if conda is enabled, use fastp conda env
+		# if conda is disabled, check scripts for fastp binary
+		if [ "{params.condaStatus}" == "True" ]; then		
+			fastp --dont_eval_duplication --thread {threads} -q {params.qualityScore} -l {params.minReadLength} -h {output.htmlReport} -j {output.jsonReport} -i {input.read1} -I {input.read2} -o {output.read1} -O {output.read2} &> {log}
+		else
+			scripts/fastp --dont_eval_duplication --thread {threads} -q {params.qualityScore} -l {params.minReadLength} -h {output.htmlReport} -j {output.jsonReport} -i {input.read1} -I {input.read2} -o {output.read1} -O {output.read2} &> {log}
+		fi
+		"""
