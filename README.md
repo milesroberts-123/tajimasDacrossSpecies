@@ -28,9 +28,9 @@ This workflow takes a list of SRA run numbers, separated before-hand as either p
 
 In addition, this workflow is designed to:
 
-* parallelize computations by splitting data by chromsome
-
 * analyze read data from multiple species simultaneously (in progress)
+
+* parallelize computations by splitting data by chromsome
 
 * merge technical replicates after read trimming
 
@@ -42,6 +42,8 @@ In addition, this workflow is designed to:
 
 * perform steps that are often omitted from online tutorials (such as building indices of reference genomes for BWA, GATK, and Picard)
 
+* output metrics for called variants before filtering (useful for determining if filters were appropriate)
+
 This workflow will **not** work if:
 
 * Some replicates of a given sample are single-end, but others are paired-end. To resolve this, either throw out read two of the paired-end replicates (treating them as single end) or throw out the single-end reads (leaving only paired-end).
@@ -50,10 +52,44 @@ This workflow will **not** work if:
 
 The scripts in src/ should be run in their numbered order to replicate my results.
 
+## prepare metadata for workflow
+
 ```
 src/s00_organizeSRAdata.Rmd # take data in workflow/data/SRArunInfo and structure it so that it can be churned through snakemake workflow
 src/s01_snakemake.bash # job submission script to run the snakemake workflow on a SLURM HPCC system
 ```
+
+## Run workflow with conda envs
+
+An example script can be found in `src/s02_snakemake.bash`
+
+## Run workflow with the MSU ICER HPCC modules
+
+**I highly recommend that you use conda environments instead!** This method for running the workflow is specific only to the ICER HPCC and will probably break if the modules on the HPCC are updated. I mainly keep this note in the readme for my own reference.
+
+Nonetheless, if you want to do this you will need to add the following to `/workflow/scripts/`
+
+* [degenotate](https://github.com/harvardinformatics/degenotate)
+
+* [fastp](https://github.com/OpenGene/fastp)
+
+To get degenotate, clone degenotate github repo into `workflow/scripts`:
+
+```
+cd workflow/scripts
+
+git clone https://github.com/OpenGene/fastp.git
+```
+
+You can then update degenotate by doing into the degenotate folder and using the `git fetch` then `git pull` commands
+
+```
+git fetch
+
+git pull
+```
+
+Go to the fastp github repo and download the latest linux binary, add this to the scripts folder and make it executable with `chmod +x fastp`
 
 # Input files for workflow
 
@@ -70,15 +106,31 @@ workflow/data/
 
 See `workflow/dag.svg` for an example of my snakemake workflow executed on a handful of samples.
 
-# Dependencies
+# Run workflow with the MSU ICER HPCC modules
 
-These are in `/workflow/scripts/` and include
+**I highly recommend that you use conda environments instead!** This method for running the workflow is specific only to the ICER HPCC and will probably break if the modules on the HPCC are updated. I mainly keep this note in the readme for my own reference.
 
-* degenotate (I should convert this to a conda environment)
+Nonetheless, if you want to do this you will need to add the following to `/workflow/scripts/`
 
-* fastp
+* [degenotate](https://github.com/harvardinformatics/degenotate)
 
-To get degenotate, clone degenotate github repo into `workflow/scripts`, you can then update degenotate by doing into the degenotate folder and  using the `git fetch` then `git pull` commands
+* [fastp](https://github.com/OpenGene/fastp)
+
+To get degenotate, clone degenotate github repo into `workflow/scripts`:
+
+```
+cd workflow/scripts
+
+git clone https://github.com/OpenGene/fastp.git
+```
+
+You can then update degenotate by doing into the degenotate folder and using the `git fetch` then `git pull` commands
+
+```
+git fetch
+
+git pull
+```
 
 Go to the fastp github repo and download the latest linux binary, add this to the scripts folder and make it executable with `chmod +x fastp`
 
@@ -112,8 +164,6 @@ git push -u origin main
 * memory requirements of dissimilarity calculations should scale with the dataset input size
 
 * fully separate multi-threaded and single-threaded steps
-
-* add conda environment for degenotate
 
 * extend workflow to work with multiple species
 
