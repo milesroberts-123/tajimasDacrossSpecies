@@ -1,7 +1,7 @@
 rule cbind_kmer_counts:
 	input:
 		key="kmerRandomSubset.txt",
-		kmerCounts=expand("{sampleSe}_se_mergedKmerCounts.txt", sampleSe=samplesSe.index.get_level_values("replicate")) + expand("{samplePe}_pe_mergedKmerCounts.txt", samplePe=samplesPe.index.get_level_values("replicate"))
+		kmerCounts=expand("{sampleSe}_se_mergedKmerCounts.txt", sampleSe=set(samplesSe.index.get_level_values("replicate"))) + expand("{samplePe}_pe_mergedKmerCounts.txt", samplePe=set(samplesPe.index.get_level_values("replicate")))
 	output:
 		matrix="mergedKmerCounts.txt",
 		cbindScript="cbind.sh"

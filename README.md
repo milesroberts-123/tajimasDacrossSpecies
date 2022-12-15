@@ -130,11 +130,11 @@ git push -u origin main
  
 # To do
 
-* memory requirements of dissimilarity calculations should scale with the dataset input size
-
 * fully separate multi-threaded and single-threaded steps
 
 * extend workflow to work with multiple species
+
+* add conda env for degenotate, for some reason the degenotate module doesn't load when snakemake makes the conda environment from my .yml file, could be a bug
 
 # Notes
 
