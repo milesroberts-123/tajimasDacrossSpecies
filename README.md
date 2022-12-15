@@ -6,8 +6,6 @@
 
 [Input files for workflow](#input-files-for-workflow)
 
-[Dependencies](#dependencies)
-
 [Updating the repo](#updating-the-repo)
 
 [To do](#to-do)
