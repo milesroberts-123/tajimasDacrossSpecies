@@ -96,9 +96,9 @@ This how I eventually want the input data for the workflow to be organized
 workflow/data/
 	annotations/ # gffs of genome sequences, naming convention: genus_species.gff3
 	assemblies/ # fasta files of genome sequences, naming convention: genus_species.fa
-	chromosomes/ # text files with chromosome names, used for parallelization of genotype calling, naming convention: genus_species_chroms.txt	
 	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples.tsv using code in src/ before workflow begins
 	samples.tsv # tab-separated text file listing read metadata with these columns: run, replicate, layout, genome
+	chromosomes.tsv # tab-separated text file listing chromosome names for each genome: genus_species, chromsome_name
 ```
 
 See `workflow/dag.svg` for an example of my snakemake workflow executed on a handful of samples.
@@ -130,9 +130,13 @@ git push -u origin main
  
 # To do
 
-* fully separate multi-threaded and single-threaded steps
+* complete `samples.tsv`
+
+* add step to get simple statistics on reads with seqkit
 
 * extend workflow to work with multiple species
+
+* fully separate multi-threaded and single-threaded steps
 
 * add conda env for degenotate, for some reason the degenotate module doesn't load when snakemake makes the conda environment from my .yml file, could be a bug
 
