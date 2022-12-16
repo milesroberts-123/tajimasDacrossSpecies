@@ -30,7 +30,7 @@ In addition, this workflow is designed to:
 
 * parallelize computations by splitting data by chromsome
 
-* merge technical replicates after read trimming
+* merge technical replicates
 
 * work with both paired-end and single-end data
 
@@ -42,11 +42,15 @@ In addition, this workflow is designed to:
 
 * output metrics for called variants before filtering (useful for determining if filters were appropriate)
 
+* output simple statistics on the number of reads and bp applied to workflow
+
 This workflow will **not** work if:
 
 * Some replicates of a given sample are single-end, but others are paired-end. To resolve this, either throw out read two of the paired-end replicates (treating them as single end) or throw out the single-end reads (leaving only paired-end).
 
 # How to replicate my results
+
+First, download this repo with `git clone`.
 
 The scripts in src/ should be run in their numbered order to replicate my results.
 
@@ -56,7 +60,9 @@ The `src/s00_organizeSRAdata.Rmd` script takes data in workflow/data/SRArunInfo 
 
 ## Run workflow with conda envs
 
-An example script can be found in `src/s02_snakemake.bash`
+Once you have a table of SRA runs to be chruned throught the workflow, you then need to call the workflow. 
+
+An example script to apply the workflow with conda environments be found in `src/s02_snakemake.bash`
 
 ## Run workflow with the MSU ICER HPCC modules
 
@@ -129,8 +135,6 @@ git push -u origin main
 ```
  
 # To do
-
-* complete `samples.tsv`
 
 * add step to get simple statistics on reads with seqkit
 
