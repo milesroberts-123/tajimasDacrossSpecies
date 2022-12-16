@@ -136,8 +136,6 @@ git push -u origin main
  
 # To do
 
-* add step to get simple statistics on reads with seqkit
-
 * extend workflow to work with multiple species
 
 * fully separate multi-threaded and single-threaded steps

@@ -78,10 +78,12 @@ rule all:
 		#"kmerSubset.txt",
 		"bcd.txt",
 		"jac.txt",
-		"pairwise-pi.txt"
+		"pairwise-pi.txt",
+		"readStats.txt"
 
 include: "rules/download_pe.smk"
 include: "rules/download_se.smk"
+include: "rules/seqkit_stats.smk"
 include: "rules/fastp_se.smk"
 include: "rules/fastp_pe.smk"
 include: "rules/cat_replicates_se.smk"

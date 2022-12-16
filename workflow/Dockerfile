@@ -1,6 +1,6 @@
 FROM condaforge/mambaforge:latest
 LABEL io.github.snakemake.containerized="true"
-LABEL io.github.snakemake.conda_env_hash="da7f50da9f134fb0e8d09aa0b9c430b1e8938800aaed6426659cf22784a1b104"
+LABEL io.github.snakemake.conda_env_hash="ec3373bc149c92a06f04d2004c62949bb9894ea693d4b9bd5b7157809b50cbc2"
 
 # Step 1: Retrieve conda environments
 
@@ -157,6 +157,19 @@ RUN mkdir -p /conda-envs/935725baedb41d73d5ce355b88e3940f
 COPY envs/samtools.yml /conda-envs/935725baedb41d73d5ce355b88e3940f/environment.yaml
 
 # Conda environment:
+#   source: envs/seqkit.yml
+#   prefix: /conda-envs/4ca7932f2891537ec8093be237cc4491
+#   name: seqkit
+#   
+#   channels:
+#    - bioconda
+#   
+#   dependencies:
+#    - seqkit=2.3.1
+RUN mkdir -p /conda-envs/4ca7932f2891537ec8093be237cc4491
+COPY envs/seqkit.yml /conda-envs/4ca7932f2891537ec8093be237cc4491/environment.yaml
+
+# Conda environment:
 #   source: envs/vcftools.yml
 #   prefix: /conda-envs/830a8d38017a88379bdd588e8ca60cd9
 #   name: vcftools
@@ -184,5 +197,6 @@ RUN mamba env create --prefix /conda-envs/a5149814b913910bb219abf08307ce3a --fil
     mamba env create --prefix /conda-envs/c66123f273d11315398335f3b4f71d07 --file /conda-envs/c66123f273d11315398335f3b4f71d07/environment.yaml && \
     mamba env create --prefix /conda-envs/107701487a60823e74ff554a7e31dc8d --file /conda-envs/107701487a60823e74ff554a7e31dc8d/environment.yaml && \
     mamba env create --prefix /conda-envs/935725baedb41d73d5ce355b88e3940f --file /conda-envs/935725baedb41d73d5ce355b88e3940f/environment.yaml && \
+    mamba env create --prefix /conda-envs/4ca7932f2891537ec8093be237cc4491 --file /conda-envs/4ca7932f2891537ec8093be237cc4491/environment.yaml && \
     mamba env create --prefix /conda-envs/830a8d38017a88379bdd588e8ca60cd9 --file /conda-envs/830a8d38017a88379bdd588e8ca60cd9/environment.yaml && \
     mamba clean --all -y
