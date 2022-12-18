@@ -1,5 +1,6 @@
 # load packages
 import pandas as pd
+import re
 
 # load samples
 samples = pd.read_table("data/samples.tsv", sep="\t", dtype={"run": str, "replicate": str}).set_index(["run","replicate"], drop=False)
