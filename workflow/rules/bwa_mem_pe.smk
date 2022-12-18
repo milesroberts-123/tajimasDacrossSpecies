@@ -1,10 +1,10 @@
 def get_genome(wildcards):
-        genome = samples.loc[samples["replicate"] == wildcards.sampleSe, "genome"]
-        return "data/assemblies/" + genome + ".fa"
+        genome = samples.loc[samples["replicate"] == wildcards.samplePe, "genome"]
+        return ["data/assemblies/" + genome + ".fa"]
 
 def get_index(wildcards):
-        genome = samples.loc[samples["replicate"] == wildcards.sampleSe, "genome"]
-        return ["data/assemblies/" + genome + ".fa" + x for x in [".amb", ".ann", ".bwt", ".pac", ".sa"]]
+        genome = samples.loc[samples["replicate"] == wildcards.samplePe, "genome"]
+        return ["data/assemblies/" + genome + ".fa." + x for x in ["amb", "ann", "bwt", "pac", "sa"]]
 
 rule bwa_mem_pe:
 	input:

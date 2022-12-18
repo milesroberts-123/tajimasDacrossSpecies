@@ -1,11 +1,27 @@
+def get_genome(wildcards):
+        genome = samples.loc[samples["replicate"] == wildcards.sample, "genome"]
+        return "data/assemblies/" + genome + ".fa"
+
+def get_dict(wildcards):
+        genome = samples.loc[samples["replicate"] == wildcards.sample, "genome"]
+        return "data/assemblies/" + genome + ".dict"
+
+def get_fai(wildcards):
+        genome = samples.loc[samples["replicate"] == wildcards.sample, "genome"]
+        return "data/assemblies/" + genome + ".fa.fai"
+
+def get_regions(wildcards):
+        genome = samples.loc[samples["replicate"] == wildcards.sample, "genome"]
+        return "data/" + genome + "_fourfoldDegenerateSites.bed"
+
 rule gatk_haplotype_caller:
 	input:
-		index="data/assemblies/{assembly}.fa.fai",
-		dictionary="data/assemblies/{assembly}.dict",
-		genome="data/assemblies/{assembly}.fa",
+		index=get_fai,
+		dictionary=get_dict,
+		genome=get_genome,
+		regions=get_regions,
 		reads="sorted_marked_reads/{sample}.bam",
 		readsIndex="sorted_marked_reads/{sample}.bam.bai",
-		regions="data/{assembly}_fourfoldDegenerateSites.bed"
 	output:
 		temp("calls/{sample}.g.vcf.gz")
 	envmodules:
