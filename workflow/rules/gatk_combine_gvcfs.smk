@@ -2,15 +2,14 @@
 # in shell command, use bash brace expansion to add a -V flag to each input file
 rule gatk_combine_gvcfs:
 	input:
-		#calls=expand("calls/{sample}_se.g.vcf.gz", sample=samplesSe.index) + expand("calls/{sample}_pe.g.vcf.gz", sample=samplesPe.index),
-		calls=expand("calls/{sample}_se.g.vcf.gz", sample=set(samplesSe.index.get_level_values("replicate"))) + expand("calls/{sample}_pe.g.vcf.gz", sample=set(samplesPe.index.get_level_values("replicate"))),
-		genome="data/genome.fa"
+		calls=expand("calls/{sample}_se.g.vcf.gz", sample=set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])) + expand("calls/{sample}_pe.g.vcf.gz", sample=set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])),
+		genome="data/assemblies/{assembly}.fa"
 	output:
-		temp("combinedCalls_{chrom}.g.vcf.gz")		
+		temp("combinedCalls_{assembly}_{chromosome}.g.vcf.gz")		
 	params:
-		chromosome="{chrom}"
+		chromosome="{chromosome}"
 	log:
-		"logs/gatk_combine_gvcfs/gatk_combine_gvcfs_{chrom}.log"
+		"logs/gatk_combine_gvcfs/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=20000

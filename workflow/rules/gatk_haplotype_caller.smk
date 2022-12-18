@@ -1,11 +1,11 @@
 rule gatk_haplotype_caller:
 	input:
-		index="data/genome.fa.fai",
-		dictionary="data/genome.dict",
-		genome="data/genome.fa",
+		index="data/assemblies/{assembly}.fa.fai",
+		dictionary="data/assemblies/{assembly}.dict",
+		genome="data/assemblies/{assembly}.fa",
 		reads="sorted_marked_reads/{sample}.bam",
 		readsIndex="sorted_marked_reads/{sample}.bam.bai",
-		regions="data/fourfoldDegenerateSites.bed"
+		regions="data/{assembly}_fourfoldDegenerateSites.bed"
 	output:
 		temp("calls/{sample}.g.vcf.gz")
 	envmodules:

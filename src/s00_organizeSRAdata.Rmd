@@ -995,14 +995,14 @@ length(unique(allReadsFinal$replicate))
 # output read metadata for snakemake input
 ```{r}
 # test dataset for merging reads into single datasets
-mergeTestSet = allReadsFinal[(allReadsFinal$replicate %in% c("SAMEA2567517", "SAMEA2567535", "SAMEA2567633", "SAMEA2567634")),]
+mergeTestSet = allReads[(allReads$replicate %in% c("SAMEA2567517", "SAMEA2567535", "SAMEA2567633", "SAMEA2567634", "SAMN03005107", "SAMN03005132")),]
 
 write.table(mergeTestSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # write run numbers and metadata to workflow input
 # need to replace write path with "../workflow/data/samples_pe.tsv" when I'm ready
-write.table(seReads, file = "samples_se.tsv", sep = "\t", quote = F, row.names = F)
-write.table(allReads, file = "samples_pe.tsv", sep = "\t", quote = F, row.names = F)
+#write.table(seReads, file = "samples_se.tsv", sep = "\t", quote = F, row.names = F)
+#write.table(allReads, file = "samples_pe.tsv", sep = "\t", quote = F, row.names = F)
 
 ```
 

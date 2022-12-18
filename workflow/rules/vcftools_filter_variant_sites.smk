@@ -1,10 +1,10 @@
 rule vcftools_filter_variant_sites:
 	input:
-		"annotated_variant_{chrom}.vcf.gz"
+		"annotated_variant_{assembly}_{chromosome}.vcf.gz"
 	output:
-		temp("filtered_variant_{chrom}.vcf.gz")
+		temp("filtered_variant_{assembly}_{chromosome}.vcf.gz")
 	log:
-		"logs/vcftools_filter_variant_sites/vcftools_filter_variant_sites_{chrom}.log"
+		"logs/vcftools_filter_variant_sites/vcftools_filter_variant_sites_{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
@@ -28,5 +28,5 @@ rule vcftools_filter_variant_sites:
 		tabix {output}
 
 		# remove temporary index
-		rm annotated_variant_{wildcards.chrom}.vcf.gz.tbi
+		rm annotated_variant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
 		"""

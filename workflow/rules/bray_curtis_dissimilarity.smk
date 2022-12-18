@@ -1,11 +1,11 @@
 rule bray_curtis_dissimilarity:
 	input:
-		"mergedKmerCounts.txt"
+		"{assembly}_mergedKmerCounts.txt"
 	output:
-		dissim="bcd.txt",
-		kmerMatrix="mergedKmerCountsNorm.txt"
+		dissim="{assembly}_bcd.txt",
+		kmerMatrix="{assembly}_mergedKmerCountsNorm.txt"
 	log:
-		"logs/bray_curtis_dissimilarity.log"
+		"logs/bray_curtis_dissimilarity/{assembly}.log"
 	threads: 3
 	resources:
 		mem_mb_per_cpu=128000

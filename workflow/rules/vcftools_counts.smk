@@ -1,15 +1,15 @@
 rule vcftools_counts:
 	input:
-		"filtered_variantAndInvariant_{chrom}.vcf.gz"
+		"filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz"
 	output:
-		"filtered_variantAndInvariant_{chrom}.frq.count",
-		"filtered_variantAndInvariant_{chrom}.012",
-		"filtered_variantAndInvariant_{chrom}.012.indv",
-		"filtered_variantAndInvariant_{chrom}.012.pos"
+		"filtered_variantAndInvariant_{assembly}_{chromosome}.frq.count",
+		"filtered_variantAndInvariant_{assembly}_{chromosome}.012",
+		"filtered_variantAndInvariant_{assembly}_{chromosome}.012.indv",
+		"filtered_variantAndInvariant_{assembly}_{chromosome}.012.pos"
 	params:
-		outPrefix="filtered_variantAndInvariant_{chrom}"
+		outPrefix="filtered_variantAndInvariant_{assembly}_{chromosome}"
 	log:
-		"logs/vcftools_counts/vcftools_counts_{chrom}.log"
+		"logs/vcftools_counts/vcftools_counts_{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000

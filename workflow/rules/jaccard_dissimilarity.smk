@@ -1,11 +1,11 @@
 rule jaccard_dissimilarity:
 	input:
-		"mergedKmerCounts.txt"
+		"{assembly}_mergedKmerCounts.txt"
 	output:
-		dissim="jac.txt",
-		kmerMatrix="mergedKmerCountsNorm_01.txt"
+		dissim="{assembly}_jac.txt",
+		kmerMatrix="{assembly}_mergedKmerCountsNorm_01.txt"
 	log:
-		"logs/jaccard_dissimilarity.log"
+		"logs/jaccard_dissimilarity/{assembly}.log"
 	params:
 		countThresh=5 # mark a k-mer as present if it has a count equal to or greater than this threshold
 	threads: 3

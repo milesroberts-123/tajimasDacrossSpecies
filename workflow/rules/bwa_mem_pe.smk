@@ -1,13 +1,11 @@
+def get_genome(wildcards):
+        genome = samples.loc[samples["replicate"] == wildcards.sampleSe, "genome"]
+        return "data/assemblies/" + genome + ".fa"
+
 rule bwa_mem_pe:
 	input:
-		bwaIndex1="data/genome.fa.amb",
-                bwaIndex2="data/genome.fa.ann",
-                bwaIndex3="data/genome.fa.bwt",
-                bwaIndex4="data/genome.fa.pac",
-                bwaIndex5="data/genome.fa.sa",
-		genome="data/genome.fa",
-		#read1="trimmed_reads/{samplePe}_1_trim.fastq.gz",
-		#read2="trimmed_reads/{samplePe}_2_trim.fastq.gz"
+		bwaIndex=multiext(get_genome, ".amb", ".ann", ".bwt", ".pac", ".sa"),
+		genome="data/assemblies/{assembly}.fa",
 		read1="cat_reads/{samplePe}_1_cat.fastq.gz",
 		read2="cat_reads/{samplePe}_2_cat.fastq.gz"
 	output:

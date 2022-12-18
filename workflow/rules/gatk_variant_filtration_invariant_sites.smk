@@ -1,11 +1,11 @@
 rule gatk_variant_filtration_invariant_sites:
 	input:
-		genome="data/genome.fa",
-		invariantSites="invariant_{chrom}.vcf.gz"
+		genome="data/assemblies/{assembly}.fa",
+		invariantSites="invariant_{assembly}_{chromosome}.vcf.gz"
 	output:
-		temp("annotated_invariant_{chrom}.vcf.gz")
+		temp("annotated_invariant_{assembly}_{chromosome}.vcf.gz")
 	log:
-		"logs/gatk_variant_filtration_invariant_sites/gatk_variant_filtration_invariant_sites_{chrom}.log"
+		"logs/gatk_variant_filtration_invariant_sites/gatk_variant_filtration_invariant_sites_{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
@@ -23,5 +23,5 @@ rule gatk_variant_filtration_invariant_sites:
 			--filter-expression "QUAL > 100.0" &> {log}
 
 		# remove temp index
-		rm invariant_{wildcards.chrom}.vcf.gz.tbi
+		rm invariant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
 		"""

@@ -1,8 +1,8 @@
 rule picard_create_sequence_dictionary:
 	input:
-		"data/genome.fa"
+		"data/assemblies/{assembly}.fa"
 	output:
-		"data/genome.dict"
+		"data/assemblies/{assembly}.dict"
 	params:
 		condaStatus=get_conda_status
 	envmodules:

@@ -1,12 +1,12 @@
 # need to split over multiple chromsomes
 rule gatk_genotype_gvcfs:
 	input:
-		allCalls="combinedCalls_{chrom}.g.vcf.gz",
-		genome="data/genome.fa"
+		allCalls="combinedCalls_{assembly}_{chromosome}.g.vcf.gz",
+		genome="data/assemblies/{assembly}.fa"
 	output:
-		temp("jointGenotypes_{chrom}.vcf.gz")
+		temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz")
 	log:
-		"logs/gatk_genotype_gvcfs/gatk_genotype_gvcfs_{chrom}.log"
+		"logs/gatk_genotype_gvcfs/gatk_genotype_gvcfs_{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=50000
@@ -23,5 +23,5 @@ rule gatk_genotype_gvcfs:
    			--include-non-variant-sites &> {log}
 		
 		# remove temp index
-		rm combinedCalls_{wildcards.chrom}.g.vcf.gz.tbi
+		rm combinedCalls_{wildcards.assembly}_{wildcards.chromosome}.g.vcf.gz.tbi
 		"""

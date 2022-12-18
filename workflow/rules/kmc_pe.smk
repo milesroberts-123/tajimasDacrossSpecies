@@ -1,3 +1,7 @@
+def get_kmer_database_pe(wildcards):
+        genome = samples.loc[samples["replicate"] == wildcards.samplePe, "genome"]
+        return genome + "_codingKmerDatabase.txt"
+
 rule kmc_pe:
 	input:
 		cdsDatabase="codingKmerDatabase.txt",

@@ -1,11 +1,11 @@
 rule get_cds_seq:
 	input:
-		fasta="data/genome.fa",
-		gff="data/genome.gff3"
+		fasta="data/assemblies/{assembly}.fa",
+		gff="data/annotations/{assembly}.gff3"
 	output:
-		"cds.fa"
+		"{assembly}_cds.fa"
 	log:
-		"logs/get_cds_seq.log"
+		"logs/get_cds_seq/{assembly}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=750

@@ -1,12 +1,12 @@
 rule bwa_index:
 	input:
-		"data/genome.fa"
+		"data/assemblies/{assembly}.fa"
 	output:
-		"data/genome.fa.amb",
-		"data/genome.fa.ann",
-		"data/genome.fa.bwt",
-		"data/genome.fa.pac",
-		"data/genome.fa.sa"
+		"data/assemblies/{assembly}.fa.amb",
+		"data/assemblies/{assembly}.fa.ann",
+		"data/assemblies/{assembly}.fa.bwt",
+		"data/assemblies/{assembly}.fa.pac",
+		"data/assemblies/{assembly}.fa.sa"
 	log:
 		"logs/bwa_index.log"
 	threads: 1

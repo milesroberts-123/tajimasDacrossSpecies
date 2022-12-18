@@ -1,11 +1,11 @@
 rule bcftools_concat:
 	input:
-		"filtered_variant_{chrom}.vcf.gz",
-		"filtered_invariant_{chrom}.vcf.gz"
+		"filtered_variant_{assembly}_{chromosome}.vcf.gz",
+		"filtered_invariant_{assembly}_{chromosome}.vcf.gz"
 	output:
-		"filtered_variantAndInvariant_{chrom}.vcf.gz"
+		"filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz"
 	log:
-		"logs/bcftools_concat/bcftools_concat_{chrom}.log"
+		"logs/bcftools_concat/bcftools_concat_{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
@@ -21,6 +21,6 @@ rule bcftools_concat:
 			-O z -o {output} &> {log}
 
 		# remove temporary index
-		rm filtered_variant_{wildcards.chrom}.vcf.gz.tbi
-		rm filtered_invariant_{wildcards.chrom}.vcf.gz.tbi
+		rm filtered_variant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
+		rm filtered_invariant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
 		"""

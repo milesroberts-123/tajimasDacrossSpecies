@@ -1,11 +1,11 @@
 rule separate_variant_invariant_sites:
 	input:
-		"jointGenotypes_{chrom}.vcf.gz"
+		"jointGenotypes_{assembly}_{chromosome}.vcf.gz"
 	output:
-		invariantSites=temp("invariant_{chrom}.vcf.gz"),
-		variantSites=temp("variant_{chrom}.vcf.gz")
+		invariantSites=temp("invariant_{assembly}_{chromosome}.vcf.gz"),
+		variantSites=temp("variant_{assembly}_{chromosome}.vcf.gz")
 	log:
-		"logs/separate_variant_invariant_sites/separate_variant_invariant_sites_{chrom}.log"
+		"logs/separate_variant_invariant_sites/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=32000
@@ -30,5 +30,5 @@ rule separate_variant_invariant_sites:
 		tabix {output.variantSites} # index sites
 		
 		# remove temporary indices
-		rm jointGenotypes_{wildcards.chrom}.vcf.gz.tbi
+		rm jointGenotypes_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
 		"""

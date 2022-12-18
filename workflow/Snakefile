@@ -15,7 +15,7 @@ samplesSe = samples[samples["layout"] == "SE"]
 #print(samplesSe)
 
 # load list of chromosome names
-chroms = pd.read_table("data/chroms.txt", sep="\t", dtype={"chroms": str}).set_index("chroms", drop=False)
+chroms = pd.read_table("data/chromosomes.tsv", sep="\t", dtype={"assembly": str, "chromosome": str}).set_index(["assembly", "chromosome"], drop=False)
 
 #ruleorder: download_pe > download_se
 
@@ -66,19 +66,15 @@ def get_mem_mb(wildcards, attempt):
 
 rule all:
 	input:
-		expand("filtered_variantAndInvariant_{chrom}.frq.count", chrom=chroms.index),
+		expand("filtered_variantAndInvariant_{assembly}_{chromosome}.frq.count", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
 		"multiqc_report.html",
-		expand("out_{chrom}.frq", chrom=chroms.index),
-		expand("out_{chrom}.ldepth.mean", chrom=chroms.index),
-		expand("out_{chrom}.lqual", chrom=chroms.index),
-		expand("out_{chrom}.lmiss", chrom=chroms.index),
-		#expand("{sampleSe}_se_kmers.txt", sampleSe=samplesSe.index),
-		#expand("{samplePe}_pe_kmers.txt", samplePe=samplesPe.index),
-		#"data/fourfoldDegenerateSites.bed",
-		#"kmerSubset.txt",
-		"bcd.txt",
-		"jac.txt",
-		"pairwise-pi.txt",
+		expand("out_{assembly}_{chromosome}.frq", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
+		expand("out_{assembly}_{chromosome}.ldepth.mean", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
+		expand("out_{assembly}_{chromosome}.lqual", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
+		expand("out_{assembly}_{chromosome}.lmiss", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
+		expand("{assembly}_bcd.txt", assembly=set(chroms.index.get_level_values("assembly"))),
+		expand("{assembly}_jac.txt", assembly=set(chroms.index.get_level_values("assembly"))),
+		expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		"readStats.txt"
 
 include: "rules/download_pe.smk"

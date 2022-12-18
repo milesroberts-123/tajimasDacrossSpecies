@@ -1,10 +1,10 @@
 rule remove_kmer_dups:
 	input:
-		"kmerList.txt"
+		"{assembly}_kmerList.txt"
 	output:
-		temp("kmerListNoDups.txt")
+		temp("{assembly}_kmerListNoDups.txt")
 	log:
-		"logs/remove_kmer_dups.log"
+		"logs/remove_kmer_dups/{assembly}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=128000

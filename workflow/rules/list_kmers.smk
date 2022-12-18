@@ -1,10 +1,14 @@
+def get_list_kmers_input(wildcards):
+	return [x + "_se_kmers.txt" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"]))] + [x + "_pe_kmers.txt" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"]))]
+
 rule list_kmers:
 	input:
-		expand("{sample}_se_kmers.txt", sample=set(samplesSe.index.get_level_values("replicate"))) + expand("{sample}_pe_kmers.txt", sample=set(samplesPe.index.get_level_values("replicate")))
+		#expand("{sample}_se_kmers.txt", sample=set(samplesSe.index.get_level_values("replicate"))) + expand("{sample}_pe_kmers.txt", sample=set(samplesPe.index.get_level_values("replicate")))
+		get_list_kmers_input
 	output:
-		temp("kmerList.txt")
+		temp("{assembly}_kmerList.txt")
 	log:
-		"logs/list_kmers.log"
+		"logs/list_kmers/{assembly}.log"
 	params:
 		countThresh=10
 	threads: 1

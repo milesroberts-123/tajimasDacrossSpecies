@@ -1,9 +1,9 @@
 rule degenotate:
 	input:
-		genome="data/genome.fa",
-		annot="data/genome.gff3"
+		genome="data/assemblies/{assembly}.fa",
+		annot="data/annotations/{assembly}.gff3"
 	output:
-		"data/fourfoldDegenerateSites.bed"
+		"data/{assembly}_fourfoldDegenerateSites.bed"
 	params:
 		condaStatus=get_conda_status
 	threads: 1

@@ -13,7 +13,8 @@ echo "This job is running on $HOSTNAME on `date`"
 
 # load snakemake
 echo Loading snakemake...
-ml -* iccifort/2020.1.217 impi/2019.7.217 snakemake/5.26.1-Python-3.8.2
+#ml -* iccifort/2020.1.217 impi/2019.7.217 snakemake/5.26.1-Python-3.8.2
+conda activate snakemake
 
 # go to workflow directory with Snakefile
 echo Changing directory...

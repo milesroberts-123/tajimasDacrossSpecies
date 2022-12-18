@@ -1,10 +1,10 @@
 rule random_kmer_subset:
 	input:
-		"kmerListNoDups.txt"
+		"{assembly}_kmerListNoDups.txt"
 	output:
-		temp("kmerRandomSubset.txt")
+		temp("{assembly}_kmerRandomSubset.txt")
 	log:
-		"logs/random_kmer_subset.log"
+		"logs/random_kmer_subset/{assembly}.log"
 	params:
 		kmersKept=4000000
 	threads: 1

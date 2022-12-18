@@ -1,14 +1,14 @@
 rule build_coding_kmer_database:
 	input:
-		"cds.fa"
+		"{assembly}_cds.fa"
 	output:
-		"codingKmerDatabase.txt"
+		"{assembly}_codingKmerDatabase.txt"
 	log:
-		"logs/build_coding_kmer_database.log"
+		"logs/build_coding_kmer_database/{assembly}.log"
 	threads: 4
 	params:
 		kmerLength=30,
-		outputPrefix="codingKmerDatabase"
+		outputPrefix="{wildcards.assembly}_codingKmerDatabase"
 	resources:
 		mem_mb_per_cpu=4000
 	conda:
