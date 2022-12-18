@@ -17,14 +17,6 @@ samplesSe = samples[samples["layout"] == "SE"]
 # load list of chromosome names
 chroms = pd.read_table("data/chromosomes.tsv", sep="\t", dtype={"assembly": str, "chromosome": str}).set_index(["assembly", "chromosome"], drop=False)
 
-#ruleorder: download_pe > download_se
-
-#ruleorder: fastp_pe > fastp_se
-
-#ruleorder: bwa_mem_pe > bwa_mem_se
-
-#ruleorder: cat_replicates_se > fastp_se > download_pe > download_se 
-
 wildcard_constraints:
 	sampleSe="[A-Za-z0-9]+",
 	runSe="[A-Za-z0-9]+"
@@ -43,26 +35,6 @@ def get_thread_count(wildcards, input):
 # 2 GB per thread, but increase limit linearly if job fails
 def get_mem_mb(wildcards, attempt):
     return 2000 * attempt
-
-#rule all:
-#	input:
-		#expand("{sampleSe}.fastq.gz", sampleSe=samplesSe.index),
-		#expand("{samplePe}_{end}.fastq.gz", samplePe=samplesPe.index, end = [1,2]),
-		#expand("trimmed_reads/{sampleSe}_trim.fastq.gz", sampleSe=samplesSe.index),
-		#expand("trimmed_reads/{samplePe}_{end}_trim.fastq.gz", samplePe=samplesPe.index, end = [1,2]),
-#		"multiqc_report.html",
-		#expand("mapped_reads/{samplePe}_pe.bam", samplePe=samplesPe.index),
-		#expand("mapped_reads/{sampleSe}_se.bam", sampleSe=samplesSe.index)
-		#expand("sorted_reads/{samplePe}_pe.bam", samplePe=samplesPe.index),
-		#expand("sorted_reads/{sampleSe}_se.bam", sampleSe=samplesSe.index)
-		#expand("sorted_marked_reads/{sampleSe}_se.bam", sampleSe=samplesSe.index),
-		#expand("sorted_marked_reads/{samplePe}_pe.bam", samplePe=samplesPe.index)
-		#expand("sorted_marked_reads/{sampleSe}_se.bam.bai", sampleSe=samplesSe.index),
-		#expand("sorted_marked_reads/{samplePe}_pe.bam.bai", samplePe=samplesPe.index)
-		#expand("calls/{sampleSe}_se.g.vcf.gz", sampleSe=samplesSe.index),
-		#expand("calls/{samplePe}_pe.g.vcf.gz", samplePe=samplesPe.index),
-		#expand("combinedCalls_{chrom}.g.vcf.gz", chrom=chroms.index),
-#		expand("jointGenotypes_{chrom}.vcf.gz", chrom=chroms.index)
 
 rule all:
 	input:
@@ -86,8 +58,6 @@ include: "rules/cat_replicates_se.smk"
 include: "rules/cat_replicates_pe.smk"
 include: "rules/get_cds_seq.smk"
 include: "rules/build_coding_kmer_database.smk"
-#include: "rules/kmc_tools_filter_pe.smk"
-#include: "rules/kmc_tools_filter_se.smk"
 include: "rules/kmc_pe.smk"
 include: "rules/kmc_se.smk"
 include: "rules/list_kmers.smk"
@@ -107,7 +77,6 @@ include: "rules/picard_mark_duplicates.smk"
 include: "rules/samtools_index.smk"
 include: "rules/samtools_faidx.smk"
 include: "rules/picard_create_sequence_dictionary.smk"
-#include: "rules/subset_genome.smk"
 include: "rules/degenotate.smk"
 include: "rules/gatk_haplotype_caller.smk"
 include: "rules/gatk_combine_gvcfs.smk"

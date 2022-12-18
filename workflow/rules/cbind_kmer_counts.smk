@@ -1,8 +1,11 @@
+def get_cbind_kmer_counts_input(wildcards):
+	return [x + "_se_mergedKmerCounts.txt" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])] + [x + "_pe_mergedKmerCounts.txt" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])]
+
 rule cbind_kmer_counts:
 	input:
 		key="{assembly}_kmerRandomSubset.txt",
 		#kmerCounts=expand("{sampleSe}_se_mergedKmerCounts.txt", sampleSe=set(samplesSe.index.get_level_values("replicate"))) + expand("{samplePe}_pe_mergedKmerCounts.txt", samplePe=set(samplesPe.index.get_level_values("replicate")))
-		kmerCounts=expand("{sample}_se_mergedKmerCounts.txt", sample=set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])) + expand("{sample}_pe_mergedKmerCounts.txt", sample=set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"]))
+		kmerCounts=get_cbind_kmer_counts_input
 	output:
 		matrix="{assembly}_mergedKmerCounts.txt",
 		cbindScript="{assembly}_cbind.sh"

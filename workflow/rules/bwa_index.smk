@@ -8,7 +8,7 @@ rule bwa_index:
 		"data/assemblies/{assembly}.fa.pac",
 		"data/assemblies/{assembly}.fa.sa"
 	log:
-		"logs/bwa_index.log"
+		"logs/bwa_index/{assembly}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=4000

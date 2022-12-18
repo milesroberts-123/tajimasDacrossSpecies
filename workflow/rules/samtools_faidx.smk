@@ -5,7 +5,7 @@ rule samtools_faidx:
 		index="data/assemblies/{assembly}.fa.fai",
 		genomeFile="data/assemblies/{assembly}.txt"
 	log:
-		"logs/samtools_faidx.log"
+		"logs/samtools_faidx/{assembly}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=8000

@@ -11,7 +11,7 @@ rule picard_create_sequence_dictionary:
 	resources:
 		mem_mb_per_cpu=4000
 	log:
-		"logs/picard_create_sequence_dictionary.log"
+		"logs/picard_create_sequence_dictionary/{assembly}.log"
 	conda:
 		"../envs/picard.yml"
 	shell:
