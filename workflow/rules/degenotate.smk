@@ -5,7 +5,8 @@ rule degenotate:
 	output:
 		"data/{assembly}_fourfoldDegenerateSites.bed"
 	params:
-		condaStatus=get_conda_status
+		condaStatus=get_conda_status,
+		outputFolder="data/degenotateOutput/{assembly}"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
@@ -22,11 +23,11 @@ rule degenotate:
 		# if conda is enabled, use fastp conda env
                 # if conda is disabled, check scripts for fastp binary
                 if [ "{params.condaStatus}" == "True" ]; then
-			degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o data/degenotateOutput
+			degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o {params.outputFolder}
 		else
-			scripts/degenotate/degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o data/degenotateOutput
+			scripts/degenotate/degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o {params.outputFolder}
 		fi
 
 		# subset out four-fold degenerate sites
-		awk '(($5 == 4))' data/degenotateOutput/degeneracy-all-sites.bed > {output}
+		awk '(($5 == 4))' {params.outputFolder}/degeneracy-all-sites.bed > {output}
 		"""

@@ -8,9 +8,9 @@
 
 [Updating the repo](#updating-the-repo)
 
-[To do](#to-do)
-
 [Notes](#notes)
+
+[To do](#to-do)
 
 # Summary
 
@@ -26,9 +26,9 @@ This workflow takes a list of SRA run numbers, separated before-hand as either p
 
 In addition, this workflow is designed to:
 
-* analyze read data from multiple species simultaneously (in progress)
+* analyze read data from multiple species simultaneously
 
-* parallelize computations by splitting data by chromsome
+* split data by chromosome to parallelize computations
 
 * merge technical replicates
 
@@ -47,6 +47,8 @@ In addition, this workflow is designed to:
 This workflow will **not** work if:
 
 * Some replicates of a given sample are single-end, but others are paired-end. To resolve this, either throw out read two of the paired-end replicates (treating them as single end) or throw out the single-end reads (leaving only paired-end).
+
+* If a single sample is associated with more than one genome
 
 # How to replicate my results
 
@@ -76,12 +78,14 @@ Nonetheless, if you want to do this you will need to add the following to `/work
 
 * [fastp](https://github.com/OpenGene/fastp)
 
+* [seqkit](https://github.com/shenwei356/seqkit)
+
 To get degenotate, clone degenotate github repo into `workflow/scripts`:
 
 ```
 cd workflow/scripts
 
-git clone https://github.com/OpenGene/fastp.git
+git clone https://github.com/harvardinformatics/degenotate.git
 ```
 
 You can then update degenotate by doing into the degenotate folder and using the `git fetch` then `git pull` commands
@@ -92,7 +96,7 @@ git fetch
 git pull
 ```
 
-Go to the fastp github repo and download the latest linux binary, add this to the scripts folder and make it executable with `chmod +x fastp`
+Go to the fastp github repo and download the latest linux binary, add this to the scripts folder and make it executable with `chmod +x fastp`. Do the same for seqkit too!
 
 # Input files for workflow
 
@@ -134,14 +138,6 @@ git commit -m "my update message"
 git push -u origin main
 ```
  
-# To do
-
-* extend workflow to work with multiple species
-
-* fully separate multi-threaded and single-threaded steps
-
-* add conda env for degenotate, for some reason the degenotate module doesn't load when snakemake makes the conda environment from my .yml file, could be a bug
-
 # Notes
 
 ## search methods for genotype data
@@ -164,3 +160,9 @@ conda install -c bioconda snakemake
 # install mamba too, a faster replacement for conda
 conda install -n base -c conda-forge mamba
 ```
+
+# To do
+
+* fully separate multi-threaded and single-threaded steps in k-mer counting workflow
+
+* extract 4-fold degenerate sites using `degenotate` instead of `bedtools`
