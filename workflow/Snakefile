@@ -20,7 +20,7 @@ chroms = pd.read_table("data/chromosomes.tsv", sep="\t", dtype={"assembly": str,
 
 wildcard_constraints:
 	sampleSe="[A-Za-z0-9]+",
-	runSe="[A-Za-z0-9]+"
+	runSe="[A-Za-z0-9]+",
 
 # function to determine if --use-conda is enabled
 def get_conda_status(wildcards):
@@ -48,7 +48,7 @@ rule all:
 		expand("{assembly}_bcd.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_jac.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
-		"readStats.txt"
+		expand("{assembly}_readStats.txt", assembly=set(chroms.index.get_level_values("assembly")))
 
 include: "rules/download_pe.smk"
 include: "rules/download_se.smk"

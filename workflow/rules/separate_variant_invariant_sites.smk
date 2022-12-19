@@ -30,5 +30,5 @@ rule separate_variant_invariant_sites:
 		tabix {output.variantSites} # index sites
 		
 		# remove temporary indices
-		rm jointGenotypes_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
+		rm {input}.tbi
 		"""

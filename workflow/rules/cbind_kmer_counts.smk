@@ -4,10 +4,9 @@ def get_cbind_kmer_counts_input(wildcards):
 rule cbind_kmer_counts:
 	input:
 		key="{assembly}_kmerRandomSubset.txt",
-		#kmerCounts=expand("{sampleSe}_se_mergedKmerCounts.txt", sampleSe=set(samplesSe.index.get_level_values("replicate"))) + expand("{samplePe}_pe_mergedKmerCounts.txt", samplePe=set(samplesPe.index.get_level_values("replicate")))
 		kmerCounts=get_cbind_kmer_counts_input
 	output:
-		matrix="{assembly}_mergedKmerCounts.txt",
+		matrix="{assembly}_AllMergedKmerCounts.txt",
 		cbindScript="{assembly}_cbind.sh"
 	log:
 		"logs/cbind_kmer_counts/{assembly}.log"
@@ -18,7 +17,7 @@ rule cbind_kmer_counts:
 		"""
 		# Extract file names and create header for merged matrix
 		HEADER=$(echo "kmer {input.kmerCounts}" | sed 's/_se_mergedKmerCounts.txt//g' | sed 's/_pe_mergedKmerCounts.txt//g') 
-		echo $HEADER > {assembly}_headers.txt
+		echo $HEADER > {wildcards.assembly}_headers.txt
 
 		# paste in k-mer key to first column, save as bash script
 		echo 'paste -d " " {input.key} \\' > {output.cbindScript}
@@ -34,6 +33,6 @@ rule cbind_kmer_counts:
 
 		# Add header to output
 		# sed -i '1i "$HEADER"' {output.matrix}
-		cat {assembly}_headers.txt {output.matrix} > {assembly}_tmpMyMatrix
-		mv {assembly}_tmpMyMatrix {output.matrix}
+		cat {wildcards.assembly}_headers.txt {output.matrix} > {wildcards.assembly}_tmpMyMatrix
+		mv {wildcards.assembly}_tmpMyMatrix {output.matrix}
 		"""

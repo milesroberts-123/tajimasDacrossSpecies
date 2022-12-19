@@ -1,10 +1,11 @@
 def get_kmer_database_pe(wildcards):
         genome = samples.loc[samples["replicate"] == wildcards.samplePe, "genome"]
+	genome = genome[0]
         return genome + "_codingKmerDatabase.txt"
 
 rule kmc_pe:
 	input:
-		cdsDatabase="codingKmerDatabase.txt",
+		cdsDatabase=get_kmer_database_pe,
 		read1="cat_reads/{samplePe}_1_cat.fastq.gz",
 		read2="cat_reads/{samplePe}_2_cat.fastq.gz"
 	output:

@@ -1,21 +1,25 @@
 def get_genome(wildcards):
-	sample = re.sub("(_pe|_se)", "", wildcards.sample)
-        genome = set(samples.loc[samples["replicate"] == sample, "genome"])
+	repName = re.sub("_pe|_se", "", wildcards.sample)
+        genome = samples.loc[samples["replicate"] == repName, "genome"]
+	genome = genome[0]
         return "data/assemblies/" + str(genome) + ".fa"
 
 def get_dict(wildcards):
-	sample = re.sub("(_pe|_se)", "", wildcards.sample)
-        genome = set(samples.loc[samples["replicate"] == sample, "genome"])
+	repName = re.sub("_pe|_se", "", wildcards.sample)
+        genome = samples.loc[samples["replicate"] == repName, "genome"]
+	genome = genome[0]
         return "data/assemblies/" + str(genome) + ".dict"
 
 def get_fai(wildcards):
-	sample = re.sub("(_pe|_se)", "", wildcards.sample)
-        genome = set(samples.loc[samples["replicate"] == sample, "genome"])
+	repName = re.sub("_pe|_se", "", wildcards.sample)
+        genome = samples.loc[samples["replicate"] == repName, "genome"]
+	genome = genome[0]
         return "data/assemblies/" + str(genome) + ".fa.fai"
 
 def get_regions(wildcards):
-	sample = re.sub("(_pe|_se)", "", wildcards.sample)
-        genome = set(samples.loc[samples["replicate"] == sample, "genome"])
+	repName = re.sub("_pe|_se", "", wildcards.sample)
+        genome = samples.loc[samples["replicate"] == repName, "genome"]
+	genome = genome[0]
         return "data/" + str(genome) + "_fourfoldDegenerateSites.bed"
 
 rule gatk_haplotype_caller:

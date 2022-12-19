@@ -1,6 +1,6 @@
 rule jaccard_dissimilarity:
 	input:
-		"{assembly}_mergedKmerCounts.txt"
+		"{assembly}_AllMergedKmerCounts.txt"
 	output:
 		dissim="{assembly}_jac.txt",
 		kmerMatrix="{assembly}_mergedKmerCountsNorm_01.txt"

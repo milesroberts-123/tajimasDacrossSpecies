@@ -6,7 +6,7 @@ rule gatk_genotype_gvcfs:
 	output:
 		temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz")
 	log:
-		"logs/gatk_genotype_gvcfs/gatk_genotype_gvcfs_{assembly}_{chromosome}.log"
+		"logs/gatk_genotype_gvcfs/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=50000
@@ -23,5 +23,5 @@ rule gatk_genotype_gvcfs:
    			--include-non-variant-sites &> {log}
 		
 		# remove temp index
-		rm combinedCalls_{wildcards.assembly}_{wildcards.chromosome}.g.vcf.gz.tbi
+		rm {input.allCalls}.tbi
 		"""

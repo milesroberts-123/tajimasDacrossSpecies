@@ -1,5 +1,6 @@
 def get_kmer_database_se(wildcards):
         genome = samples.loc[samples["replicate"] == wildcards.sampleSe, "genome"]
+	genome = genome[0]
         return genome + "_codingKmerDatabase.txt"
 
 rule kmc_se:

@@ -5,7 +5,6 @@ def get_calls(wildcards):
 # in shell command, use bash brace expansion to add a -V flag to each input file
 rule gatk_combine_gvcfs:
 	input:
-		#calls=expand("calls/{sample}_se.g.vcf.gz", sample=set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])) + expand("calls/{sample}_pe.g.vcf.gz", sample=set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])),
 		calls = get_calls,
 		genome="data/assemblies/{assembly}.fa"
 	output:

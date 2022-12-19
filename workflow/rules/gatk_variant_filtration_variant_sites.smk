@@ -5,7 +5,7 @@ rule gatk_variant_filtration_variant_sites:
 	output:
 		temp("annotated_variant_{assembly}_{chromosome}.vcf.gz")
 	log:
-		"logs/gatk_variant_filtration_variant_sites/gatk_variant_filtration_variant_sites_{assembly}_{chromosome}.log"
+		"logs/gatk_variant_filtration_variant_sites/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
@@ -35,5 +35,5 @@ rule gatk_variant_filtration_variant_sites:
 			--filter-expression "ReadPosRankSum < -8.0" &> {log}
 		
 		# remove temp index
-		rm variant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
+		rm {input.variantSites}.tbi
 		"""

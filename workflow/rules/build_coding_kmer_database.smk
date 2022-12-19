@@ -8,7 +8,7 @@ rule build_coding_kmer_database:
 	threads: 4
 	params:
 		kmerLength=30,
-		outputPrefix="{wildcards.assembly}_codingKmerDatabase"
+		outputPrefix="{assembly}_codingKmerDatabase"
 	resources:
 		mem_mb_per_cpu=4000
 	conda:

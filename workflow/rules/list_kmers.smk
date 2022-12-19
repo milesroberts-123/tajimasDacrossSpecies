@@ -1,5 +1,5 @@
 def get_list_kmers_input(wildcards):
-	return [x + "_se_kmers.txt" for x in str(set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"]))] + [x + "_pe_kmers.txt" for x in str(set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"]))]
+	return [x + "_se_kmers.txt" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])] + [x + "_pe_kmers.txt" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])]
 
 rule list_kmers:
 	input:

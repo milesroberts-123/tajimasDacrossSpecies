@@ -4,7 +4,7 @@ rule vcftools_filter_invariant_sites:
 	output:
 		temp("filtered_invariant_{assembly}_{chromosome}.vcf.gz")
 	log:
-		"logs/vcftools_filter_invariant_sites/vcftools_filter_invariant_sites_{assembly}_{chromosome}.log"
+		"logs/vcftools_filter_invariant_sites/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
@@ -29,5 +29,5 @@ rule vcftools_filter_invariant_sites:
 		tabix {output}
 
 		# remove temporary index
-		rm annotated_invariant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
+		rm {input}.tbi
 		"""
