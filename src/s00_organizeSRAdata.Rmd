@@ -11,7 +11,7 @@ library(data.table)
 # 
 # BiocManager::install("SRAdb")
 
-speciesList = unique(read.csv("../workflow/data/speciesList.csv")$Species)
+# speciesList = unique(read.csv("../workflow/data/speciesList.csv")$Species)
 
 # create empty objects for growing list of reads
 allReads = NULL
@@ -70,6 +70,28 @@ any(arabidopsis_halleri$spots_with_mates == 0)
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = arabidopsis_halleri[,"Run"], replicate = arabidopsis_halleri[,"BioSample"], layout = "PE", genome = "arabidopsis_halleri"))
 ```
+
+## Arabidopsis lyrata
+```{r}
+arabidopsis_lyrata_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_lyrata_PRJEB23202.csv.gz", data.table = F)
+arabidopsis_lyrata_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_lyrata_PRJEB30473.csv.gz", data.table = F)
+arabidopsis_lyrata_3 = fread("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_lyrata_PRJNA284572.csv.gz", data.table = F)
+
+# subset only A. lyrata
+arabidopsis_lyrata_1 = arabidopsis_lyrata_1[grepl("Arabidopsis lyrata", arabidopsis_lyrata_1$ScientificName),]
+arabidopsis_lyrata_2 = arabidopsis_lyrata_2[grepl("Arabidopsis lyrata", arabidopsis_lyrata_2$ScientificName),]
+arabidopsis_lyrata_3 = arabidopsis_lyrata_3[grepl("Arabidopsis lyrata", arabidopsis_lyrata_3$ScientificName),]
+
+# concatenate datasets
+arabidopsis_lyrata = rbind(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3)
+
+# check if any reads are single-end
+any(arabidopsis_lyrata$spots_with_mates == 0)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = arabidopsis_lyrata[,"Run"], replicate = arabidopsis_lyrata[,"BioSample"], layout = "PE", genome = "arabidopsis_lyrata"))
+```
+
 
 ## Arabidopsis thaliana
 ```{r}
@@ -885,6 +907,12 @@ spirodela_polyrhiza$layout[(spirodela_polyrhiza$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = spirodela_polyrhiza[,"Run"], replicate = spirodela_polyrhiza[,"BioSample"], layout = spirodela_polyrhiza[,"layout"], genome = "spirodela_polyrhiza"))
+```
+
+## Triticum aestivum
+```{r}
+# fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_turgidum.csv.gz", data.table = F)
+
 ```
 
 ## Vitis vinifera

@@ -1,6 +1,7 @@
 def get_kmer_key_pe(wildcards):
         genome = samples.loc[samples["replicate"] == wildcards.samplePe, "genome"]
-        return genome + "_kmerRandomSubset.txt"
+        genome = genome[0]
+	return genome + "_kmerRandomSubset.txt"
 
 rule join_kmer_counts_pe:
 	input:

@@ -163,6 +163,12 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
+* fix multiqc conda environment, don't specify channel so that numpy is installed, or maybe try specifying `$CONDA_PREFIX`
+
 * fully separate multi-threaded and single-threaded steps in k-mer counting workflow
 
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`
+
+* add data from more plant species
+
+* Run workflow in batches: 1 batch = 1 species

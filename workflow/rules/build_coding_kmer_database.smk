@@ -30,9 +30,9 @@ rule build_coding_kmer_database:
 		# remove first column from text file
 		cut -f1 tmp_{output} | sort > {output}
 
-		# remove wd
+		# remove intermediate files
 		rm tmp_{output}
-		rm -r tmp_codingKmerDatabase
+		rm -r tmp_{params.outputPrefix}
 		rm {params.outputPrefix}.kmc_pre
 		rm {params.outputPrefix}.kmc_suf
 		"""

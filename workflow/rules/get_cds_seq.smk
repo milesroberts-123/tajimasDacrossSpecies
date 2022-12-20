@@ -16,8 +16,8 @@ rule get_cds_seq:
 	shell:
 		"""
 		# subset gff to just CDS
-		awk '(($3 == "CDS"))' {input.gff} > cds.gff
+		awk '(($3 == "CDS"))' {input.gff} > {wildcards.assembly}_cds.gff
 		
 		# extract CDS from fasta
-		bedtools getfasta -fi {input.fasta} -bed cds.gff > {output}
+		bedtools getfasta -fi {input.fasta} -bed {wildcards.assembly}_cds.gff > {output}
 		"""

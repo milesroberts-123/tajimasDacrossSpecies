@@ -1,5 +1,6 @@
 def get_kmer_key_se(wildcards):
         genome = samples.loc[samples["replicate"] == wildcards.sampleSe, "genome"]
+	genome = genome[0]
         return genome + "_kmerRandomSubset.txt"
 
 rule join_kmer_counts_se:

@@ -3,6 +3,8 @@
 ```{r}
 rm(list = ls())
 
+library(data.table)
+
 #info = read.csv("SraRunInfo.csv")
 #sort(table(info$BioProject), decreasing = T)
 
@@ -15,7 +17,7 @@ sort(table(bdistachyon$BioProject), decreasing = T)
 tintermedium = read.csv("SraRunInfo_thinopyrum_intermedium.csv")
 sort(table(tintermedium$BioProject), decreasing = T)
 
-arabidopsis_lyrata = read.csv("SraRunInfo_arabidopsis_lyrata_2022-10-14.csv")
+arabidopsis_lyrata = fread("SraRunInfo_arabidopsis_lyrata_2022-10-14.csv.gz", data.table = F, header = T)
 sort(table(arabidopsis_lyrata$BioProject), decreasing = T)
 
 arachis_hypogaea = read.csv("SraRunInfo_arachis_hypogaea_2022-10-11.csv")
@@ -99,7 +101,7 @@ sort(table(solanum_tuberosum$BioProject), decreasing = T)
 sorghum_bicolor = read.csv("SraRunInfo_sorghum_bicolor_2022-10-14.csv")
 sort(table(sorghum_bicolor$BioProject), decreasing = T)
 
-triticum_turgidum = read.csv("SraRunInfo_triticum_turgidum_2022-10-14.csv")
+triticum_turgidum = fread("SraRunInfo_triticum_turgidum_2022-10-14.csv.gz", data.table = F)
 sort(table(triticum_turgidum$BioProject), decreasing = T)
 
 vitis_vinifera = read.csv("SraRunInfo_vitis_vinifera_2022-10-14.csv")
