@@ -13,8 +13,8 @@ rule cat_replicates_pe:
 		read1=get_pe_reps_one,
 		read2=get_pe_reps_two,
 	output:
-		read1="cat_reads/{samplePe}_1_cat.fastq.gz",
-		read2="cat_reads/{samplePe}_2_cat.fastq.gz",
+		read1=temp("cat_reads/{samplePe}_1_cat.fastq.gz"),
+		read2=temp("cat_reads/{samplePe}_2_cat.fastq.gz"),
 	log: 
 		"logs/cat_replicates/{samplePe}.log"
 	resources:

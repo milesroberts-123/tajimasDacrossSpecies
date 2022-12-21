@@ -6,7 +6,7 @@ def get_se_reps(wildcards):
 rule cat_replicates_se:
 	input: get_se_reps
 	output:
-		"cat_reads/{sampleSe}_cat.fastq.gz",
+		temp("cat_reads/{sampleSe}_cat.fastq.gz"),
 	log: 
 		"logs/cat_replicates/{sampleSe}.log"
 	resources:

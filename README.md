@@ -163,7 +163,7 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
-* fix multiqc conda environment, don't specify channel so that numpy is installed, or maybe try specifying `$CONDA_PREFIX`
+* run multiqc once per species/genome
 
 * fully separate multi-threaded and single-threaded steps in k-mer counting workflow
 
@@ -171,4 +171,6 @@ conda install -n base -c conda-forge mamba
 
 * add data from more plant species
 
-* Run workflow in batches: 1 batch = 1 species
+* Run workflow in batches? 1 batch = 1 species
+
+* add error checking to main snakefile?
