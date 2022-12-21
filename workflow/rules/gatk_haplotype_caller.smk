@@ -1,3 +1,9 @@
+def get_ploidy(wildcards):
+	repName = re.sub("_pe|_se", "", wildcards.sample)
+        ploidy = samples.loc[samples["replicate"] == repName, "ploidy"]
+        ploidy = ploidy[0]
+        return int(ploidy)
+
 def get_genome(wildcards):
 	repName = re.sub("_pe|_se", "", wildcards.sample)
         genome = samples.loc[samples["replicate"] == repName, "genome"]
@@ -32,6 +38,8 @@ rule gatk_haplotype_caller:
 		readsIndex="sorted_marked_reads/{sample}.bam.bai",
 	output:
 		temp("calls/{sample}.g.vcf.gz")
+	params:
+		ploidy=get_ploidy
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	threads: 4
@@ -50,7 +58,7 @@ rule gatk_haplotype_caller:
 			-L {input.regions} \
 			-ERC GVCF \
 			--native-pair-hmm-threads {threads} \
-			--sample-ploidy 2 \
+			--sample-ploidy {params.ploidy} \
 			--heterozygosity 0.001 \
 			--indel-heterozygosity 0.001 \
 			--min-base-quality-score 20 &> {log}
