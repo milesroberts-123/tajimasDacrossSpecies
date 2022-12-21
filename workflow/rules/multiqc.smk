@@ -1,13 +1,17 @@
+def get_multiqc_input(wildcards):
+        return ["fastp_output/" + x + "_se_fastp.json" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "run"])] + ["fastp_output/" + x + "_pe_fastp.json" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "run"])]
+
 rule multiqc:
 	input:
-		expand("fastp_output/{runSe}_se_fastp.json", runSe=samplesSe.index.get_level_values("run")),
-		expand("fastp_output/{runPe}_pe_fastp.json", runPe=samplesPe.index.get_level_values("run")),
+		#expand("fastp_output/{runSe}_se_fastp.json", runSe=samplesSe.index.get_level_values("run")),
+		#expand("fastp_output/{runPe}_pe_fastp.json", runPe=samplesPe.index.get_level_values("run")),
+		get_multiqc_input
 	output:
-		"multiqc_report.html"
+		"{assembly}_multiqc_report.html"
 	params:
 		condaStatus=get_conda_status
 	log:
-		"logs/multiqc.log"
+		"logs/multiqc/{assembly}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=32000

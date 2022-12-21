@@ -163,9 +163,7 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
-* run multiqc once per species/genome
-
-* fully separate multi-threaded and single-threaded steps in k-mer counting workflow
+* add ploidy column to `samples.tsv`
 
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`
 
