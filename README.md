@@ -54,19 +54,35 @@ This workflow will **not** work if:
 
 First, download this repo with `git clone`.
 
-The scripts in src/ should be run in their numbered order to replicate my results.
+## replicate full snakemake workflow
 
-## prepare metadata for workflow
+Clone this repository and submit a SLURM job script to run the entire workflow. **Caution: this will submit about 300,000 jobs**
 
-The `src/s00_organizeSRAdata.Rmd` script takes data in workflow/data/SRArunInfo and structures it into `data/samples.tsv` so that it can be churned through snakemake workflow.
+```
+git clone https://github.com/milesroberts-123/tajimasDacrossSpecies.git
 
-## Run workflow with conda envs
+cd tajimasDacrossSpecies/src
 
-Once you have a table of SRA runs to be chruned throught the workflow, you then need to call the workflow. 
+sbatch s02_full_snakemake.sh
+```
 
-An example script to apply the workflow with conda environments be found in `src/s02_snakemake.bash`
+## replicate test snakemake workflow
 
-## Run workflow with the MSU ICER HPCC modules
+Replicating the entire snakemake workflow will be impossible if you do not have access to a high performance computing cluster. Instead, you can verify the workflow using a much smaller test dataset. To do this, run:
+
+```
+git clone https://github.com/milesroberts-123/tajimasDacrossSpecies.git
+
+cd tajimasDacrossSpecies/src
+
+sbatch s03_test_snakemake.sh
+``` 
+
+## replicate preparation of metadata for workflow
+
+The `src/s00_organizeSRAdata.Rmd` script takes data in workflow/data/SRArunInfo and structures it into `data/samples.tsv` so that it can be churned through snakemake workflow. This table can be found in `workflow/data/samples.tsv` already.
+
+## run workflow with the MSU ICER HPCC modules instead of conda environments
 
 Find an example script in `src/s01_snakemake.bash`
 

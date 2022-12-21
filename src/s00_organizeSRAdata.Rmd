@@ -911,7 +911,26 @@ allReads = rbind(allReads, data.frame(run = spirodela_polyrhiza[,"Run"], replica
 
 ## Triticum aestivum
 ```{r}
-# fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_turgidum.csv.gz", data.table = F)
+
+# load data
+triticum_aestivum_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_aestivum_PRJEB48738.csv.gz", data.table = F)
+triticum_aestivum_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_aestivum_PRJEB48988.csv.gz", data.table = F)
+
+# concatenate
+triticum_aestivum = rbind(triticum_aestivum_1, triticum_aestivum_2)
+
+# check for technical replicates
+any(duplicated(triticum_aestivum$Experiment))
+any(duplicated(triticum_aestivum$SampleName))
+any(duplicated(triticum_aestivum$BioSample))
+
+# add layout
+triticum_aestivum$layout = NA
+triticum_aestivum$layout[(triticum_aestivum$spots_with_mates > 0)] = "PE"
+triticum_aestivum$layout[(triticum_aestivum$spots_with_mates == 0)] = "SE"
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = triticum_aestivum[,"Run"], replicate = triticum_aestivum[,"BioSample"], layout = triticum_aestivum[,"layout"], genome = "triticum_aestivum"))
 
 ```
 

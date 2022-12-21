@@ -101,6 +101,9 @@ sort(table(solanum_tuberosum$BioProject), decreasing = T)
 sorghum_bicolor = read.csv("SraRunInfo_sorghum_bicolor_2022-10-14.csv")
 sort(table(sorghum_bicolor$BioProject), decreasing = T)
 
+triticum_aestivum = fread("SraRunInfo_triticum_aestivum_2022-12-21.csv.gz", data.table = F)
+sort(table(triticum_aestivum$BioProject), decreasing = T)
+
 triticum_turgidum = fread("SraRunInfo_triticum_turgidum_2022-10-14.csv.gz", data.table = F)
 sort(table(triticum_turgidum$BioProject), decreasing = T)
 
