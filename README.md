@@ -26,7 +26,7 @@ This workflow takes a list of SRA run numbers, separated before-hand as either p
 
 In addition, this workflow is designed to:
 
-* analyze read data from multiple species simultaneously
+* analyze read data from multiple species simultaneously, including species of varying ploidy
 
 * split data by chromosome to parallelize computations
 
@@ -52,17 +52,15 @@ This workflow will **not** work if:
 
 # How to replicate my results
 
-First, download this repo with `git clone`.
+Running the scripts in `src/` in their numbered order to will replicate my analysis
 
 ## replicate full snakemake workflow
 
-Clone this repository and submit a SLURM job script to run the entire workflow. **Caution: this will submit about 300,000 jobs**
+Clone this repository and submit a SLURM job script to run the entire workflow. **Caution: this will submit about 400,000 jobs**
 
 ```
 git clone https://github.com/milesroberts-123/tajimasDacrossSpecies.git
-
 cd tajimasDacrossSpecies/src
-
 sbatch s02_full_snakemake.sh
 ```
 
@@ -72,9 +70,7 @@ Replicating the entire snakemake workflow will be impossible if you do not have 
 
 ```
 git clone https://github.com/milesroberts-123/tajimasDacrossSpecies.git
-
 cd tajimasDacrossSpecies/src
-
 sbatch s03_test_snakemake.sh
 ``` 
 
@@ -100,15 +96,13 @@ To get degenotate, clone degenotate github repo into `workflow/scripts`:
 
 ```
 cd workflow/scripts
-
 git clone https://github.com/harvardinformatics/degenotate.git
 ```
 
-You can then update degenotate by doing into the degenotate folder and using the `git fetch` then `git pull` commands
+You can then update degenotate by doing into the degenotate folder and using:
 
 ```
 git fetch
-
 git pull
 ```
 
@@ -128,6 +122,28 @@ workflow/data/
 ```
 
 See `workflow/dag.svg` for an example of my snakemake workflow executed on a handful of samples.
+
+## samples.tsv
+
+This file contains the following columns:
+
+* run: the SRA run number for the fastq dataset
+
+* replicate: the SRA biosample number, used to identify technical replicates
+
+* layout: SE or PE for single-end or paired-end respectively
+
+* genome: the prefix for the fasta file used as the reference for the sample (e.g. arabidopsis_thaliana)
+
+* ploidy: the number of chromosome sets in the cells of the organism sampled (e.g. 2 for diploid)
+
+## chromosomes.tsv
+
+This file is used to parallelize the GATK genotype GVCFs step in the workflow (splitting the data by chromosome/scaffold) contains the following columns
+
+* genome: the prefix of a fasta file
+
+* chromosome: the name of the chromosome/scaffold in the associated fasta file
 
 # Updating the repo
 
@@ -179,11 +195,9 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
-* add ploidy column to `samples.tsv`
+* finalize list of datasets to churn through workflow, maybe do a preliminary analysis on a handful of species with relatively little data first?
 
-* extract 4-fold degenerate sites using `degenotate` instead of `bedtools`
-
-* add data from more plant species
+* extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
 * Run workflow in batches? 1 batch = 1 species
 
