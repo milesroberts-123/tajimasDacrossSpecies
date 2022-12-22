@@ -107,6 +107,27 @@ arabidopsis_thaliana$layout[(arabidopsis_thaliana$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = arabidopsis_thaliana[,"Run"], replicate = arabidopsis_thaliana[,"BioSample"], layout = arabidopsis_thaliana[,"layout"], genome = "arabidopsis_thaliana", ploidy = 2))
 ```
 
+## Arabis alpina
+```{r}
+# load data for species
+arabis_alpina = fread("../workflow/data/SRArunInfo/SraRunInfo_arabis_alpina_PRJNA489364.csv.gz", data.table = F)
+
+# check species
+unique(arabis_alpina$ScientificName)
+
+# check if any reads are single-end
+any(arabis_alpina$spots_with_mates == 0)
+
+# assign reads as single end or paired end
+arabis_alpina$layout = NA
+arabis_alpina$layout = "PE"
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = arabis_alpina[,"Run"], replicate = arabis_alpina[,"BioSample"], layout = arabis_alpina[,"layout"], genome = "arabis_alpina", ploidy = 2))
+
+```
+
+
 ## Beta vulgaris
 ```{r}
 # load data for species
@@ -522,6 +543,25 @@ lactuca_sativa$layout[(lactuca_sativa$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = lactuca_sativa[,"Run"], replicate = lactuca_sativa[,"BioSample"], layout = lactuca_sativa[,"layout"], genome = "lactuca_sativa", ploidy = 2))
+```
+
+## Linum usitatissimum
+```{r}
+linum_usitatissimum = fread("../workflow/data/SRArunInfo/SraRunInfo_linum_usitatissimum_PRJNA590636.csv.gz", data.table = F)
+
+# check for technical replicates
+any(duplicated(linum_usitatissimum$Experiment))
+any(duplicated(linum_usitatissimum$SampleName))
+any(duplicated(linum_usitatissimum$BioSample))
+
+# add layout
+# checked that reads without mates are actually SE
+linum_usitatissimum$layout = NA
+linum_usitatissimum$layout = "PE"
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = linum_usitatissimum[,"Run"], replicate = linum_usitatissimum[,"BioSample"], layout = linum_usitatissimum[,"layout"], genome = "linum_usitatissimum", ploidy = 2))
+
 ```
 
 ## Lotus japonicus
@@ -945,6 +985,25 @@ triticum_aestivum$layout = "PE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = triticum_aestivum[,"Run"], replicate = triticum_aestivum[,"BioSample"], layout = triticum_aestivum[,"layout"], genome = "triticum_aestivum", ploidy = 6))
+
+```
+
+## Triticum turgidum
+```{r}
+triticum_turgidum = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_turgidum_PRJNA663409.csv.gz", data.table = F)
+
+# subset relevant species
+unique(triticum_turgidum$ScientificName)
+
+triticum_turgidum = triticum_turgidum[grepl("Triticum turgidum", triticum_turgidum$ScientificName),]
+
+# add layout, check if any reads are potentially single-end
+any(triticum_turgidum$spots_with_mates == 0)
+triticum_turgidum$layout = NA
+triticum_turgidum$layout = "PE"
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = triticum_turgidum[,"Run"], replicate = triticum_turgidum[,"BioSample"], layout = triticum_turgidum[,"layout"], genome = "triticum_turgidum", ploidy = 4))
 
 ```
 

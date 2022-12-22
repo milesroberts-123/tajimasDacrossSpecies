@@ -2,17 +2,21 @@
 
 ```{r}
 rm(list = ls())
-
 library(data.table)
 
 #info = read.csv("SraRunInfo.csv")
 #sort(table(info$BioProject), decreasing = T)
+arabis_alpina = fread("SraRunInfo_arabis_alpina_2022-12-22.csv.gz", data.table = F)
+sort(table(arabis_alpina$BioProject), decreasing = T)
 
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 
 bdistachyon = read.csv("SraRunInfo_brachypodium_distachyon_2022-10-05.csv")
 sort(table(bdistachyon$BioProject), decreasing = T)
+
+brachypodium_hybridum = fread("SraRunInfo_brachypodium_hybridum_2022-12-22.csv.gz", data.table = F)
+sort(table(brachypodium_hybridum$BioProject), decreasing = T)
 
 tintermedium = read.csv("SraRunInfo_thinopyrum_intermedium.csv")
 sort(table(tintermedium$BioProject), decreasing = T)
@@ -50,7 +54,7 @@ sort(table(glycine_max$BioProject), decreasing = T)
 lactuca_sativa = read.csv("SraRunInfo_lactuca_sativa_2022-10-13.csv")
 sort(table(lactuca_sativa$BioProject), decreasing = T)
 
-linum_usitatissimum = read.csv("SraRunInfo_linum_usitatissimum_2022-10-13.csv")
+linum_usitatissimum = fread("SraRunInfo_linum_usitatissimum_2022-10-13.csv.gz", data.table = F)
 sort(table(linum_usitatissimum$BioProject), decreasing = T)
 
 lotus_japonicus = read.csv("SraRunInfo_lotus_japonicus_2022-10-13.csv")
@@ -110,7 +114,7 @@ sort(table(triticum_turgidum$BioProject), decreasing = T)
 vitis_vinifera = read.csv("SraRunInfo_vitis_vinifera_2022-10-14.csv")
 sort(table(vitis_vinifera$BioProject), decreasing = T)
 
-zostera_marina = read.csv("SraRunInfo_zostera_marina_2022-10-14.csv")
+zostera_marina = fread("SraRunInfo_zostera_marina_2022-10-14.csv.gz", data.table = F)
 sort(table(zostera_marina$BioProject), decreasing = T)
 
 
