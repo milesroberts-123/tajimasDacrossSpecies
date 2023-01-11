@@ -18,6 +18,25 @@ allReads = NULL
 ```
 
 # Compile SRA run info for each species into master list, separate paired end and single-end reads
+## Aegilops tauschii
+```{r}
+# load data for species
+aegilops_tauschii = fread("../workflow/data/SRArunInfo/SraRunInfo_aegilops_tauschii_PRJNA685125.csv.gz", data.table = F)
+
+# subset to only appropriate reads
+aegilops_tauschii = aegilops_tauschii[(aegilops_tauschii$ScientificName == "Aegilops tauschii"),]
+
+# Check if there are any technical replicates
+any(duplicated(aegilops_tauschii$Experiment))
+any(duplicated(aegilops_tauschii$BioSample))
+
+# check if any reads are single-end
+any(aegilops_tauschii$spots_with_mates == 0)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = aegilops_tauschii[,"Run"], replicate = aegilops_tauschii[,"BioSample"], layout = "PE", genome = "aegilops_tauschii", ploidy = 2))
+```
+
 ## Amaranthus hypochondriacus
 ```{r}
 # load data for species
@@ -212,6 +231,49 @@ brachypodium_distachyon$layout[(brachypodium_distachyon$spots_with_mates == 0)] 
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = brachypodium_distachyon[,"Run"], replicate = brachypodium_distachyon[,"BioSample"], layout = brachypodium_distachyon[,"layout"], genome = "brachypodium_distachyon", ploidy = 2))
+
+```
+
+## Brassica juncea
+```{r}
+# load data for species
+brassica_juncea = fread("../workflow/data/SRArunInfo/SraRunInfo_brassica_juncea_PRJNA615316.csv.gz", data.table = F)
+
+# isolate only WGS datasets
+brassica_juncea = brassica_juncea[(brassica_juncea$LibraryStrategy == "WGS" & brassica_juncea$Platform == "ILLUMINA" & brassica_juncea$ScientificName == "Brassica juncea"),]
+
+# check for technical replicates
+any(duplicated(brassica_juncea$Experiment))
+any(duplicated(brassica_juncea$SampleName))
+any(duplicated(brassica_juncea$BioSample))
+any(duplicated(brassica_juncea$LibraryName))
+
+# add layout
+all(brassica_juncea$spots_with_mates > 0)
+brassica_juncea$layout = "PE"
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = brassica_juncea[,"Run"], replicate = brassica_juncea[,"BioSample"], layout = brassica_juncea[,"layout"], genome = "brassica_juncea", ploidy = 4))
+
+```
+
+## Brassica napus
+```{r}
+# load data for species
+brassica_napus = fread("../workflow/data/SRArunInfo/SraRunInfo_brassica_napus_PRJNA476657.csv.gz", data.table = F)
+
+# check for technical replicates
+any(duplicated(brassica_napus$Experiment))
+any(duplicated(brassica_napus$SampleName))
+any(duplicated(brassica_napus$BioSample))
+any(duplicated(brassica_napus$LibraryName))
+
+# add layout
+all(brassica_napus$spots_with_mates > 0)
+
+# add reads to growing list
+# use experiment ID instead of BioSample ID because BioSample ID is not unique for each sample
+allReads = rbind(allReads, data.frame(run = brassica_napus[,"Run"], replicate = brassica_napus[,"Experiment"], layout = "PE", genome = "brassica_napus", ploidy = 4))
 
 ```
 

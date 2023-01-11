@@ -6,8 +6,20 @@ library(data.table)
 
 #info = read.csv("SraRunInfo.csv")
 #sort(table(info$BioProject), decreasing = T)
+actinidia_chinensis = fread("SraRunInfo_actinidia_chinensis_2023-01-11.csv.gz", data.table = F)
+sort(table(actinidia_chinensis$BioProject), decreasing = T)
+
+aegilops_tauschii = fread("SraRunInfo_aegilops_tauschii_2023-01-11.csv.gz", data.table = F)
+sort(table(aegilops_tauschii$BioProject), decreasing = T)
+
 arabis_alpina = fread("SraRunInfo_arabis_alpina_2022-12-22.csv.gz", data.table = F)
 sort(table(arabis_alpina$BioProject), decreasing = T)
+
+brassica_juncea = fread("SraRunInfo_brassica_juncea_2023-01-11.csv.gz", data.table = F)
+sort(table(brassica_juncea$BioProject), decreasing = T)
+
+brassica_napus = fread("SraRunInfo_brassica_napus_2023-01-11.csv.gz", data.table = F)
+sort(table(brassica_napus$BioProject), decreasing = T)
 
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
