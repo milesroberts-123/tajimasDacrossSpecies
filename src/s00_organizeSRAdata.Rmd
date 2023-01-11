@@ -304,6 +304,14 @@ allReads = rbind(allReads, data.frame(run = brassica_rapa[,"Run"], replicate = b
 allReads = rbind(allReads, data.frame(run = brassica_oleracea[,"Run"], replicate = brassica_oleracea[,"BioSample"], layout = brassica_oleracea[,"layout"], genome = "brassica_oleracea", ploidy = 2))
 ```
 
+## Cannabis sativa
+```{r}
+cannabis_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_cannabis_sativa_PRJNA866500.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = cannabis_sativa[,"Run"], replicate = cannabis_sativa[,"BioSample"], layout = "PE", genome = "cannabis_sativa", ploidy = 2))
+```
+
 ## Capsella grandiflora
 ```{r}
 capsella_grandiflora = fread("../workflow/data/SRArunInfo/SraRunInfo_capsella_grandiflora_PRJEB39830.csv.gz", data.table = F)
@@ -893,6 +901,18 @@ prunus_persica$layout[(prunus_persica$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = prunus_persica[,"Run"], replicate = prunus_persica[,"BioSample"], layout = prunus_persica[,"layout"], genome = "prunus_persica", ploidy = 2))
+```
+
+## Secale cereale
+```{r}
+secale_cereale = fread("../workflow/data/SRArunInfo/SraRunInfo_secale_cereale_PRJEB6215.csv.gz", data.table = F)
+
+# remove wild lines
+secale_cereale = secale_cereale[(secale_cereale$ScientificName == "Secale cereale"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = secale_cereale[,"Run"], replicate = secale_cereale[,"BioSample"], layout = "PE", genome = "secale_cereale", ploidy = 2))
+
 ```
 
 ## Setaria italica

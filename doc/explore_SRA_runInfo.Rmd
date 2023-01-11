@@ -21,6 +21,12 @@ sort(table(brassica_juncea$BioProject), decreasing = T)
 brassica_napus = fread("SraRunInfo_brassica_napus_2023-01-11.csv.gz", data.table = F)
 sort(table(brassica_napus$BioProject), decreasing = T)
 
+camelina_sativa = fread("SraRunInfo_camelina_sativa_2023-01-11.csv.gz", data.table = F)
+sort(table(camelina_sativa$BioProject), decreasing = T)
+
+cannabis_sativa = fread("SraRunInfo_cannabis_sativa_2023-01-11.csv.gz", data.table = F)
+sort(table(cannabis_sativa$BioProject), decreasing = T)
+
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 
@@ -101,6 +107,9 @@ sort(table(prunus_persica$BioProject), decreasing = T)
 
 salix_purpurea = read.csv("SraRunInfo_salix_purpurea_2022-10-14.csv")
 sort(table(salix_purpurea$BioProject), decreasing = T)
+
+secale_cereale = read.csv("SraRunInfo_secale_cereale_2023-01-11.csv.gz")
+sort(table(secale_cereale$BioProject), decreasing = T)
 
 setaria_italica = read.csv("SraRunInfo_setaria_italica_2022-10-14.csv")
 sort(table(setaria_italica$BioProject), decreasing = T)
