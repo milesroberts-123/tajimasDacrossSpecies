@@ -27,6 +27,18 @@ sort(table(camelina_sativa$BioProject), decreasing = T)
 cannabis_sativa = fread("SraRunInfo_cannabis_sativa_2023-01-11.csv.gz", data.table = F)
 sort(table(cannabis_sativa$BioProject), decreasing = T)
 
+capsicum_annuum = fread("SraRunInfo_capsicum_annuum_2023-01-12.csv.gz", data.table = F)
+sort(table(capsicum_annuum$BioProject), decreasing = T)
+
+coffea_canephora = fread("SraRunInfo_coffea_canephora_2023-01-12.csv.gz", data.table = F)
+sort(table(coffea_canephora$BioProject), decreasing = T)
+
+corylus_avellana = fread("SraRunInfo_corylus_avellana_2023-01-12.csv.gz", data.table = F)
+sort(table(corylus_avellana$BioProject), decreasing = T)
+
+cucumis_melo = fread("SraRunInfo_cucumis_melo_2023-01-12.csv.gz", data.table = F)
+sort(table(cucumis_melo$BioProject), decreasing = T)
+
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 

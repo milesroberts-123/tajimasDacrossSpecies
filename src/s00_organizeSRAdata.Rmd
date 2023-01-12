@@ -357,6 +357,18 @@ capsella_rubella$layout = "PE"
 allReads = rbind(allReads, data.frame(run = capsella_rubella[,"Run"], replicate = capsella_rubella[,"BioSample"], layout = capsella_rubella[,"layout"], genome = "capsella_rubella", ploidy = 2))
 ```
 
+## Capsicum annuum
+```{r}
+# load data
+capsicum_annuum = fread("../workflow/data/SRArunInfo/SraRunInfo_capsicum_annuum_PRJDB14137.csv.gz", data.table = F)
+
+# Subset only WGS reads for this species
+capsicum_annuum = capsicum_annuum[(capsicum_annuum$LibraryStrategy == "WGS" & capsicum_annuum$Platform == "ILLUMINA" & capsicum_annuum$ScientificName == "Capsicum annuum"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = capsicum_annuum[,"Run"], replicate = capsicum_annuum[,"BioSample"], layout = "PE", genome = "capsicum_annuum", ploidy = 2))
+```
+
 ## Chenopodium quinoa
 ```{r}
 # load data
@@ -427,6 +439,34 @@ citrullus_lanatus$layout[(citrullus_lanatus$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = citrullus_lanatus[,"Run"], replicate = citrullus_lanatus[,"BioSample"], layout = citrullus_lanatus[,"layout"], genome = "citrullus_lanatus", ploidy = 2))
+```
+
+## Coffea canephora
+```{r}
+# load data
+coffea_canephora = fread("../workflow/data/SRArunInfo/SraRunInfo_coffea_canephora_PRJNA505204.csv.gz", data.table = F)
+
+# subset only this species
+coffea_canephora = coffea_canephora[(coffea_canephora$ScientificName == "Coffea canephora"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = coffea_canephora[,"Run"], replicate = coffea_canephora[,"BioSample"], layout = "PE", genome = "coffea_canephora", ploidy = 2))
+
+```
+
+## Cucumis melo
+```{r}
+# load data
+cucumis_melo = fread("../workflow/data/SRArunInfo/SraRunInfo_cucumis_melo_PRJNA565104.csv.gz", data.table = F)
+
+# remove reads from outgroup based on publication, 
+# see Supplementary table 1
+runs2drop = paste("MS-", c(893:898, 900, 901, 995), sep = "")
+
+cucumis_melo = cucumis_melo[!(cucumis_melo$SampleName %in% runs2drop),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = cucumis_melo[,"Run"], replicate = cucumis_melo[,"BioSample"], layout = "PE", genome = "cucumis_melo", ploidy = 2))
 ```
 
 ## Cucumis sativus
