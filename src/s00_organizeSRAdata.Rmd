@@ -493,6 +493,28 @@ cucumis_sativus$layout = "PE"
 allReads = rbind(allReads, data.frame(run = cucumis_sativus[,"Run"], replicate = cucumis_sativus[,"BioSample"], layout = cucumis_sativus[,"layout"], genome = "cucumis_sativus", ploidy = 2))
 ```
 
+## Digitaria exilis
+```{r}
+# load data
+digitaria_exilis = fread("../workflow/data/SRArunInfo/SraRunInfo_digitaria_exilis_PRJEB36539.csv.gz", data.table = F)
+
+# subset to only this species
+digitaria_exilis = digitaria_exilis[(digitaria_exilis$ScientificName == "Digitaria exilis" & digitaria_exilis$LibraryStrategy == "WGS"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = digitaria_exilis[,"Run"], replicate = digitaria_exilis[,"BioSample"], layout = "PE", genome = "digitaria_exilis", ploidy = 4))
+```
+
+## Ficus carica
+```{r}
+# load data
+ficus_carica = fread("../workflow/data/SRArunInfo/SraRunInfo_ficus_carica_PRJDB11005.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = ficus_carica[,"Run"], replicate = ficus_carica[,"BioSample"], layout = "PE", genome = "ficus_carica", ploidy = 2))
+
+```
+
 ## Glycine max
 ```{r}
 # load data
