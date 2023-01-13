@@ -45,6 +45,15 @@ sort(table(digitaria_exilis$BioProject), decreasing = T)
 ficus_carica = fread("SraRunInfo_ficus_carica_2023-01-12.csv.gz", data.table = F)
 sort(table(ficus_carica$BioProject), decreasing = T)
 
+juglans_regia = fread("SraRunInfo_juglans_regia_2023-01-13.csv.gz", data.table = F)
+sort(table(juglans_regia$BioProject), decreasing = T)
+
+lolium_perenne = fread("SraRunInfo_lolium_perenne_2023-01-13.csv.gz", data.table = F)
+sort(table(lolium_perenne$BioProject), decreasing = T)
+
+marchantia_polymorpha = fread("SraRunInfo_marchantia_polymorpha_2023-01-13.csv.gz", data.table = F)
+sort(table(marchantia_polymorpha$BioProject), decreasing = T)
+
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 

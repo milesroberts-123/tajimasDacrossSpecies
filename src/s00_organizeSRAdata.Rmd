@@ -655,6 +655,18 @@ hordeum_vulgare$layout[(hordeum_vulgare$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = hordeum_vulgare[,"Run"], replicate = hordeum_vulgare[,"BioSample"], layout = hordeum_vulgare[,"layout"], genome = "hordeum_vulgare", ploidy = 2))
 ```
 
+## Juglans regia
+```{r}
+juglans_regia = fread("../workflow/data/SRArunInfo/SraRunInfo_juglans_regia_PRJNA721107.csv.gz", data.table = F)
+
+# subset relevant reads
+juglans_regia = juglans_regia[(juglans_regia$ScientificName == "Juglans regia"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = juglans_regia[,"Run"], replicate = juglans_regia[,"BioSample"], layout = "PE", genome = "juglans_regia", ploidy = 2))
+
+```
+
 ## Lactuca sativa
 ```{r}
 lactuca_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_lactuca_sativa_PRJNA693894.csv.gz", data.table = F)
@@ -718,6 +730,21 @@ lotus_japonicus$layout[(lotus_japonicus$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = lotus_japonicus[,"Run"], replicate = lotus_japonicus[,"BioSample"], layout = lotus_japonicus[,"layout"], genome = "lotus_japonicus", ploidy = 2))
 ```
 
+## Lupinus angustifolius
+```{r}
+lupinus_angustifolius = fread("../workflow/data/SRArunInfo/SraRunInfo_lupinus_angustifolius_PRJNA797109.csv.gz", data.table = F)
+
+lupinus_angustifolius = lupinus_angustifolius[(lupinus_angustifolius$Platform == "ILLUMINA"),]
+
+length(unique(lupinus_angustifolius$BioSample))
+length(unique(lupinus_angustifolius$Experiment))
+
+# add reads to growing list
+# Use experiment labels, because 51 biosamples doesn't match the 55 mentioned in the publication
+allReads = rbind(allReads, data.frame(run = lupinus_angustifolius[,"Run"], replicate = lupinus_angustifolius[,"Experiment"], layout = "PE", genome = "lupinus_angustifolius", ploidy = 2))
+
+```
+
 ## Manihot esculenta
 ```{r}
 manihot_esculenta = fread("../workflow/data/SRArunInfo/SraRunInfo_manihot_esculenta_PRJNA234389.csv.gz", data.table = F)
@@ -749,6 +776,8 @@ manihot_esculenta$layout[(manihot_esculenta$spots_with_mates == 0)] = "SE"
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = manihot_esculenta[,"Run"], replicate = manihot_esculenta[,"BioSample"], layout = manihot_esculenta[,"layout"], genome = "manihot_esculenta", ploidy = 2))
 ```
+
+
 
 ## Medicago truncatula
 ```{r}
@@ -823,6 +852,15 @@ olea_europaea$layout[(olea_europaea$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = olea_europaea[,"Run"], replicate = olea_europaea[,"BioSample"], layout = olea_europaea[,"layout"], genome = "olea_europaea", ploidy = 2))
+```
+
+## Oryza barthii
+```{r}
+oryza_barthii = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_barthii_PRJDB4702.csv.gz", data.table = F)
+
+# add reads to growing list
+# ***not sure about the ploidy here***
+allReads = rbind(allReads, data.frame(run = oryza_barthii[,"Run"], replicate = oryza_barthii[,"BioSample"], layout = "PE", genome = "oryza_barthii", ploidy = 2))
 ```
 
 ## Oryza sativa
@@ -1221,7 +1259,16 @@ allReads = rbind(allReads, data.frame(run = zea_mays[,"Run"], replicate = zea_ma
 # Summarize read counts
 ```{r}
 # breakdown of reads per species
-table(allReads$genome, allReads$layout)
+# write.table(table(allReads$genome, allReads$layout), "breakdownOfReadSets")
+readBreakdown = table(allReads$genome, allReads$layout)
+print(readBreakdown)
+
+# number of unique genotypes per species
+countUnique = function(x){
+  length(unique(x))
+}
+indvBreakdown = aggregate(replicate ~ genome, data = allReads, FUN = countUnique)
+print(indvBreakdown)
 
 # number of species included thus far
 length(unique(allReads$genome))
@@ -1229,11 +1276,11 @@ length(unique(allReads$genome))
 # number of unique genotypes
 length(unique(allReads$replicate))
 
-# number of unique genotypes per species
-aggregate(replicate ~ genome, data = allReads, FUN = unique)
-
 # total number of read sets
 nrow(allReads)
+
+# save table of breakdown
+# write.csv(cbind(readBreakdown, indvBreakdown[,-1]), "breakdownOfReadSetsByGenome.csv")
 ```
 
 
