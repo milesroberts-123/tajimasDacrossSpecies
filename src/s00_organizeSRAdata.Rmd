@@ -910,6 +910,11 @@ allReads = rbind(allReads, data.frame(run = oryza_meridionalis[,"Run"], replicat
 
 ```
 
+## Oryza nivara
+```{r eval=FALSE, include=FALSE}
+oryza_nivara = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_nivara_PRJNA606132.csv.gz", data.table = F)
+```
+
 ## Oryza sativa
 ```{r}
 oryza_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_sativa_PRJEB6180.csv.gz", data.table = F)

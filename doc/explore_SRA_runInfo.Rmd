@@ -69,6 +69,9 @@ sort(table(oryza_longistaminata$BioProject), decreasing = T)
 oryza_meridionalis = fread("SraRunInfo_oryza_meridionalis_2023-01-14.csv.gz", data.table = F)
 sort(table(oryza_meridionalis$BioProject), decreasing = T)
 
+oryza_nivara = fread("SraRunInfo_oryza_nivara_2023-01-14.csv.gz", data.table = F)
+sort(table(oryza_nivara$BioProject), decreasing = T)
+
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 
