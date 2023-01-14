@@ -54,6 +54,21 @@ sort(table(lolium_perenne$BioProject), decreasing = T)
 marchantia_polymorpha = fread("SraRunInfo_marchantia_polymorpha_2023-01-13.csv.gz", data.table = F)
 sort(table(marchantia_polymorpha$BioProject), decreasing = T)
 
+oryza_brachyantha = fread("SraRunInfo_oryza_brachyantha_2023-01-14.csv.gz", data.table = F)
+sort(table(oryza_brachyantha$BioProject), decreasing = T)
+
+oryza_glaberrima = fread("SraRunInfo_oryza_glaberrima_2023-01-14.csv.gz", data.table = F)
+sort(table(oryza_glaberrima$BioProject), decreasing = T)
+
+oryza_glumipatula = fread("SraRunInfo_oryza_glumipatula_2023-01-14.csv.gz", data.table = F)
+sort(table(oryza_glumipatula$BioProject), decreasing = T)
+
+oryza_longistaminata = fread("SraRunInfo_oryza_longistaminata_2023-01-14.csv.gz", data.table = F)
+sort(table(oryza_longistaminata$BioProject), decreasing = T)
+
+oryza_meridionalis = fread("SraRunInfo_oryza_meridionalis_2023-01-14.csv.gz", data.table = F)
+sort(table(oryza_meridionalis$BioProject), decreasing = T)
+
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 

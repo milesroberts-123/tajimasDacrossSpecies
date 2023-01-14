@@ -855,12 +855,59 @@ allReads = rbind(allReads, data.frame(run = olea_europaea[,"Run"], replicate = o
 ```
 
 ## Oryza barthii
-```{r}
+```{r eval=FALSE, include=FALSE}
 oryza_barthii = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_barthii_PRJDB4702.csv.gz", data.table = F)
 
 # add reads to growing list
 # ***not sure about the ploidy here***
 allReads = rbind(allReads, data.frame(run = oryza_barthii[,"Run"], replicate = oryza_barthii[,"BioSample"], layout = "PE", genome = "oryza_barthii", ploidy = 2))
+```
+
+## Oryza brachyantha
+```{r}
+oryza_brachyantha = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_brachyantha_PRJDB4059.csv.gz", data.table = F)
+
+allReads = rbind(allReads, data.frame(run = oryza_brachyantha[,"Run"], replicate = oryza_brachyantha[,"BioSample"], layout = "PE", genome = "oryza_brachyantha", ploidy = 2))
+```
+
+## Oryza glaberrima and Oryza barthii
+```{r}
+oryza = fread("../workflow/data/SRArunInfo/SraRunInfo_PRJEB21312.csv.gz", data.table = F)
+
+# breakdown between species
+table(oryza$ScientificName)
+
+# separte species
+oryza_barthii = oryza[(oryza$ScientificName == "Oryza barthii"),]
+oryza_glaberrima = oryza[(oryza$ScientificName == "Oryza glaberrima"),]
+
+allReads = rbind(allReads, data.frame(run = oryza_barthii[,"Run"], replicate = oryza_barthii[,"BioSample"], layout = "PE", genome = "oryza_barthii", ploidy = 2))
+
+allReads = rbind(allReads, data.frame(run = oryza_glaberrima[,"Run"], replicate = oryza_glaberrima[,"BioSample"], layout = "PE", genome = "oryza_glaberrima", ploidy = 2))
+```
+
+## Oryza glumipatula
+```{r}
+oryza_glumipatula = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_glumipatula_PRJDB4703.csv.gz", data.table = F)
+
+allReads = rbind(allReads, data.frame(run = oryza_glumipatula[,"Run"], replicate = oryza_glumipatula[,"BioSample"], layout = "PE", genome = "oryza_glumipatula", ploidy = 2))
+```
+
+## Oryza longistaminata
+```{r}
+oryza_longistaminata = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_longistaminata_PRJDB4705.csv.gz", data.table = F)
+
+allReads = rbind(allReads, data.frame(run = oryza_longistaminata[,"Run"], replicate = oryza_longistaminata[,"BioSample"], layout = "PE", genome = "oryza_longistaminata", ploidy = 2))
+```
+
+## Oryza meridionalis
+```{r}
+oryza_meridionalis = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_meridionalis_PRJDB4704.csv.gz", data.table = F)
+
+# add reads to growing list
+# ***not sure about ploidy here***
+allReads = rbind(allReads, data.frame(run = oryza_meridionalis[,"Run"], replicate = oryza_meridionalis[,"BioSample"], layout = "PE", genome = "oryza_meridionalis", ploidy = 2))
+
 ```
 
 ## Oryza sativa
