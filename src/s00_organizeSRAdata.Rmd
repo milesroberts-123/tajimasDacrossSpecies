@@ -915,6 +915,27 @@ allReads = rbind(allReads, data.frame(run = oryza_meridionalis[,"Run"], replicat
 oryza_nivara = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_nivara_PRJNA606132.csv.gz", data.table = F)
 ```
 
+## Oryza punctata
+```{r}
+oryza_punctata = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_punctata_PRJDB4620.csv.gz", data.table = F)
+
+allReads = rbind(allReads, data.frame(run = oryza_punctata[,"Run"], replicate = oryza_punctata[,"BioSample"], layout = "PE", genome = "oryza_punctata", ploidy = 2))
+```
+
+## Oryza rufipogon
+```{r}
+oryza_rufipogon = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_rufipogon_PRJEB2829.csv.gz", data.table = F)
+
+# only include this species
+oryza_rufipogon = oryza_rufipogon[grepl("Oryza rufipogon", oryza_rufipogon$ScientificName),]
+
+length(unique(oryza_rufipogon$BioSample))
+
+# add reads to growing list
+# ***not sure about ploidy here***
+allReads = rbind(allReads, data.frame(run = oryza_rufipogon[,"Run"], replicate = oryza_rufipogon[,"BioSample"], layout = "PE", genome = "oryza_rufipogon", ploidy = 2))
+```
+
 ## Oryza sativa
 ```{r}
 oryza_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_sativa_PRJEB6180.csv.gz", data.table = F)
@@ -1013,6 +1034,26 @@ phaseolus_vulgaris$layout[(phaseolus_vulgaris$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = phaseolus_vulgaris[,"Run"], replicate = phaseolus_vulgaris[,"BioSample"], layout = phaseolus_vulgaris[,"layout"], genome = "phaseolus_vulgaris", ploidy = 2))
 ```
 
+## Pisum sativum
+```{r}
+pisum_sativum_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_pisum_sativum_PRJNA285605.csv.gz", data.table = F)
+pisum_sativum_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_pisum_sativum_PRJNA431567.csv.gz", data.table = F)
+
+# subset to just pisum sativum
+pisum_sativum_1 = pisum_sativum_1[grepl("Pisum sativum", pisum_sativum_1$ScientificName),]
+pisum_sativum_2 = pisum_sativum_2[grepl("Pisum sativum", pisum_sativum_2$ScientificName),]
+
+pisum_sativum = rbind(pisum_sativum_1,pisum_sativum_2)
+
+# add layout
+pisum_sativum$layout = NA
+pisum_sativum$layout[(pisum_sativum$spots_with_mates > 0)] = "PE"
+pisum_sativum$layout[(pisum_sativum$spots_with_mates == 0)] = "SE"
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = pisum_sativum[,"Run"], replicate = pisum_sativum[,"BioSample"], layout = pisum_sativum[,"layout"], genome = "pisum_sativum", ploidy = 2))
+```
+
 ## Populus trichocarpa
 ```{r}
 populus_trichocarpa = fread("../workflow/data/SRArunInfo/SraRunInfo_populus_trichocarpa_PRJNA276056.csv.gz", data.table = F)
@@ -1028,6 +1069,19 @@ populus_trichocarpa$layout = "PE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = populus_trichocarpa[,"Run"], replicate = populus_trichocarpa[,"BioSample"], layout = populus_trichocarpa[,"layout"], genome = "populus_trichocarpa", ploidy = 2))
+```
+
+## Prunus avium
+```{r}
+prunus_avium = fread("../workflow/data/SRArunInfo/SraRunInfo_prunus_avium_PRJNA813711.csv.gz", data.table = F)
+
+length(unique(prunus_avium$BioSample))
+length(unique(prunus_avium$Experiment))
+length(unique(prunus_avium$LibraryName))
+length(unique(prunus_avium$SampleName))
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = prunus_avium[,"Run"], replicate = prunus_avium[,"BioSample"], layout = "PE", genome = "prunus_avium", ploidy = 2))
 ```
 
 ## Prunus persica
@@ -1055,6 +1109,28 @@ prunus_persica$layout[(prunus_persica$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = prunus_persica[,"Run"], replicate = prunus_persica[,"BioSample"], layout = prunus_persica[,"layout"], genome = "prunus_persica", ploidy = 2))
 ```
 
+## Quercus lobata
+```{r}
+quercus_lobata = fread("../workflow/data/SRArunInfo/SraRunInfo_quercus_lobata_PRJNA729978.csv.gz", data.table = F)
+
+# subset only quercus lobata
+quercus_lobata = quercus_lobata[(quercus_lobata$ScientificName == "Quercus lobata"),]
+
+# number of genotypes
+length(unique(quercus_lobata$BioSample))
+length(unique(quercus_lobata$Experiment))
+length(unique(quercus_lobata$LibraryName))
+length(unique(quercus_lobata$SampleName))
+
+# add layout
+quercus_lobata$layout = NA
+quercus_lobata$layout[(quercus_lobata$spots_with_mates > 0)] = "PE"
+quercus_lobata$layout[(quercus_lobata$spots_with_mates == 0)] = "SE"
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = quercus_lobata[,"Run"], replicate = quercus_lobata[,"BioSample"], layout = quercus_lobata[,"layout"], genome = "quercus_lobata", ploidy = 2))
+```
+
 ## Secale cereale
 ```{r}
 secale_cereale = fread("../workflow/data/SRArunInfo/SraRunInfo_secale_cereale_PRJEB6215.csv.gz", data.table = F)
@@ -1065,6 +1141,17 @@ secale_cereale = secale_cereale[(secale_cereale$ScientificName == "Secale cereal
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = secale_cereale[,"Run"], replicate = secale_cereale[,"BioSample"], layout = "PE", genome = "secale_cereale", ploidy = 2))
 
+```
+
+## Sesamum indicum
+```{r}
+sesamum_indicum = fread("../workflow/data/SRArunInfo/SraRunInfo_sesamum_indicum_PRJEB8078.csv.gz", data.table = F)
+
+# subset only sesamum indicum
+sesamum_indicum = sesamum_indicum[(sesamum_indicum$ScientificName == "Sesamum indicum"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = sesamum_indicum[,"Run"], replicate = sesamum_indicum[,"BioSample"], layout = "PE", genome = "sesamum_indicum", ploidy = 2))
 ```
 
 ## Setaria italica
@@ -1222,6 +1309,7 @@ allReads = rbind(allReads, data.frame(run = triticum_aestivum[,"Run"], replicate
 
 ```
 
+
 ## Triticum turgidum
 ```{r}
 triticum_turgidum = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_turgidum_PRJNA663409.csv.gz", data.table = F)
@@ -1238,6 +1326,24 @@ triticum_turgidum$layout = "PE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = triticum_turgidum[,"Run"], replicate = triticum_turgidum[,"BioSample"], layout = triticum_turgidum[,"layout"], genome = "triticum_turgidum", ploidy = 4))
+
+```
+
+## Vigna radiata
+```{r}
+vigna_radiata = fread("../workflow/data/SRArunInfo/SraRunInfo_vigna_radiata_PRJNA885164.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = vigna_radiata[,"Run"], replicate = vigna_radiata[,"BioSample"], layout = "SE", genome = "vigna_radiata", ploidy = 2))
+
+```
+
+## Vigna unguiculata
+```{r}
+vigna_unguiculata = fread("../workflow/data/SRArunInfo/SraRunInfo_vigna_unguiculata_SRP077082.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = vigna_unguiculata[,"Run"], replicate = vigna_unguiculata[,"BioSample"], layout = "PE", genome = "vigna_unguiculata", ploidy = 2))
 
 ```
 

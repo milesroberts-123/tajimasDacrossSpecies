@@ -72,6 +72,45 @@ sort(table(oryza_meridionalis$BioProject), decreasing = T)
 oryza_nivara = fread("SraRunInfo_oryza_nivara_2023-01-14.csv.gz", data.table = F)
 sort(table(oryza_nivara$BioProject), decreasing = T)
 
+oryza_punctata = fread("SraRunInfo_oryza_punctata_2023-01-16.csv.gz", data.table = F)
+sort(table(oryza_punctata$BioProject), decreasing = T)
+
+oryza_rufipogon = fread("SraRunInfo_oryza_rufipogon_2023-01-16.csv.gz", data.table = F)
+sort(table(oryza_rufipogon$BioProject), decreasing = T)
+
+papaver_somniferum = fread("SraRunInfo_papaver_somniferum_2023-01-16.csv.gz", data.table = F)
+sort(table(papaver_somniferum$BioProject), decreasing = T)
+
+pisum_sativum = fread("SraRunInfo_pisum_sativum_2023-01-16.csv.gz", data.table = F)
+sort(table(pisum_sativum$BioProject), decreasing = T)
+
+prunus_avium = fread("SraRunInfo_prunus_avium_2023-01-16.csv.gz", data.table = F)
+sort(table(prunus_avium$BioProject), decreasing = T)
+
+prunus_dulcis = fread("SraRunInfo_prunus_dulcis_2023-01-16.csv.gz", data.table = F)
+sort(table(prunus_dulcis$BioProject), decreasing = T)
+
+quercus_lobata = fread("SraRunInfo_quercus_lobata_2023-01-16.csv.gz", data.table = F)
+sort(table(quercus_lobata$BioProject), decreasing = T)
+
+quercus_suber = fread("SraRunInfo_quercus_suber_2023-01-16.csv.gz", data.table = F)
+sort(table(quercus_suber$BioProject), decreasing = T)
+
+rosa_chinensis = fread("SraRunInfo_rosa_chinensis_2023-01-16.csv.gz", data.table = F)
+sort(table(rosa_chinensis$BioProject), decreasing = T)
+
+sesamum_indicum = fread("SraRunInfo_sesamum_indicum_2023-01-16.csv.gz", data.table = F)
+sort(table(sesamum_indicum$BioProject), decreasing = T)
+
+triticum_dicoccoides = fread("SraRunInfo_triticum_dicoccoides_2023-01-16.csv.gz", data.table = F)
+sort(table(triticum_dicoccoides$BioProject), decreasing = T)
+
+vigna_radiata = fread("SraRunInfo_vigna_radiata_2023-01-16.csv.gz", data.table = F)
+sort(table(vigna_radiata$BioProject), decreasing = T)
+
+vigna_unguiculata = fread("SraRunInfo_vigna_unguiculata_2023-01-16.csv.gz", data.table = F)
+sort(table(vigna_unguiculata$BioProject), decreasing = T)
+
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 
