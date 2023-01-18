@@ -199,6 +199,8 @@ conda install -n base -c conda-forge mamba
 
 * Add scripts to remove underscores from chromosome/scaffold names in the assembly and annotation files
 
+* extend workflow to output genome-wide nucleotide diversity and k-mer dissimilarity values
+
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
 * Run workflow in batches? 1 batch = 1 species
