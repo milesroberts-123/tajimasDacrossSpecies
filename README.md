@@ -197,7 +197,7 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
-* finalize list of datasets to churn through workflow, maybe do a preliminary analysis on a handful of species with relatively little data first?
+* Add scripts to remove underscores from chromosome/scaffold names in the assembly and annotation files
 
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
