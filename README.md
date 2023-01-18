@@ -145,6 +145,8 @@ This file is used to parallelize the GATK genotype GVCFs step in the workflow (s
 
 * chromosome: the name of the chromosome/scaffold in the associated fasta file
 
+**You must remove any underscores from chromosome/scaffold names for snakemake wildcards to work (e.g. scaffold_25 -> scaffold25)!** This name change should be reflected in `chromosomes.tsv`, the gff files, and the fasta files.
+
 # Updating the repo
 
 ```
