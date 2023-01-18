@@ -1439,6 +1439,19 @@ nrow(allReads)
 
 # save table of breakdown
 # write.csv(cbind(readBreakdown, indvBreakdown[,-1]), "breakdownOfReadSetsByGenome.csv")
+
+# remove intermediate objects
+rm(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3, brassica, boechera_stricta_1, boechera_stricta_2, glycine_max_1, glycine_max_2, glycine_max_3, oryza, pisum_sativum_1, pisum_sativum_2, triticum_aestivum_1, triticum_aestivum_2, zea_mays_1, zea_mays_2, zea_mays_3)
+
+# Estimate number of basepairs included in dataset
+# bind all metadata together
+runsAllMetaData = list(aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_thaliana, arabis_alpina, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brassica_juncea, brassica_napus, brassica_oleracea, brassica_rapa, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_canephora, cucumis_melo, cucumis_sativus, digitaria_exilis, ficus_carica, glycine_max, glycine_soja, gossypium_barbadense, gossypium_hirsutum, hordeum_vulgare, juglans_regia, lactuca_sativa, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, manihot_esculenta, medicago_truncatula, mimulus_guttatus, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_glumipatula, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_halli, panicum_virgatum, phaseolus_vulgaris, pisum_sativum, populus_trichocarpa, prunus_avium, prunus_persica, quercus_lobata, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_lycopersicum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, triticum_aestivum, triticum_turgidum, vigna_radiata, vigna_unguiculata, vitis_vinifera, zea_mays)
+
+sumColumnInList = function(x){
+  sum(as.numeric(x[,"bases"]))
+}
+
+sum(unlist(lapply(runsAllMetaData, sumColumnInList)))
 ```
 
 
@@ -1472,9 +1485,12 @@ length(unique(allReadsFinal$genome))
 # output read metadata for snakemake input
 ```{r}
 # test dataset for merging reads into single datasets
-mergeTestSet = allReads[(allReads$replicate %in% c("SAMEA2567517", "SAMEA2567535", "SAMEA2567633", "SAMEA2567634", "SAMN03005107", "SAMN03005132")),]
+#mergeTestSet = allReads[(allReads$replicate %in% c("SAMEA2567517", "SAMEA2567535", "SAMEA2567633", "SAMEA2567634", "SAMN03005107", "SAMN03005132")),]
+#write.table(mergeTestSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
-write.table(mergeTestSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
+# analyze just a couple species as an example
+testSet = allReads[(allReads$genome %in% c("capsella_rubella", "brachypodium_distachyon", "arabidopsis_halleri")),]
+write.table(testSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # write run numbers and metadata to workflow input
 # need to replace write path with "../workflow/data/samples_pe.tsv" when I'm ready
