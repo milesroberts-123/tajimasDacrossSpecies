@@ -7,7 +7,7 @@ rule download_se:
 		"logs/fastq-dump/{runSe}.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=1500
+		mem_mb_per_cpu=4000
 	conda:
 		"../envs/download.yml"
 	envmodules:
