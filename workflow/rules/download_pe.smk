@@ -1,6 +1,4 @@
 rule download_pe:
-	input:
-		"data/samples.tsv"
 	output:
 		temp("raw_reads/{runPe}_1.fastq.gz"),
 		temp("raw_reads/{runPe}_2.fastq.gz")

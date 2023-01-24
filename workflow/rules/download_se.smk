@@ -1,6 +1,4 @@
 rule download_se:
-	input:
-		"data/samples.tsv"
 	output:
 		temp("raw_reads/{runSe}.fastq.gz"),
 	log:
