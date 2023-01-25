@@ -187,11 +187,24 @@ area(spatpol)/1e6
 arabidopsis_halleri_pi = read.table("../results/2023-01-24/arabidopsis_halleri_pairwise-pi.txt", header = F)
 sum(arabidopsis_halleri_pi$V3)/sum(arabidopsis_halleri_pi$V4)
 
+arabidopsis_halleri_jac = read.table("../results/2023-01-24/arabidopsis_halleri_jac.txt", header = F)
+mean(arabidopsis_halleri_jac$V2)
+
+
 capsella_rubella_pi = read.table("../results/2023-01-24/capsella_rubella_pairwise-pi.txt", header = F)
 sum(capsella_rubella_pi$V3)/sum(capsella_rubella_pi$V4)
 
+capsella_rubella_jac = read.table("../results/2023-01-24/capsella_rubella_jac.txt", header = F)
+mean(capsella_rubella_jac$V2)
+
+
+
 brachypodium_distachyon_pi = read.table("../results/2023-01-24/brachypodium_distachyon_pairwise-pi.txt", header = F)
 sum(brachypodium_distachyon_pi$V3)/sum(brachypodium_distachyon_pi$V4)
+
+brachypodium_distachyon_jac = read.table("../results/2023-01-24/brachypodium_distachyon_jac.txt", header = F)
+mean(brachypodium_distachyon_jac$V2)
+
 
 arabidopsis_thaliana_pi = read.table("../results/2022-12-14/pairwise-pi.txt", header = F)
 sum(arabidopsis_thaliana_pi$V3)/sum(arabidopsis_thaliana_pi$V4)

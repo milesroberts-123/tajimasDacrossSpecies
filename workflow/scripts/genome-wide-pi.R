@@ -56,11 +56,6 @@ all(apply(indvs, allSame, MARGIN = 1))
 
 # transpose
 print("Transposing matrices...")
-
-print("Number of cores to use:")
-transposeCores = min(threadCount, length(mats))
-print(transposeCores)
-
 mats = lapply(mats, t)
 
 # remove top row from each matrix
@@ -109,15 +104,15 @@ print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
 # function to calculate pi
-heterozygosity = function(data, p, outputFileName){
+heterozygosity = function(data, p){
   
   # number of segregating sites
   S = nrow(data)
 
-  # number of chromosomes per site = ploidy * number of non-missing genotypes
+  # number of non-missing chromosomes per site = ploidy * number of non-missing genotypes
   n = p*rowSums(!is.na(data))
   
-  # alternate allele frequency = number of alternate allele calls/number of non-missing genotype calls
+  # alternate allele frequency = number of alternate allele calls/number of non-missing chromosomes
   alt_frq = rowSums(data, na.rm = T)/n
 
   # reference allele frequency = 1 - alternative allele frequency
@@ -131,9 +126,13 @@ heterozygosity = function(data, p, outputFileName){
   # return average heterozygosity per site (i.e. pi)
   # sum of heterozygosities / number of segregating sites
   H = sum(het)
-  return(c(H, S, H/S))
+  return(c(mean(n), H, S, H/S))
 }
 
 # calculate pairwise pi
-print("Calculating pairwise pi...")
-heterozygosity(bigmat, ploidy, outputFile)
+print("Calculating average heterozygosity across the genome...")
+myResult = heterozygosity(bigmat, ploidy)
+print(myResult)
+
+# save output
+write.csv(myResult, outputFile)
