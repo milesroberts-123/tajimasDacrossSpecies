@@ -74,7 +74,7 @@ jaccardDissimilarity=function(data){
   kmerInter = length(kmerCounts[(kmerCounts == nindv)])
 
   # dissimilarity = 1 - similarity
-  dissm = 1 - (kmerInter/kmerUnion)
+  dissim = 1 - (kmerInter/kmerUnion)
 
   # return result
   return(c(kmerInter, kmerUnion, dissim))
