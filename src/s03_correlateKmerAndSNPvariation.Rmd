@@ -143,7 +143,7 @@ alphashape = ashape(dat$decimalLongitude, dat$decimalLatitude, alpha = 200)
 plot(alphashape)
 plot(dat$decimalLongitude, dat$decimalLatitude)
 
-# https://babichmorrowc.github.io/post/2019-03-18-alpha-hull/
+# function from: https://babichmorrowc.github.io/post/2019-03-18-alpha-hull/
 ashape2poly <- function(ashape){
   # Convert node numbers into characters
   ashape$edges[,1] <- as.character(ashape$edges[,1])
