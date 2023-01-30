@@ -135,7 +135,7 @@ This file contains the following columns:
 
 * genome: the prefix for the fasta file used as the reference for the sample (e.g. arabidopsis_thaliana)
 
-* ploidy: the number of chromosome sets in the cells of the organism sampled (e.g. 2 for diploid)
+* ploidy: the number of genome copies in each cell of the organism sampled (e.g. 2 for diploid)
 
 ## chromosomes.tsv
 
@@ -180,6 +180,10 @@ My search for plant genotype data was restricted to only species with reference 
 
 To get the CSV for Boechera stricta run numbers I searched "Boechera stricta Reference Population" on the SRA.
 
+## listing genomes in NCBI to investigate
+
+On 2023-01-30, I downloaded a list of genomes that met these filters: eukaryotic, plants, land plants, exclude partial. I then filtered this list to exclude genomes that didn't have download links or didn't include chromosome assemblies (i.e. only plastid genomes) or didn't include any coding sequences
+
 ## installing updated snakemake
 
 The snakemake installation on the MSU HPCC is v4, but I want v7 so that I can use the `--containerize` functions
@@ -197,14 +201,16 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
+* modify workflow to output genome-wide nucleotide diversity and k-mer dissimilarity values, instead of pairwise values
+
+* Add scripts to download and filter gbif data
+
 * Add scripts to remove underscores from chromosome/scaffold names in the assembly and annotation files
-
-* add workflow to measure dS, then convert to mutation rate
-
-* extend workflow to output genome-wide nucleotide diversity and k-mer dissimilarity values
 
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
 * Run workflow in batches? 1 batch = 1 species
 
 * add error checking to main snakefile?
+
+* add workflow to measure dS, then convert to mutation rate?

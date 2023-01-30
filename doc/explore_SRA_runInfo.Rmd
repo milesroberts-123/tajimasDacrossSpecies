@@ -84,8 +84,11 @@ sort(table(papaver_somniferum$BioProject), decreasing = T)
 pisum_sativum = fread("SraRunInfo_pisum_sativum_2023-01-16.csv.gz", data.table = F)
 sort(table(pisum_sativum$BioProject), decreasing = T)
 
-prunus_avium = fread("SraRunInfo_prunus_avium_2023-01-16.csv.gz", data.table = F)
-sort(table(prunus_avium$BioProject), decreasing = T)
+pisum_sativum = fread("SraRunInfo_pisum_sativum_2023-01-16.csv.gz", data.table = F)
+sort(table(pisum_sativum$BioProject), decreasing = T)
+
+phoenix_dactylifera = fread("SraRunInfo_phoenix_dactylifera_2023-01-30.csv.gz", data.table = F)
+sort(table(phoenix_dactylifera$BioProject), decreasing = T)
 
 prunus_dulcis = fread("SraRunInfo_prunus_dulcis_2023-01-16.csv.gz", data.table = F)
 sort(table(prunus_dulcis$BioProject), decreasing = T)
@@ -223,4 +226,198 @@ zostera_marina = fread("SraRunInfo_zostera_marina_2022-10-14.csv.gz", data.table
 sort(table(zostera_marina$BioProject), decreasing = T)
 
 
+```
+
+
+## Explore genomes in NCBI that aren't in phytozome or ensembl
+```{r}
+
+genomeInfo = fread("Genome_info_plants_landplants_excludePartial_2023-01-30.csv.gz", data.table = F)
+
+# Want annotations with CDS to look at 4-fold degenerate sites
+genomeInfo = genomeInfo[(genomeInfo$CDS > 0),]
+
+# remove genomes with only plastid sequences
+genomeInfo = genomeInfo[( grepl("chromosome", genomeInfo$Replicons) | genomeInfo$Replicons == ""),]
+
+# remove genomes where annotations can't be downloaded via ftp
+genomeInfo = genomeInfo[!(genomeInfo$`RefSeq FTP` == "" & genomeInfo$`GenBank FTP` == ""),]
+
+# extract just species names, remove duplicates
+genomes = genomeInfo[,1]
+
+# remove varieties and subspecies
+genomes = gsub(" subsp\\..*$", "", genomes)
+genomes = gsub(" var\\..*$", "", genomes)
+genomes = unique(genomes)
+
+# remove hybrids
+genomes = genomes[!grepl(" x ", genomes)]
+
+# remove genomes that I've already looked at
+alreadySearched = c("Amaranthus hypochondriacus",
+"Amaranthus tuberculatus",
+"Amborella trichopoda",
+"Ananas comosus",
+"Aquilegia coerulea",
+"Arabidopsis halleri",
+"Arabidopsis lyrata",
+"Arabidopsis thaliana",
+"Arachis hypogaea",
+"Asparagus officinalis",
+"Beta vulgaris",
+"Betula platyphylla",
+"Boechera stricta",
+"Brachypodium distachyon",
+"Brachypodium hybridum",
+"Brachypodium stacei",
+"Brassica oleracea capitata",
+"Brassica rapa",
+"Capsella grandiflora",
+"Capsella orientalis",
+"Capsella rubella",
+"Carica papaya",
+"Carya illinoinensis",
+"Chenopodium quinoa",
+"Cicer arietinum",
+"Cinnamomum kanehirae",
+"Citrullus lanatus",
+"Citrus clementina",
+"Citrus sinensis",
+"Corymbia citriodora",
+"Cucumis sativus",
+"Daucus carota",
+"Dioscorea alata",
+"Diphasiastrum complanatum",
+"Eucalyptus grandis",
+"Eutrema salsugineum",
+"Fragaria vesca",
+"Fragaria x ananassa",
+"Glycine max",
+"Glycine soja",
+"Gossypium barbadense",
+"Gossypium darwinii",
+"Gossypium hirsutum",
+"Gossypium mustelinum",
+"Gossypium raimondii",
+"Gossypium tomentosum",
+"Helianthus annuus",
+"Hordeum vulgare",
+"Kalanchoe fedtschenkoi",
+"Lactuca sativa",
+"Lens culinaris",
+"Lens ervoides",
+"Linum usitatissimum",
+"Liriodendron tulipifera",
+"Lotus japonicus",
+"Lupinus albus",
+"Manihot esculenta",
+"Medicago truncatula",
+"Mimulus guttatus",
+"Miscanthus sinensis",
+"Musa acuminata",
+"Nymphaea colorata",
+"Olea europaea",
+"Oropetium thomaeum",
+"Oryza sativa",
+"Panicum hallii",
+"Panicum virgatum",
+"Phaseolus acutifolius",
+"Phaseolus vulgaris",
+"Poncirus trifoliata",
+"Populus trichocarpa",
+"Prunus persica",
+"Ricinus communis",
+"Salix purpurea",
+"Schrenkiella parvula",
+"Setaria italica",
+"Setaria viridis",
+"Solanum lycopersicum",
+"Solanum tuberosum",
+"Sorghum bicolor",
+"Spinacia oleracea",
+"Spirodela polyrhiza",
+"Theobroma cacao",
+"Thinopyrum intermedium",
+"Trifolium pratense",
+"Triticum aestivum",
+"Triticum turgidum",
+"Vaccinium darrowii",
+"Vigna unguiculata",
+"Vitis vinifera",
+"Zea mays",
+"Zostera marina",
+"Arabis alpina",
+"Actinidia chinensis",
+"Aegilops tauschii",
+"Brassica juncea",
+"Brassica napus",
+"Secale cereale",
+"Camelina sativa",
+"Cannabis sativa",
+"Capsicum annuum",
+"Chara braunii",
+"Chlamydomonas reinhardtii",
+"Chondrus crispus",
+"Coffea canephora",
+"Corchorus capsularis",
+"Corylus avellana",
+"Corymbia citriodora",
+"Cucumis melo",
+"Cyanidioschyzon merolae",
+"Cynara cardunculus",
+"Digitaria exilis",
+"Dioscorea rotundata",
+"Echinochloa crus-galli",
+"Eragrostis curvula",
+"Eragrostis tef",
+"Ficus carica",
+"Galdieria sulphuraria",
+"Ipomoea triloba",
+"Juglans regia",
+"Leersia perrieri",
+"Lolium perenne",
+"Lupinus angustifolius",
+"Marchantia polymorpha",
+"Nicotiana attenuata",
+"Oryza barthii",
+"Oryza brachyantha",
+"Oryza glaberrima",
+"Oryza glumipatula",
+"Oryza longistaminata",
+"Oryza meridionalis",
+"Oryza nivara",
+"Oryza punctata",
+"Oryza rufipogon",
+"Ostreococcus lucimarinus",
+"Papaver somniferum",
+"Physcomitrium patens",
+"Pistacia vera",
+"Pisum sativum",
+"Prunus avium",
+"Prunus dulcis",
+"Quercus lobata",
+"Quercus suber",
+"Rosa chinensis",
+"Saccharum spontaneum",
+"Selaginella moellendorffii",
+"Sesamum indicum",
+"Triticum dicoccoides",
+"Triticum spelta",
+"Triticum urartu",
+"Vigna angularis",
+"Vigna radiata",
+"Vigna unguiculata",
+"Picea abies",
+"Phoenix dactylifera")
+
+genomes = genomes[!(genomes %in% alreadySearched)]
+
+# sort alphabetically
+genomes = sort(genomes)
+
+# remove Oryza sativa
+genomes = genomes[!grepl("Oryza sativa", genomes)]
+
+genomes = genomes[(genomes != "Brassica oleracea")]
 ```

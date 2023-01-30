@@ -1034,6 +1034,14 @@ phaseolus_vulgaris$layout[(phaseolus_vulgaris$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = phaseolus_vulgaris[,"Run"], replicate = phaseolus_vulgaris[,"BioSample"], layout = phaseolus_vulgaris[,"layout"], genome = "phaseolus_vulgaris", ploidy = 2))
 ```
 
+## Phoenix dactylifera
+```{r}
+phoenix_dactylifera = fread("../workflow/data/SRArunInfo/SraRunInfo_phoenix_dactylifera_PRJNA505141.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = phoenix_dactylifera[,"Run"], replicate = phoenix_dactylifera[,"BioSample"], layout = "PE", genome = "phoenix_dactylifera", ploidy = 2))
+```
+
 ## Pisum sativum
 ```{r}
 pisum_sativum_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_pisum_sativum_PRJNA285605.csv.gz", data.table = F)

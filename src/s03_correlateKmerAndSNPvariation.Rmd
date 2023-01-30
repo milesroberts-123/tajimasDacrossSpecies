@@ -182,6 +182,23 @@ spatpol = SpatialPolygons(list(Polygons(list(mypol), ID = 1)), proj4string = CRS
 area(spatpol)/1e6
 ```
 
+# 2023-01-26: explore plant mass data
+```{r}
+plantMass = read.table("../workflow/data/populationSize/24562.txt", sep = "\t", fill = T, header = T)
+
+plantHeight = read.table("../workflow/data/populationSize/24563.txt", sep = "\t", fill = T, header = T, nrows = 1000)
+
+plantMass = plantMass[(plantMass$DataName == "Whole Plant Dry Mass"),]
+
+#
+which(plantMass == "Arabidopsis thaliana", arr.ind = T)
+
+# look at just one species
+zmaysMass = plantMass[(plantMass$AccSpeciesName == "Zea mays"),]
+
+sapply(colnames(plantMass), function(x) grep("thaliana", plantMass[,x]))
+```
+
 # 2023-01-24 results
 ```{r}
 arabidopsis_halleri_pi = read.table("../results/2023-01-24/arabidopsis_halleri_pairwise-pi.txt", header = F)
