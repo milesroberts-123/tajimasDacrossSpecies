@@ -114,6 +114,18 @@ sort(table(vigna_radiata$BioProject), decreasing = T)
 vigna_unguiculata = fread("SraRunInfo_vigna_unguiculata_2023-01-16.csv.gz", data.table = F)
 sort(table(vigna_unguiculata$BioProject), decreasing = T)
 
+cajanus_cajan = fread("SraRunInfo_cajanus_cajan_2023-02-02.csv.gz", data.table = F)
+sort(table(cajanus_cajan$BioProject), decreasing = T)
+
+camellia_sinensis = fread("SraRunInfo_camellia_sinensis_2023-02-02.csv.gz", data.table = F)
+sort(table(camellia_sinensis$BioProject), decreasing = T)
+
+camellia_sinensis = fread("SraRunInfo_camellia_sinensis_2023-02-02.csv.gz", data.table = F)
+sort(table(camellia_sinensis$BioProject), decreasing = T)
+
+castanea_mollissima = fread("SraRunInfo_castanea_mollissima_2023-02-02.csv.gz", data.table = F)
+sort(table(castanea_mollissima$BioProject), decreasing = T)
+
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 

@@ -157,6 +157,42 @@ allReads = rbind(allReads, data.frame(run = arabis_alpina[,"Run"], replicate = a
 ```
 
 
+## Arabis nemorensis
+```{r}
+# load data for species
+arabis_nemorensis = fread("../workflow/data/SRArunInfo/SraRunInfo_arabis_nemorensis_PRJEB39992.csv.gz", data.table = F)
+
+# get just WGS reads
+arabis_nemorensis = arabis_nemorensis[(arabis_nemorensis$LibraryStrategy == "WGS" & arabis_nemorensis$ScientificName == "Arabis nemorensis"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = arabis_nemorensis[,"Run"], replicate = arabis_nemorensis[,"BioSample"], layout = "SE", genome = "arabis_nemorensis", ploidy = 2))
+```
+
+## Arachis hypogaea and Arachis duranensis
+```{r}
+# load data for species
+arachis_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_PRJNA490832.csv.gz", data.table = F)
+arachis_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_PRJNA511155.csv.gz", data.table = F)
+arachis_3 = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_PRJNA525866.csv.gz", data.table = F)
+
+# split reads by species
+arachis = rbind(arachis_1, arachis_2, arachis_3)
+
+arachis_hypogaea = arachis[grepl("Arachis hypogaea", arachis$ScientificName),]
+
+arachis_duranensis = arachis[(arachis$ScientificName == "Arachis duranensis"),]
+
+arachis_ipaensis = arachis[(arachis$ScientificName == "Arachis ipaensis"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = arachis_hypogaea[,"Run"], replicate = arachis_hypogaea[,"BioSample"], layout = "PE", genome = "arachis_hypogaea", ploidy = 4))
+
+allReads = rbind(allReads, data.frame(run = arachis_duranensis[,"Run"], replicate = arachis_duranensis[,"BioSample"], layout = "PE", genome = "arachis_duranensis", ploidy = 2))
+
+allReads = rbind(allReads, data.frame(run = arachis_ipaensis[,"Run"], replicate = arachis_ipaensis[,"BioSample"], layout = "PE", genome = "arachis_ipaensis", ploidy = 2))
+```
+
 ## Benincasa hispida
 ```{r}
 # load data for species
@@ -335,6 +371,32 @@ buddleja_alternifolia = buddleja_alternifolia[!(buddleja_alternifolia$LibraryNam
 allReads = rbind(allReads, data.frame(run = buddleja_alternifolia[,"Run"], replicate = buddleja_alternifolia[,"BioSample"], layout = "PE", genome = "buddleja_alternifolia", ploidy = 2))
 ```
 
+## Cajanus cajan
+```{r}
+# load data for species
+cajanus_cajan = fread("../workflow/data/SRArunInfo/SraRunInfo_cajanus_cajan_PRJNA383013.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = cajanus_cajan[,"Run"], replicate = cajanus_cajan[,"BioSample"], layout = "PE", genome = "cajanus_cajan", ploidy = 2))
+```
+
+## Camellia sinensis
+```{r}
+# load data for species
+camellia_sinensis = fread("../workflow/data/SRArunInfo/SraRunInfo_camellia_sinensis_PRJNA646044.csv.gz", data.table = F)
+
+# subset reads for this species only
+camellia_sinensis = camellia_sinensis[grepl("Camellia sinensis",camellia_sinensis$ScientificName),]
+
+# assign reads as single end or paired end
+camellia_sinensis$layout = NA
+camellia_sinensis$layout[(camellia_sinensis$spots_with_mates > 0)] = "PE"
+camellia_sinensis$layout[(camellia_sinensis$spots_with_mates == 0)] = "SE"
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = camellia_sinensis[,"Run"], replicate = camellia_sinensis[,"BioSample"], layout = camellia_sinensis[,"layout"], genome = "camellia_sinensis", ploidy = 2))
+```
+
 ## Cannabis sativa
 ```{r}
 cannabis_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_cannabis_sativa_PRJNA866500.csv.gz", data.table = F)
@@ -398,6 +460,21 @@ capsicum_annuum = capsicum_annuum[(capsicum_annuum$LibraryStrategy == "WGS" & ca
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = capsicum_annuum[,"Run"], replicate = capsicum_annuum[,"BioSample"], layout = "PE", genome = "capsicum_annuum", ploidy = 2))
+```
+
+## Castanea mollissima
+```{r}
+# load data
+castanea_mollissima = fread("../workflow/data/SRArunInfo/SraRunInfo_castanea_mollissima_PRJNA540917.csv.gz", data.table = F)
+
+# remove reads used for genome assembly
+castanea_mollissima = castanea_mollissima[!(castanea_mollissima$Run %in% c("SRR10672059", "SRR10672058")),]
+
+# subset to just one species
+castanea_mollissima = castanea_mollissima[(castanea_mollissima$ScientificName == "Castanea mollissima"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = castanea_mollissima[,"Run"], replicate = castanea_mollissima[,"BioSample"], layout = "SE", genome = "castanea_mollissima", ploidy = 2))
 ```
 
 ## Chenopodium quinoa
