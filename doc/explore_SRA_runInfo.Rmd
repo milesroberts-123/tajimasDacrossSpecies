@@ -126,6 +126,60 @@ sort(table(camellia_sinensis$BioProject), decreasing = T)
 castanea_mollissima = fread("SraRunInfo_castanea_mollissima_2023-02-02.csv.gz", data.table = F)
 sort(table(castanea_mollissima$BioProject), decreasing = T)
 
+coffea_arabica = fread("SraRunInfo_coffea_arabica_2023-02-02.csv.gz", data.table = F)
+sort(table(coffea_arabica$BioProject), decreasing = T)
+
+cucurbita_moschata = fread("SraRunInfo_cucurbita_moschata_2023-02-02.csv.gz", data.table = F)
+sort(table(cucurbita_moschata$BioProject), decreasing = T)
+
+cucurbita_pepo = fread("SraRunInfo_cucurbita_pepo_2023-02-02.csv.gz", data.table = F)
+sort(table(cucurbita_pepo$BioProject), decreasing = T)
+
+elaeis_guineensis = fread("SraRunInfo_elaeis_guineensis_2023-02-03.csv.gz", data.table = F)
+sort(table(elaeis_guineensis$BioProject), decreasing = T)
+
+eleusine_coracana = fread("SraRunInfo_eleusine_coracana_2023-02-03.csv.gz", data.table = F)
+sort(table(eleusine_coracana$BioProject), decreasing = T)
+
+gossypium_arboreum = fread("SraRunInfo_gossypium_arboreum_2023-02-03.csv.gz", data.table = F)
+sort(table(gossypium_arboreum$BioProject), decreasing = T)
+
+hevea_brasiliensis = fread("SraRunInfo_hevea_brasiliensis_2023-02-03.csv.gz", data.table = F)
+sort(table(hevea_brasiliensis$BioProject), decreasing = T)
+
+jatropha_curcas = fread("SraRunInfo_jatropha_curcas_2023-02-03.csv.gz", data.table = F)
+sort(table(jatropha_curcas$BioProject), decreasing = T)
+
+malus_domestica = fread("SraRunInfo_malus_domestica_2023-02-03.csv.gz", data.table = F)
+sort(table(malus_domestica$BioProject), decreasing = T)
+
+mangifera_indica = fread("SraRunInfo_mangifera_indica_2023-02-03.csv.gz", data.table = F)
+sort(table(mangifera_indica$BioProject), decreasing = T)
+
+momordica_charantia = fread("SraRunInfo_momordica_charantia_2023-02-03.csv.gz", data.table = F)
+sort(table(momordica_charantia$BioProject), decreasing = T)
+
+nelumbo_nucifera = fread("SraRunInfo_nelumbo_nucifera_2023-02-03.csv.gz", data.table = F)
+sort(table(nelumbo_nucifera$BioProject), decreasing = T)
+
+perilla_frutescens = fread("SraRunInfo_perilla_frutescens_2023-02-03.csv.gz", data.table = F)
+sort(table(perilla_frutescens$BioProject), decreasing = T)
+
+populus_deltoides = fread("SraRunInfo_populus_deltoides_2023-02-03.csv.gz", data.table = F)
+sort(table(populus_deltoides$BioProject), decreasing = T)
+
+prunus_armeniaca = fread("SraRunInfo_prunus_armeniaca_2023-02-03.csv.gz", data.table = F)
+sort(table(prunus_armeniaca$BioProject), decreasing = T)
+
+quercus_robur = fread("SraRunInfo_quercus_robur_2023-02-03.csv.gz", data.table = F)
+sort(table(quercus_robur$BioProject), decreasing = T)
+
+thlaspi_arvense = fread("SraRunInfo_thlaspi_arvense_2023-02-03.csv.gz", data.table = F)
+sort(table(thlaspi_arvense$BioProject), decreasing = T)
+
+ziziphus_jujuba = fread("SraRunInfo_ziziphus_jujuba_2023-02-03.csv", data.table = F)
+sort(table(ziziphus_jujuba$BioProject), decreasing = T)
+
 cgrandiflora = read.csv("SraRunInfo_capsella_grandiflora.csv")
 sort(table(cgrandiflora$BioProject), decreasing = T)
 
