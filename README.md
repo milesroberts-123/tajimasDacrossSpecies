@@ -182,7 +182,9 @@ To get the CSV for Boechera stricta run numbers I searched "Boechera stricta Ref
 
 ## listing genomes in NCBI to investigate
 
-On 2023-01-30, I downloaded a list of genomes that met these filters: eukaryotic, plants, land plants, exclude partial. I then filtered this list to exclude genomes that didn't have download links or didn't include chromosome assemblies (i.e. only plastid genomes) or didn't include any coding sequences
+I first looked for WGS data based on genomes I found in phytozome, then I moved to ensembl.
+
+Then, on 2023-01-30, I downloaded a list of genomes that met these filters on NCBI genome: eukaryotic, plants, land plants, exclude partial. I then filtered this list to exclude genomes that I already looked at from phytozome and ensembl, genomes that didn't have download links or didn't include chromosome assemblies (i.e. only plastid genomes) or didn't include any coding sequences.
 
 ## installing updated snakemake
 
