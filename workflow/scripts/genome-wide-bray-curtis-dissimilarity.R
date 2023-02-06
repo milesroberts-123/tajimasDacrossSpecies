@@ -72,55 +72,23 @@ print("Kmer matrix looks like this:")
 kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 
 # calculate dissimilarity between kmer profiles
-# y = index for pair of individuals to compare
-# idxs = list of pairs
-# data = dataframe of normalized k-mer counts
-brayCurtisDissimilarity=function(y, idxs, data, outputFileName, coreCount){
+brayCurtisDissimilarity = function(data){
 
-  idx = idxs[[y]]
-  rm(idxs)
+  N = ncol(data)
+  rowMinsSum = sum(apply(data, MARGIN = 1, FUN = min, na.rm = T))
+  rowSumsSum = sum(rowSums(data))
 
-  coly = data[,idx[1]]
-  colz = data[,idx[2]]
-  rm(data)
+  dissim = 1 - ((N*rowMinsSum)/rowSumsSum)
 
-  result = 1 - (2*sum(pmin(coly,colz)))/sum(coly+colz)
-
-  # write output to separate files, one file per core
-  subFile = y %% coreCount
-
-  line = paste(paste(idx, collapse = "-"), result, sep = " ")
-  write(line, file = paste(subFile, "_", outputFileName, sep = ""), append = TRUE)
-
-  #if(y %% 1000 == 0){
-  #  print(paste(y, "pairwise dissimilarities calculated", sep = " "))
-  #}
-
+  result = c(N, rowMinsSum, rowSumsSum, dissim)
+  names(result) = c("N", "rowMinsSum", "rowSumsSum", "dissimilarity")
   return(result)
 
 }
 
-# Get list of column pairs to loop over for calculating dissimilarity
-print("Generating list of pairwise comparisons...")
-
-indices = list()
-k = 1
-for(i in 1:(ncol(kmerCounts) - 1)){
-  for(j in (i+1):ncol(kmerCounts)){
-    indices[[k]] = colnames(kmerCounts)[c(i, j)]
-    k = k + 1
-  }
-}
-
-print("Some example indices:")
-head(indices)
-
-print("Number of pairwise comparisons:")
-length(indices)
-
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
-mclapply(1:length(indices), brayCurtisDissimilarity, idxs = indices, data = kmerCounts, outputFileName = bcdOutputFile, coreCount = threadCount, mc.cores = threadCount, mc.silent = T)
+write.table(brayCurtisDissimilarity(kmerCounts), bcdOutputFile, row.names = F, quote = F)
 
 # write normalized k-mer matrix
 print("Writing normalized k-mer matrix...")

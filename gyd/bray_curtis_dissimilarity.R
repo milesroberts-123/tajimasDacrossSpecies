@@ -12,8 +12,6 @@ library(data.table)
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
 
-#kmerFiles = args[1:(length(args)-1)]
-#outputFile = args[length(args)]
 kmerFile = args[1]
 bcdOutputFile = args[2]
 normCountsOutputFile = args[3]
@@ -31,22 +29,7 @@ print(threadCount)
 
 # read key and all kmer count files into memory
 print("Reading files into memory...")
-#kmerCounts = mclapply(kmerFiles, read.table, header = F)
 kmerCounts = fread(kmerFile, nThread = threadCount, header = T, data.table = F)
-
-# merge key with kmer counts
-#print("Merging input files in the order passed to script...")
-#kmerCountsMerged = Reduce(function(dtf1, dtf2) merge(dtf1, dtf2, by = "V1", all.x = TRUE), kmerCounts)
-
-# add sample names to header
-#print("Adding names to merged matrix...")
-#names(kmerCountsMerged) = c("kmer", kmerFiles[-1])
-#names(kmerCountsMerged) = gsub("_pe_kmers.txt", "", names(kmerCountsMerged))
-#names(kmerCountsMerged) = gsub("_se_kmers.txt", "", names(kmerCountsMerged))
-
-# replace NA's with zeros
-#print("Replacing NA's with zeros in merged matrix...")
-#kmerCountsMerged[is.na(kmerCountsMerged)] = 0
 
 # print out sample of matrix
 print("Kmer matrix looks like this:")
@@ -92,7 +75,7 @@ kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 # y = index for pair of individuals to compare
 # idxs = list of pairs
 # data = dataframe of normalized k-mer counts
-brayCurtisDissimilarity=function(y, idxs, data){
+brayCurtisDissimilarity=function(y, idxs, data, outputFileName, coreCount){
 
   idx = idxs[[y]]
   rm(idxs)
@@ -103,9 +86,15 @@ brayCurtisDissimilarity=function(y, idxs, data){
 
   result = 1 - (2*sum(pmin(coly,colz)))/sum(coly+colz)
 
-  if(y %% 1000 == 0){
-    print(paste(y, "pairwise dissimilarities calculated", sep = " "))
-  }
+  # write output to separate files, one file per core
+  subFile = y %% coreCount
+
+  line = paste(paste(idx, collapse = "-"), result, sep = " ")
+  write(line, file = paste(subFile, "_", outputFileName, sep = ""), append = TRUE)
+
+  #if(y %% 1000 == 0){
+  #  print(paste(y, "pairwise dissimilarities calculated", sep = " "))
+  #}
 
   return(result)
 
@@ -126,23 +115,12 @@ for(i in 1:(ncol(kmerCounts) - 1)){
 print("Some example indices:")
 head(indices)
 
+print("Number of pairwise comparisons:")
+length(indices)
+
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
-dissim = unlist(mclapply(1:length(indices), brayCurtisDissimilarity, idxs = indices, data = kmerCounts, mc.cores = threadCount))
-
-print("Some example dissimilarity values:")
-head(dissim)
-
-# Extract the pairs used for calculating dissimilarity
-print("Adding names of genotypes compared to each pairwise comparison...")
-pairs = unlist(lapply(indices, paste, collapse = "-"))
-
-print("Some example pair ids:")
-head(pairs)
-
-# write output of dissimilarity calculations 
-print("Writing dissimilarity calculations...")
-write.table(data.frame(pairs = pairs, dissim = dissim), bcdOutputFile, row.names = F, quote = F)
+mclapply(1:length(indices), brayCurtisDissimilarity, idxs = indices, data = kmerCounts, outputFileName = bcdOutputFile, coreCount = threadCount, mc.cores = threadCount, mc.silent = T)
 
 # write normalized k-mer matrix
 print("Writing normalized k-mer matrix...")

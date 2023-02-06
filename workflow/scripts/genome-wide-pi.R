@@ -106,7 +106,7 @@ bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 # function to calculate pi
 heterozygosity = function(data, p){
   
-  # number of segregating sites
+  # number of sites in calculation (both invariant and variant)
   S = nrow(data)
 
   # number of non-missing chromosomes per site = ploidy * number of non-missing genotypes
@@ -126,13 +126,12 @@ heterozygosity = function(data, p){
   # return average heterozygosity per site (i.e. pi)
   # sum of heterozygosities / number of segregating sites
   H = sum(het)
-  return(c(mean(n), H, S, H/S))
+  result = c(c(mean(n), H, S, H/S))
+  names(result) = c("avgN", "H", "S", "heterozygosity")
+  return(result)
 }
 
 # calculate pairwise pi
 print("Calculating average heterozygosity across the genome...")
-myResult = heterozygosity(bigmat, ploidy)
-print(myResult)
+write.table(heterozygosity(bigmat, ploidy), outputFile, row.names = F, quote = F)
 
-# save output
-write.csv(myResult, outputFile)

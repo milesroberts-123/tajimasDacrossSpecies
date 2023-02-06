@@ -201,7 +201,7 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
-* modify workflow to output genome-wide nucleotide diversity and k-mer dissimilarity values, instead of pairwise values
+* Determine whether it's best to apply the same genotyping filters to each dataset or whether the filters should vary between datasets
 
 * Add scripts to download and filter gbif data
 

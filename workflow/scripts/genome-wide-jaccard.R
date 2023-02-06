@@ -77,10 +77,15 @@ jaccardDissimilarity=function(data){
   dissim = 1 - (kmerInter/kmerUnion)
 
   # return result
-  return(c(kmerInter, kmerUnion, dissim))
-
+  result = c(kmerInter, kmerUnion, dissim)
+  names(result) = c("intersection", "union", "dissimilarity")
+  return(result)
 }
 
 # calculate dissimilarity
-print("Calculating dissimilarity of comparing all sets")
-jaccardDissimilarity(kmerCounts)
+print("Calculating dissimilarity...")
+write.table(jaccardDissimilarity(kmerCounts), dissimOutput, row.names = F, quote = F)
+
+# output k-mer presence absence table
+print("Writing table of k-mer presence/absence values...")
+write.table(kmerCounts, normCountsOutputFile, row.names = F, quote = F)
