@@ -19,6 +19,9 @@ library(igraph)
 # library(rgdal)
 #library(alphahull)
 # library(ppcor)
+# 
+# install.packages("CoordinateCleaner")
+library(CoordinateCleaner)
 
 today = Sys.Date()
 ```
