@@ -1,7 +1,15 @@
 # A helpful vignette for learning how to clean gbif data
 # https://cran.r-project.org/web/packages/CoordinateCleaner/vignettes/Cleaning_GBIF_data_with_CoordinateCleaner.html
+print("Parsing arguments...")
+args = commandArgs(trailingOnly=TRUE)
+package_list = c("CoordinateCleaner", "ggplot2", "rgbif", "countrycode") # list of needed packages
+species = args[1]
+input_file_name = paste(gsub(" ", "_", species), "_raw_gbif_data.txt", sep = "")
+output_file_name = paste(gsub(" ", "_", species), "_clean_gbif_data.txt", sep = "")
 
-package_list = c("CoordinateCleaner", "ggplot2", "rgbif", "countrycode")
+print(species)
+print(input_file_name)
+print(output_file_name)
 
 # Load packages
 # Input: character vector of package names to load
@@ -13,7 +21,7 @@ load_packages = function(packages){
         installed_packages <- packages %in% rownames(installed.packages())
         if (any(installed_packages == FALSE)) {
                 print("Installing needed packages...")
-                install.packages(packages[!installed_packages])
+                install.packages(packages[!installed_packages], repos = "http://cran.us.r-project.org")
         }
 
         # Packages loading
@@ -100,3 +108,6 @@ main = function(package_list, input_file_name, output_plot_name, output_file_nam
 	# save cleaned data table for next step in workflow (alpha hull fitting)
 	write.table(data_clean, output_file_name)
 }
+
+# execute workflow
+main(package_list, input_file_name, output_plot_name, output_file_name)

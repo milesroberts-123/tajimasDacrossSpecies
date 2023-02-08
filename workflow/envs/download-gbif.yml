@@ -162,6 +162,7 @@ dependencies:
   - r-colorspace=2.1_0=r42h133d619_0
   - r-commonmark=1.8.1=r42h06615bd_0
   - r-conditionz=0.1.0=r42hc72bb7e_2
+  - r-countrycode=1.4.0=r42hc72bb7e_1
   - r-cpp11=0.4.3=r42hc72bb7e_0
   - r-crayon=1.5.2=r42hc72bb7e_1
   - r-crul=1.3=r42h785f33e_1
