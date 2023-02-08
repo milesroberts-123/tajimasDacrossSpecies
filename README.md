@@ -205,7 +205,7 @@ conda install -n base -c conda-forge mamba
 
 * Determine whether it's best to apply the same genotyping filters to each dataset or whether the filters should vary between datasets
 
-* Add scripts to download and filter gbif data
+* test gbif processing scripts
 
 * Add scripts to remove underscores from chromosome/scaffold names in the assembly and annotation files
 

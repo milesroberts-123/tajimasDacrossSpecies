@@ -1,29 +1,38 @@
 # PARAMETERS
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
+package_list = c("rgbif", "rworldmap", "ggplot2") # list of needed packages
+kept_columns = c(
+	"species", 
+	"decimalLongitude",
+	"decimalLatitude",
+	"countryCode",
+	"individualCount",
+         "gbifID",
+	"family",
+	"taxonRank",
+	"coordinateUncertaintyInMeters",
+	"year",
+         "basisOfRecord",
+	"institutionCode",
+	"datasetName") # list of needed columns from gbif data
+species = args[1] # species name
+today = Sys.Date() # date
+output_plot_name = paste(gsub(" ", "_", species), "_raw_gbif_data_", today, ".png", sep = "") # name of output plot
+output_table_name = paste(gsub(" ", "_", species), "_raw_gbif_data_", today, ".txt", sep = "") # name of output table
 
-# list of needed packages
-package_list = c()
-
-# list of needed columns from gbif data
-kept_columns = c("species", "decimalLongitude", "decimalLatitude", "countryCode", "individualCount",
-         "gbifID", "family", "taxonRank", "coordinateUncertaintyInMeters", "year",
-         "basisOfRecord", "institutionCode", "datasetName")
-# species
-species = args[1]
-
-# name of output file
-today = Sys.Date()
-output_plot_name = paste(species, "_raw_gbif_data_", today, ".png", sep = "")
-output_table_name = paste(species, "_raw_gbif_data_", today, ".txt", sep = "")
-
+# Print parameters to console
+print(species)
+print(today)
+print(output_plot_name)
+print(output_table_name)
 
 # Input: character vector of package names to load
 # Output: loaded packages
 load_packages = function(packages){
 
 	# Install packages if they are not yet installed
-	print("Checking if pakcages are not yet installed...")
+	print("Checking if needed packages are installed...")
 	installed_packages <- packages %in% rownames(installed.packages())
 	if (any(installed_packages == FALSE)) {
 		print("Installing needed packages...")
@@ -41,8 +50,8 @@ load_packages = function(packages){
 search_gbif = function(species, kept_columns){
 
 	#obtain data from GBIF via rgbif
-	print("Searching GBIF for occurence data")
-	dat = occ_search(scientificName = species, hasCoordinate = T)
+	print("Searching GBIF for occurence data...")
+	dat = occ_search(scientificName = species, hasCoordinate = TRUE, limit = 90000)
 
 	# get just data from list
 	print("Extracting occurence data from search results...")
@@ -51,6 +60,9 @@ search_gbif = function(species, kept_columns){
 	# select just columns of interest
 	print("Subsetting only columns of interest for cleaning later...")
 	dat = dat[,kept_columns]
+
+	print("Example of what occurence matrix looks like:")
+	head(dat)
 
 	# return result
 	print("Returning result...")
@@ -68,10 +80,10 @@ plot_gbif = function(data, output_plot_name){
 
 	# plot occurence data on world borders
 	print("Plotting occurence data on world borders...")
-	ggplot() +
+	ggplot(data, aes(x = decimalLongitude, y = decimalLatitude)) +
 		coord_fixed() +
 		wm +
-		geom_point(data, aes(x = decimalLongitude, y = decimalLatitude), colour = "darkred", size = 0.5) +
+		geom_point(colour = "darkred", size = 0.5) +
 		theme_bw()
 
 	# save plot
@@ -97,4 +109,4 @@ main = function(package_list, species, kept_columns, output_plot_name, output_ta
 }
 
 # execute workflow
-main(package_list, species, kept_columns, output_name)
+main(package_list, species, kept_columns, output_plot_name, output_table_name)
