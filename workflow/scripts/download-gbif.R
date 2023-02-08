@@ -1,7 +1,7 @@
 # PARAMETERS
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
-package_list = c("rgbif", "rworldmap", "ggplot2", "stringr") # list of needed packages
+package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igraph", "raster") # list of needed packages
 kept_columns = c(
 	"species", 
 	"decimalLongitude",
@@ -19,12 +19,14 @@ kept_columns = c(
 	"issues") # list of needed columns from gbif data
 species = args[1] # species name
 output_plot_name = paste(gsub(" ", "_", species), "_raw_gbif_data.png", sep = "") # name of output plot
-output_table_name = paste(gsub(" ", "_", species), "_raw_gbif_data.txt", sep = "") # name of output table
+output_occ_table_name = paste(gsub(" ", "_", species), "_raw_gbif_data.txt", sep = "") # name of output table
+output_area_table_name = paste(gsub(" ", "_", species), "_areas.txt", sep = "") # name of output table
 
 # Print parameters to console
 print(species)
 print(output_plot_name)
-print(output_table_name)
+print(output_occ_table_name)
+print(output_area_table_name)
 
 # Input: character vector of package names to load
 # Output: loaded packages
@@ -98,6 +100,51 @@ search_gbif = function(species, kept_columns){
 	return(dat)
 }
 
+
+# get continent from coordinates
+# function from: https://github.com/vsbuffalo/paradox_variation/blob/master/R/range_funcs.r
+coords2continent = function(lon, lat, countriesSP) {
+  # https://stackoverflow.com/questions/21708488/get-country-and-continent-from-longitude-and-latitude-point-in-r
+  points <- data.frame(lon=lon, lat=lat)
+  # converting points to a SpatialPoints object
+  # setting CRS directly to that from rworldmap
+  pointsSP = sp:::SpatialPoints(points, proj4string=sp:::CRS(sp:::proj4string(countriesSP)))
+
+  # use 'over' to get indices of the Polygons object containing each point
+  indices = sp:::over(pointsSP, countriesSP)
+
+  #indices$REGION   # returns the continent (7 continent model)
+  indices$continent
+}
+
+
+# function from: https://babichmorrowc.github.io/post/2019-03-18-alpha-hull/
+ashape2poly <- function(ashape){
+  # Convert node numbers into characters
+  ashape$edges[,1] <- as.character(ashape$edges[,1])
+  ashape_graph <- graph_from_edgelist(ashape$edges[,1:2], directed = FALSE)
+  if (!is.connected(ashape_graph)) {
+    stop("Graph not connected")
+  }
+  if (any(degree(ashape_graph) != 2)) {
+    stop("Graph not circular")
+  }
+  if (clusters(ashape_graph)$no > 1) {
+    stop("Graph composed of more than one circle")
+  }
+  # Delete one edge to create a chain
+  cut_graph <- ashape_graph - E(ashape_graph)[1]
+  # Find chain end points
+  ends = names(which(degree(cut_graph) == 1))
+  path = get.shortest.paths(cut_graph, ends[1], ends[2])$vpath[[1]]
+  # this is an index into the points
+  pathX = as.numeric(V(ashape_graph)[path]$name)
+  # join the ends
+  pathX = c(pathX, pathX[1])
+  return(pathX)
+}
+
+
 # INPUT: GBIF occurence data
 # OUTPUT: plot of species occurences on world map
 plot_gbif = function(data, output_plot_name){
@@ -119,7 +166,7 @@ plot_gbif = function(data, output_plot_name){
 }
 
 # combine the above functions into one workflow
-main = function(package_list, species, kept_columns, output_plot_name, output_table_name){
+main = function(package_list, species, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name){
 	
 	# load packages
 	load_packages(package_list)
@@ -129,11 +176,60 @@ main = function(package_list, species, kept_columns, output_plot_name, output_ta
 
 	# plot gbif data
 	plot_gbif(all_data, output_plot_name)
-
+	
 	# write gbif output
-	write.table(all_data, output_table_name, row.names = F, quote = F, sep = ";")
+	write.table(all_data, output_occ_table_name, row.names = F, quote = F, sep = ";")
+
+	# separate points by continent, so that I can draw alpha hull for each continent separately
+	countriesSP <- rworldmap:::getMap(resolution='low')
+	all_data$continent = as.character(coords2continent(all_data$decimalLongitude, all_data$decimalLatitude, countriesSP))
+	# print(head(all_data$continent))
+
+	# remove occurences that don't map to a continent
+	all_data = all_data[!(is.na(all_data$continent)),]
+
+	# subset to just needed columns
+	print("Subsetting to just longlat and continent...")
+        all_data = all_data[,c("decimalLongitude", "decimalLatitude", "continent")]
+	
+	# remove duplicates
+	print("Removing duplicate data points...")
+	all_data = unique(all_data)
+	print("Points remaining after removing duplicates:")
+	print(nrow(all_data))
+
+	# loop over each continent, drawing alpha hull for each and outputing area
+	areas = NULL
+	for(continent in unique(all_data$continent)){
+		print("Measuring range area for this continent:")
+		print(continent)
+
+		#subset data for one continent
+		data_sub = all_data[(all_data$continent == continent),]
+
+		# draw alpha hull around points
+		print("Drawing alpha hull around points...")
+		alphashape = ashape(data_sub$decimalLongitude, data_sub$decimalLatitude, alpha = 200)
+
+		# from alpha shape get indices of polygon edges
+		print("Extracting polygon edges...")
+		pol = ashape2poly(alphashape)
+
+		# swap latitude and longitude, convert to polygon
+		print("Building spatial polygon...")
+		mypol = Polygon(data_sub[pol,c(2,1)])
+		spatpol = SpatialPolygons(list(Polygons(list(mypol), ID = 1)), proj4string = CRS("+proj=longlat +datum=WGS84"))
+
+		# calculate area, convert to square kilometers (1000 meters x 1000 meters = 1 million square meters per square kilometer)
+		print("Measuring polygon area...")
+		area_frame = data.frame(species = species, continent = continent, area = area(spatpol)/1e6)
+		areas = rbind(areas, area_frame)
+	}
+
+	# save results as a dataframe
+	write.table(areas, output_area_table_name, row.names = F, quote = F)
 
 }
 
 # execute workflow
-main(package_list, species, kept_columns, output_plot_name, output_table_name)
+main(package_list, species, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name)
