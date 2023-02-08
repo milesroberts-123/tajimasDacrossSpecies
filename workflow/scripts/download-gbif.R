@@ -1,7 +1,7 @@
 # PARAMETERS
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
-package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igraph", "raster") # list of needed packages
+package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igraph", "raster", "rgeos", "maps", "sf") # list of needed packages
 kept_columns = c(
 	"species", 
 	"decimalLongitude",
@@ -67,7 +67,7 @@ search_gbif = function(species, kept_columns){
 		hasCoordinate = TRUE, 
 		coordinateUncertaintyInMeters = "0,10000", 
 		year = "1973,2023", 
-		limit = 500, 
+		limit = 200, 
 		fields = kept_columns,
 		basisOfRecord = "HUMAN_OBSERVATION")
 
@@ -165,6 +165,99 @@ plot_gbif = function(data, output_plot_name){
 	ggsave(output_plot_name)
 }
 
+
+# Calculate the difference between a species range and bodies of water
+# INPUT: spatial polygon of species range
+# OUTPUT: spatial polygon of species range - overlap with land to leave just range overlapping with water
+get_diff_bw_world_and_hull = function(spatpol){
+	# function inspired by: https://stackoverflow.com/questions/49266736/clip-spatial-polygon-by-world-map-in-r
+	sf_use_s2(FALSE)
+
+        # world data
+	print("loading world data...")
+        data("wrld_simpl", package = 'maptools')
+
+        # coerce sp object to sf
+        print("converting sp objects to sf...")
+	world <- st_as_sf(wrld_simpl)
+        rectangle <- st_as_sf(spatpol)
+
+        # difference between world polygons and the rectangle
+        print("calculating difference...")
+	difference <- st_difference(rectangle, st_union(world))
+
+        # coerce back to sp
+	print("convert sf back to sp...")
+        difference <- as(difference, 'Spatial')
+
+	return(difference)
+        # plot the result
+        # plot(difference)
+}
+
+# split up occurence data by continent, fit alpha hull and calculate area for each continent
+area_by_continent = function(data, output_plot_name, output_area_table_name){
+
+	# output vector for list of areas
+        areas = NULL
+
+        # loop over each continent, drawing alpha hull for each and outputing area
+        for(continent in unique(data$continent)){
+		#subset data for one continent
+		print("Measuring range area for this continent:")
+                print(continent)
+                data_sub = data[(data$continent == continent),]
+
+                # draw alpha hull around points
+                print("Drawing alpha hull around points...")
+                alphashape = ashape(data_sub$decimalLongitude, data_sub$decimalLatitude, alpha = 400)
+
+                # from alpha shape get indices of polygon edges
+                print("Extracting polygon edges...")
+                pol = ashape2poly(alphashape)
+
+                # convert to polygon
+                print("Building spatial polygon...")
+                mypol = Polygon(data_sub[pol,c(1,2)])
+                spatpol = SpatialPolygons(list(Polygons(list(mypol), ID = 1)), proj4string = CRS("+proj=longlat +datum=WGS84"))
+
+		# get difference between spatial polygon and world map
+		print("Getting difference between spatial polygon and world map...")
+		waterpol = get_diff_bw_world_and_hull(spatpol)
+
+                # calculate area, convert to square kilometers (1000 meters x 1000 meters = 1 million square meters per square kilometer)
+                print("Measuring polygon area...")
+                area_frame = data.frame(species = species, continent = continent, area = area(spatpol)/1e6, water_area = area(waterpol)/1e6)
+                areas = rbind(areas, area_frame)
+        
+		#print("Coordinates of hull:")
+		#print(data_sub[pol[-1],])
+
+		# plot hull on world map
+		print("Getting map of world borders...")
+		wm <- borders("world", colour="gray50", fill="gray50")
+
+		#print("spatial polygon of world")
+		#print(map(database = "world", plot = F))
+		#worldpol = SpatialPolygons(list(Polygons(list(map(database = "world", plot = F)[c("x", "y")]), ID = 1)), proj4string = CRS("+proj=longlat +datum=WGS84"))
+		#print(worldpol)
+
+		print("Plotting occurence data on world borders...")
+		ggplot(data_sub, aes(x = decimalLongitude, y = decimalLatitude)) +
+			wm +
+			geom_point(colour = "darkred", size = 0.5) +
+			geom_polygon(data_sub[pol[-1],], mapping = aes(x = decimalLongitude, y = decimalLatitude), fill = "blue", alpha = 0.5) +
+			coord_fixed() +
+			theme_bw()
+
+		print("Saving plot...")
+		ggsave(paste(gsub(" ", "_", continent), "_", output_plot_name, sep = ""))
+	}
+
+        # save results as a dataframe
+        write.table(areas, output_area_table_name, row.names = F, quote = F)
+}
+
 # combine the above functions into one workflow
 main = function(package_list, species, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name){
 	
@@ -198,37 +291,8 @@ main = function(package_list, species, kept_columns, output_plot_name, output_oc
 	print("Points remaining after removing duplicates:")
 	print(nrow(all_data))
 
-	# loop over each continent, drawing alpha hull for each and outputing area
-	areas = NULL
-	for(continent in unique(all_data$continent)){
-		print("Measuring range area for this continent:")
-		print(continent)
-
-		#subset data for one continent
-		data_sub = all_data[(all_data$continent == continent),]
-
-		# draw alpha hull around points
-		print("Drawing alpha hull around points...")
-		alphashape = ashape(data_sub$decimalLongitude, data_sub$decimalLatitude, alpha = 200)
-
-		# from alpha shape get indices of polygon edges
-		print("Extracting polygon edges...")
-		pol = ashape2poly(alphashape)
-
-		# swap latitude and longitude, convert to polygon
-		print("Building spatial polygon...")
-		mypol = Polygon(data_sub[pol,c(2,1)])
-		spatpol = SpatialPolygons(list(Polygons(list(mypol), ID = 1)), proj4string = CRS("+proj=longlat +datum=WGS84"))
-
-		# calculate area, convert to square kilometers (1000 meters x 1000 meters = 1 million square meters per square kilometer)
-		print("Measuring polygon area...")
-		area_frame = data.frame(species = species, continent = continent, area = area(spatpol)/1e6)
-		areas = rbind(areas, area_frame)
-	}
-
-	# save results as a dataframe
-	write.table(areas, output_area_table_name, row.names = F, quote = F)
-
+	# measure range on each continent
+	area_by_continent(all_data, output_plot_name, output_area_table_name)
 }
 
 # execute workflow
