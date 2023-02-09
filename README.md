@@ -220,8 +220,6 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
-* switch from `occ_search` to `occ_download` in gbif processing file. I'll need to pass my GBIF user name, password, and email parameters as environment variables
-
 * Add scripts to remove underscores from chromosome/scaffold names in the assembly and annotation files
 
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
