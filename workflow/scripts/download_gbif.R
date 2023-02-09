@@ -17,13 +17,14 @@ kept_columns = c(
 	"institutionCode",
 	"datasetName",
 	"issues") # list of needed columns from gbif data
-species = args[1] # species name
-output_plot_name = paste(gsub(" ", "_", species), "_raw_gbif_data.png", sep = "") # name of output plot
-output_occ_table_name = paste(gsub(" ", "_", species), "_raw_gbif_data.txt", sep = "") # name of output table
-output_area_table_name = paste(gsub(" ", "_", species), "_areas.txt", sep = "") # name of output table
+genus_species = args[1] 
+species_string = gsub("_", " ", genus_species) # species name to pass to gbif
+output_plot_name = paste(genus_species, "_raw_gbif_data.png", sep = "") # name of output plot
+output_occ_table_name = paste(genus_species, "_raw_gbif_data.txt", sep = "") # name of output table
+output_area_table_name = paste(genus_species, "_areas.txt", sep = "") # name of output table
 
 # Print parameters to console
-print(species)
+print(species_string)
 print(output_plot_name)
 print(output_occ_table_name)
 print(output_area_table_name)
@@ -58,12 +59,12 @@ split_issue_codes = function(x){
 
 # INPUT: character vector of species name
 # OUTPUT: dataframe of occurence data for species
-search_gbif = function(species, kept_columns){
+search_gbif = function(species_string, kept_columns){
 
 	#obtain data from GBIF via rgbif
 	print("Searching GBIF for occurence data...")
 	dat = occ_search(
-		scientificName = species, 
+		scientificName = species_string, 
 		hasCoordinate = TRUE, 
 		coordinateUncertaintyInMeters = "0,10000", 
 		year = "1973,2023", 
@@ -196,17 +197,28 @@ get_diff_bw_world_and_hull = function(spatpol){
 }
 
 # split up occurence data by continent, fit alpha hull and calculate area for each continent
-area_by_continent = function(data, output_plot_name, output_area_table_name){
+area_by_continent = function(data, output_plot_name, output_area_table_name, species_string){
 
 	# output vector for list of areas
         areas = NULL
 
         # loop over each continent, drawing alpha hull for each and outputing area
         for(continent in unique(data$continent)){
+
 		#subset data for one continent
 		print("Measuring range area for this continent:")
                 print(continent)
                 data_sub = data[(data$continent == continent),]
+
+		print("Number of occurrences on this continent:")
+		data_sub_nrow = nrow(data_sub)
+		print(data_sub_nrow)
+		
+		# If there are too few occurences on a continent, don't draw a hull
+		if(data_sub_nrow < 50){
+			print("Too few occurrences on this continent to draw a hull. Skipping to next continent")
+			next
+		}
 
                 # draw alpha hull around points
                 print("Drawing alpha hull around points...")
@@ -227,7 +239,7 @@ area_by_continent = function(data, output_plot_name, output_area_table_name){
 
                 # calculate area, convert to square kilometers (1000 meters x 1000 meters = 1 million square meters per square kilometer)
                 print("Measuring polygon area...")
-                area_frame = data.frame(species = species, continent = continent, area = area(spatpol)/1e6, water_area = area(waterpol)/1e6)
+                area_frame = data.frame(species = species_string, continent = continent, total_area = area(spatpol)/1e6, water_area = area(waterpol)/1e6)
                 areas = rbind(areas, area_frame)
         
 		#print("Coordinates of hull:")
@@ -259,13 +271,13 @@ area_by_continent = function(data, output_plot_name, output_area_table_name){
 }
 
 # combine the above functions into one workflow
-main = function(package_list, species, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name){
+main = function(package_list, species_string, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name){
 	
 	# load packages
 	load_packages(package_list)
 
 	# search gbif for occurence data
-	all_data = search_gbif(species, kept_columns)
+	all_data = search_gbif(species_string, kept_columns)
 
 	# plot gbif data
 	plot_gbif(all_data, output_plot_name)
@@ -292,8 +304,8 @@ main = function(package_list, species, kept_columns, output_plot_name, output_oc
 	print(nrow(all_data))
 
 	# measure range on each continent
-	area_by_continent(all_data, output_plot_name, output_area_table_name)
+	area_by_continent(all_data, output_plot_name, output_area_table_name, species_string)
 }
 
 # execute workflow
-main(package_list, species, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name)
+main(package_list, species_string, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name)

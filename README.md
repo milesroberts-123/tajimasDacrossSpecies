@@ -118,6 +118,7 @@ workflow/data/
 	assemblies/ # fasta files of genome sequences, naming convention: genus_species.fa
 	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples.tsv using code in src/ before workflow begins
 	samples.tsv # tab-separated text file listing read metadata with these columns: run, replicate, layout, genome
+	species.tsv # list of species to download GBIF occurence records for. Format is genus_spcies
 	chromosomes.tsv # tab-separated text file listing chromosome names for each genome: genus_species, chromsome_name
 ```
 
@@ -136,6 +137,12 @@ This file contains the following columns:
 * genome: the prefix for the fasta file used as the reference for the sample (e.g. arabidopsis_thaliana)
 
 * ploidy: the number of genome copies in each cell of the organism sampled (e.g. 2 for diploid)
+
+## species.tsv
+
+A file with a single column:
+
+* species: the genus and species of the organism you're interested in written as `genus_species`. First letter of genus should be capitalized. See `workflow/data` for an example.
 
 ## chromosomes.tsv
 
@@ -203,9 +210,7 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
-* Determine whether it's best to apply the same genotyping filters to each dataset or whether the filters should vary between datasets
-
-* test gbif processing scripts
+* switch from `occ_search` to `occ_download` in gbif processing file. I'll need to pass my GBIF user name, password, and email parameters as environment variables
 
 * Add scripts to remove underscores from chromosome/scaffold names in the assembly and annotation files
 
