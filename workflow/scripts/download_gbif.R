@@ -2,22 +2,26 @@
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
 package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igraph", "raster", "rgeos", "maps", "sf") # list of needed packages
-kept_columns = c(
-	"species", 
-	"decimalLongitude",
-	"decimalLatitude",
-	"countryCode",
-	"individualCount",
-         "gbifID",
-	"family",
-	"taxonRank",
-	"coordinateUncertaintyInMeters",
-	"year",
-         "basisOfRecord",
-	"institutionCode",
-	"datasetName",
-	"issues") # list of needed columns from gbif data
+#kept_columns = c(
+#	"species", 
+#	"decimalLongitude",
+#	"decimalLatitude",
+#	"countryCode",
+#	"individualCount",
+#         "gbifID",
+#	"family",
+#	"taxonRank",
+#	"coordinateUncertaintyInMeters",
+#	"year",
+#        "basisOfRecord",
+#	"institutionCode",
+#	"datasetName",
+#	"issues") # list of needed columns from gbif data
 genus_species = args[1] 
+taxon_key = args[2]
+gbif_user = args[3]
+gbif_email = args[4]
+gbif_pwd = args[5]
 species_string = gsub("_", " ", genus_species) # species name to pass to gbif
 output_plot_name = paste(genus_species, "_raw_gbif_data.png", sep = "") # name of output plot
 output_occ_table_name = paste(genus_species, "_raw_gbif_data.txt", sep = "") # name of output table
@@ -25,6 +29,9 @@ output_area_table_name = paste(genus_species, "_areas.txt", sep = "") # name of 
 
 # Print parameters to console
 print(species_string)
+print(gbif_user)
+print(gbif_email)
+#print(gbif_pwd)
 print(output_plot_name)
 print(output_occ_table_name)
 print(output_area_table_name)
@@ -54,51 +61,80 @@ check_for_issues = function(x, issues_to_check){
 
 # split issue codes by their comma separator
 split_issue_codes = function(x){
-	unlist(str_split(x, pattern = ","))
+	unlist(str_split(x, pattern = ";"))
 }
 
+
+# Helpful reference: https://docs.ropensci.org/rgbif/articles/getting_occurrence_data.html
 # INPUT: character vector of species name
 # OUTPUT: dataframe of occurence data for species
-search_gbif = function(species_string, kept_columns){
+search_gbif = function(species_string, taxon_key, gbif_user, gbif_email, gbif_pwd){
 
 	#obtain data from GBIF via rgbif
-	print("Searching GBIF for occurence data...")
-	dat = occ_search(
-		scientificName = species_string, 
-		hasCoordinate = TRUE, 
-		coordinateUncertaintyInMeters = "0,10000", 
-		year = "1973,2023", 
-		limit = 200, 
-		fields = kept_columns,
-		basisOfRecord = "HUMAN_OBSERVATION")
+	print(paste("Searching GBIF for occurence data of ", species_string, " ...", sep = ""))
+	#dat = occ_search(
+	#	scientificName = species_string, 
+	#	hasCoordinate = TRUE, 
+	#	coordinateUncertaintyInMeters = "0,10000", 
+	#	year = "1973,2023", 
+	#	limit = 200, 
+	#	fields = kept_columns,
+	#	basisOfRecord = "HUMAN_OBSERVATION")
+	gbif_download <- occ_download(
+		pred("taxonKey", taxon_key),
+		pred("hasGeospatialIssue", FALSE),
+		pred("hasCoordinate", TRUE),
+		pred("occurrenceStatus","PRESENT"),
+		pred_gte("year", 2003),
+		pred_lte("year", 2023), 
+		pred_lte("coordinateUncertaintyInMeters", 1000),
+		pred_not(pred_in("basisOfRecord",c("FOSSIL_SPECIMEN","LIVING_SPECIMEN"))),
+		format = "SIMPLE_CSV",
+		user = gbif_user,
+		pwd = gbif_pwd,
+  		email = gbif_email
+		)
 
+	# wait for download to complete
+	# passing curlopts fixes this bug: https://github.com/ropensci/rgbif/issues/579
+	print("Waiting for download to complete...")
+	occ_download_wait(gbif_download, curlopts=list(http_version=2))
+
+	print("Getting download from gbif and importing it into R...")
+	data <- occ_download_import(occ_download_get(gbif_download))
+
+	print("What the import looks like:")
+	print(head(data))
 	# get just data from list
-	print("Extracting occurence data from search results...")
-	dat = dat$data
+	#print("Extracting occurence data from search results...")
+	#data = data$data
 
 	# select just columns of interest
-	# print("Subsetting only columns of interest for cleaning later...")
-	# dat = dat[,kept_columns]
-	issues_to_check = sort(gbif_issues()[c(-3,-10,-48),1])
+	#print("Subsetting only columns of interest for cleaning later...")
+	#data = data[,kept_columns]
+	
+	# Getting list of issues to check for
 	print("Filtering records with these issue codes:")
+	issues_to_check = sort(gbif_issues()[c(-3,-10,-48),2])
 	print(issues_to_check)
 
 	# check for specific issue codes and remove any records with at least one of said codes
 	print("Checking issue codes...")
-	data_issues = as.list(dat$issues)
+	#data_issues = as.list(data$issues)
+	data_issues = as.list(data$issue)
 	#print(head(data_issues))
 	data_issues = lapply(data_issues, split_issue_codes)
 	#print(head(data_issues))
 	rows2keep = !(unlist(lapply(data_issues, check_for_issues, issues_to_check)))
 	#print(rows2keep)
-	dat = dat[rows2keep,]
+	data = data[rows2keep,]
 
 	print("Example of what occurence matrix looks like:")
-	print(head(dat))
+	print(head(data))
 
 	# return result
 	print("Returning result...")
-	return(dat)
+	return(data)
 }
 
 
@@ -208,12 +244,37 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 		#subset data for one continent
 		print("Measuring range area for this continent:")
                 print(continent)
-                data_sub = data[(data$continent == continent),]
-
-		print("Number of occurrences on this continent:")
-		data_sub_nrow = nrow(data_sub)
-		print(data_sub_nrow)
+                data_sub = as.data.frame(unique(data[(data$continent == continent), c(1,2)]))
 		
+		print("Number of occurrences on this continent:")
+		print(nrow(data_sub))
+	
+		# maybe round data points, then remove duplicates
+		data_sub$decimalLongitude = round(data_sub$decimalLongitude, digits = 4)
+		data_sub$decimalLatitude = round(data_sub$decimalLatitude, digits = 4)
+		data_sub = unique(data_sub)
+
+		print("Checking for duplicates...")
+		print(any(duplicated(data_sub)))
+
+		print("Number of occurrences on this continent after rounding and removing duplicates:")
+                data_sub_nrow = nrow(data_sub)
+                print(data_sub_nrow)
+	
+		# remove points that are so close they're basically duplicates
+		#print("Removing points that are so close they're basically duplicates...")
+		#data_sub = SpatialPoints(coords = cbind(data_sub$decimalLongitude, data_sub$decimalLatitude))
+		#data_sub = coordinates(data_sub[-zerodist(data_sub)[,1],])
+		#print(head(data_sub))
+		#print(nrow(data_sub))
+
+		#print("Take just first few occurences further for debugging")
+		#data_sub = data_sub[1:200,]
+
+		#print("Printing occurrence records for debugging...")
+		#write.table(data_sub, "uniqueOccurences.txt", row.names = F, quote = F)
+		print(head(data_sub))
+
 		# If there are too few occurences on a continent, don't draw a hull
 		if(data_sub_nrow < 50){
 			print("Too few occurrences on this continent to draw a hull. Skipping to next continent")
@@ -222,7 +283,7 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 
                 # draw alpha hull around points
                 print("Drawing alpha hull around points...")
-                alphashape = ashape(data_sub$decimalLongitude, data_sub$decimalLatitude, alpha = 400)
+                alphashape = ashape(data_sub$decimalLongitude, data_sub$decimalLatitude, alpha = 200)
 
                 # from alpha shape get indices of polygon edges
                 print("Extracting polygon edges...")
@@ -271,13 +332,13 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 }
 
 # combine the above functions into one workflow
-main = function(package_list, species_string, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name){
+main = function(package_list, species_string, taxon_key, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd){
 	
 	# load packages
 	load_packages(package_list)
 
 	# search gbif for occurence data
-	all_data = search_gbif(species_string, kept_columns)
+	all_data = search_gbif(species_string, taxon_key, gbif_user, gbif_email, gbif_pwd)
 
 	# plot gbif data
 	plot_gbif(all_data, output_plot_name)
@@ -308,4 +369,4 @@ main = function(package_list, species_string, kept_columns, output_plot_name, ou
 }
 
 # execute workflow
-main(package_list, species_string, kept_columns, output_plot_name, output_occ_table_name, output_area_table_name)
+main(package_list, species_string, taxon_key, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd)

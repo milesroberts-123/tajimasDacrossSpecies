@@ -144,6 +144,16 @@ A file with a single column:
 
 * species: the genus and species of the organism you're interested in written as `genus_species`. First letter of genus should be capitalized. See `workflow/data` for an example.
 
+If you're looking at GBIF occurrence data, then you'll also want to have your GBIF email, username, and password stored as environment variables:
+
+```
+export GBIF_USER=<username>
+export GBIF_EMAIL=<email>
+export GBIF_PWD=<password>
+```
+
+The script `workflow/scripts/download_gbif.R` needs this information in order to download GBIF data.
+
 ## chromosomes.tsv
 
 This file is used to parallelize the GATK genotype GVCFs step in the workflow (splitting the data by chromosome/scaffold) contains the following columns
