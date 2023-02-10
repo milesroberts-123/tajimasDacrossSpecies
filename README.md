@@ -78,6 +78,10 @@ sbatch s03_test_snakemake.sh
 
 The `src/s00_organizeSRAdata.Rmd` script takes data in workflow/data/SRArunInfo and structures it into `data/samples.tsv` so that it can be churned through snakemake workflow. This table can be found in `workflow/data/samples.tsv` already.
 
+`src/s03_removeUnderscores.bash` takes renamed downloads from Phytozome, Ensembl, and NCBI and removes underscores from chromosome/scaffold names so that they can be accessed with snakemake wildcards
+
+`src/s04_buildChromosomesFiles.bash` takes the annotations (with underscores removed from chromosome/scaffold names) and creates `chromosomes.tsv`, which is used later by snakemake to split genotyping by chromosome 
+
 ## run workflow with the MSU ICER HPCC modules instead of conda environments
 
 Find an example script in `src/s01_snakemake.bash`
