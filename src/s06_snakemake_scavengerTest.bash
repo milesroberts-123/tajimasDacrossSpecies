@@ -30,4 +30,4 @@ snakemake --unlock --cores 1
 # Max cpu count for my SLURM account is 1040, subtract 1 to account for scheduler
 # Max job submit count is 1000, subtract 1 to account for scheduler
 echo Running snakemake...
-snakemake --cluster "sbatch --time 7-00:00:00 --qos=scavenger --partition=josephsnodes --account=josephsnodes --cpus-per-task={threads} --mem-per-cpu={resources.mem_mb_per_cpu}" --jobs 2048 --cores 2048 --use-conda --retries 5 --rerun-incomplete --rerun-triggers mtime
+snakemake --cluster "sbatch --time 7-00:00:00 --qos=scavenger --partition=josephsnodes --account=josephsnodes --cpus-per-task={threads} --mem-per-cpu={resources.mem_mb_per_cpu}" --jobs 990 --cores 990 --use-conda --retries 5 --rerun-incomplete --rerun-triggers mtime
