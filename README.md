@@ -76,11 +76,15 @@ sbatch s03_test_snakemake.sh
 
 ## replicate preparation of metadata for workflow
 
-The `src/s00_organizeSRAdata.Rmd` script takes data in workflow/data/SRArunInfo and structures it into `data/samples.tsv` so that it can be churned through snakemake workflow. This table can be found in `workflow/data/samples.tsv` already.
+0. `src/s00_organizeSRAdata.Rmd` takes data in workflow/data/SRArunInfo and structures it into `data/samples.tsv` so that it can be churned through snakemake workflow. This table can be found in `workflow/data/samples.tsv` already.
 
-`src/s03_removeUnderscores.bash` takes renamed downloads from Phytozome, Ensembl, and NCBI and removes underscores from chromosome/scaffold names so that they can be accessed with snakemake wildcards
+1. `src/s01_downloadGenomes.bash` contains `wget` commands to download genomes from NCBI and Ensembl
 
-`src/s04_buildChromosomesFiles.bash` takes the annotations (with underscores removed from chromosome/scaffold names) and creates `chromosomes.tsv`, which is used later by snakemake to split genotyping by chromosome 
+2. `src/s02_removeUnderscores.bash` takes renamed downloads from Phytozome, Ensembl, and NCBI and removes underscores from chromosome/scaffold names so that they can be accessed with snakemake wildcards
+
+3. `src/s03_buildChromosomesFiles.bash` takes the annotations (with underscores removed from chromosome/scaffold names) and creates `chromosomes.tsv`, which is used later by snakemake to split genotyping by chromosome 
+
+4. `src/s04_snakemake.bash` takes all of the input files and runs them through the snakemake workflow
 
 ## run workflow with the MSU ICER HPCC modules instead of conda environments
 
@@ -224,11 +228,9 @@ conda install -n base -c conda-forge mamba
 
 # To do
 
-* Add scripts to remove underscores from chromosome/scaffold names in the assembly and annotation files
-
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
-* Run workflow in batches? 1 batch = 1 species
+* Run workflow in batches? 1 batch = 1 species. I would need to add few aggregation steps to my workflow
 
 * add error checking to main snakefile?
 
