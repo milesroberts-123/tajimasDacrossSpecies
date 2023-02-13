@@ -1872,7 +1872,7 @@ length(unique(allReadsFinal$genome))
 #write.table(mergeTestSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # analyze just a couple species as an example
-testSet = allReads[(allReads$genome %in% c("arabidopsis_halleri", "arabidopsis_lyrata", "arabidopsis_thaliana", "boechera_stricta", "brassica_oleracea", "brassica_rapa", "capsella_grandiflora", "capsella_rubella")),]
+testSet = allReads[(allReads$genome %in% c("arabidopsis_halleri", "arabidopsis_lyrata", "arabidopsis_thaliana", "arabidopsis_suecica", "arabis_alpina", "arabis_nemorensis", "boechera_stricta", "brachypodium_distachyon", "brassica_juncea", "brassica_napus", "brassica_oleracea", "brassica_rapa", "capsella_grandiflora", "capsella_rubella")),]
 write.table(testSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # write run numbers and metadata to workflow input
