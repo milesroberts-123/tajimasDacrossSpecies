@@ -32,5 +32,5 @@ rule multiqc:
 		#	multiqc -f --filename {output} fastp_output/ &> {log}
 		#fi
 
-		multiqc -f --filename {output} fastp_output/ &> {log}
+		multiqc -f --filename {output} {input} &> {log}
 		"""

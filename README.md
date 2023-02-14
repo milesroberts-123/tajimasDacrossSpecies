@@ -88,7 +88,7 @@ sbatch s03_test_snakemake.sh
 
 ## run workflow with the MSU ICER HPCC modules instead of conda environments
 
-Find an example script in `src/s01_snakemake.bash`
+Find an example script in `src/s05_snakemake_modules.bash`
 
 **I highly recommend that you use conda environments instead!** This method for running the workflow is specific only to the ICER HPCC and will probably break if the modules on the HPCC are updated. I mainly keep this note in the readme for my own reference.
 
@@ -126,7 +126,7 @@ workflow/data/
 	assemblies/ # fasta files of genome sequences, naming convention: genus_species.fa
 	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples.tsv using code in src/ before workflow begins
 	samples.tsv # tab-separated text file listing read metadata with these columns: run, replicate, layout, genome
-	species.tsv # list of species to download GBIF occurence records for. Format is genus_spcies
+	species.tsv # list of species to download GBIF occurence records for. Columns are: genus_spcies, and gbif taxon keys
 	chromosomes.tsv # tab-separated text file listing chromosome names for each genome: genus_species, chromsome_name
 ```
 
@@ -226,12 +226,18 @@ conda install -c bioconda snakemake
 conda install -n base -c conda-forge mamba
 ```
 
+## Running workflow in batches
+
+I've tried to run the workflow in batches (`snakemake --batch rule=1/n`) but this function seems most helpful when you have a central aggregation step in your workflow where the input includes all of the upstream files and the output goes on to all of the downstream files. Given the high level of branching in my workflow though, there's not really a good rule to apply batch processing to. I think I'll just abandon the idea for now.
+
+## Adding scripts to estimate dS
+
+I was thinking I could add scripts for estimating the mutation rate in each species as the synonymous substitution rate. I could then combine mutation rate with diversity data to estimate population size. However, given that I'm interested in how diversity correlates with population size, this feels like I'm dipping into circular logic. This is a good idea for a future workflow in an unrelated project though.
+
 # To do
+
+* if there is only one technical replicate for an individual genotype, then just rename the read files instead of writing new files
 
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
-* Run workflow in batches? 1 batch = 1 species. I would need to add few aggregation steps to my workflow
-
-* add error checking to main snakefile?
-
-* add workflow to measure dS, then convert to mutation rate?
+* add error checking to main snakefile
