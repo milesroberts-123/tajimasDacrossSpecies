@@ -6,6 +6,18 @@ library(data.table)
 
 #info = read.csv("SraRunInfo.csv")
 #sort(table(info$BioProject), decreasing = T)
+solanum_melongena = fread("SraRunInfo_solanum_melongena_2023-02-14.csv.gz", data.table = F)
+sort(table(solanum_melongena$BioProject), decreasing = T)
+
+solanum_pimpinellifolium = fread("SraRunInfo_solanum_pimpinellifolium_2023-02-14.csv.gz", data.table = F)
+sort(table(solanum_pimpinellifolium$BioProject), decreasing = T)
+
+nicotiana_benthamiana = fread("SraRunInfo_nicotiana_benthamiana_2023-02-14.csv.gz", data.table = F)
+sort(table(nicotiana_benthamiana$BioProject), decreasing = T)
+
+nicotiana_tabacum = fread("SraRunInfo_nicotiana_tabacum_2023-02-14.csv.gz", data.table = F)
+sort(table(nicotiana_tabacum$BioProject), decreasing = T)
+
 actinidia_chinensis = fread("SraRunInfo_actinidia_chinensis_2023-01-11.csv.gz", data.table = F)
 sort(table(actinidia_chinensis$BioProject), decreasing = T)
 

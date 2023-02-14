@@ -1090,6 +1090,14 @@ nelumbo_nucifera = nelumbo_nucifera[(nelumbo_nucifera$ScientificName == "Nelumbo
 allReads = rbind(allReads, data.frame(run = nelumbo_nucifera[,"Run"], replicate = nelumbo_nucifera[,"BioSample"], layout = "PE", genome = "nelumbo_nucifera", ploidy = 2))
 ```
 
+## Nicotiana tabacum
+```{r}
+nicotiana_tabacum = fread("../workflow/data/SRArunInfo/SraRunInfo_nicotiana_tabacum_PRJNA904563.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = nicotiana_tabacum[,"Run"], replicate = nicotiana_tabacum[,"BioSample"], layout = "PE", genome = "nicotiana_tabacum", ploidy = 4))
+```
+
 ## Olea europaea
 ```{r}
 olea_europaea = fread("../workflow/data/SRArunInfo/SraRunInfo_olea_europaea_PRJEB35540.csv.gz", data.table = F)
@@ -1501,6 +1509,14 @@ setaria_viridis$layout[(setaria_viridis$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = setaria_viridis[,"Run"], replicate = setaria_viridis[,"BioSample"], layout = setaria_viridis[,"layout"], genome = "setaria_viridis", ploidy = 2))
 ```
 
+## Solanum chilense
+```{r}
+solanum_chilense = fread("../workflow/data/SRArunInfo/SraRunInfo_solanum_chilense_PRJEB47577.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = solanum_chilense[,"Run"], replicate = solanum_chilense[,"BioSample"], layout = "PE", genome = "solanum_chilense", ploidy = 2))
+```
+
 ## Solanum lycopersicum
 ```{r}
 solanum_lycopersicum = fread("../workflow/data/SRArunInfo/SraRunInfo_solanum_lycopersicum_PRJNA259308.csv.gz", data.table = F)
@@ -1527,6 +1543,29 @@ solanum_lycopersicum$layout[(solanum_lycopersicum$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = solanum_lycopersicum[,"Run"], replicate = solanum_lycopersicum[,"BioSample"], layout = solanum_lycopersicum[,"layout"], genome = "solanum_lycopersicum", ploidy = 2))
+```
+
+## Solanum melongena
+```{r}
+solanum_melongena = fread("../workflow/data/SRArunInfo/SraRunInfo_solanum_melongena_PRJNA649091.csv.gz", data.table = F)
+
+# remove hi-c library
+solanum_melongena = solanum_melongena[(solanum_melongena$LibraryStrategy == "WGS" & solanum_melongena$ScientificName == "Solanum melongena"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = solanum_melongena[,"Run"], replicate = solanum_melongena[,"BioSample"], layout = "PE", genome = "solanum_melongena", ploidy = 2))
+```
+
+## Solanum pimpinellifolium
+```{r}
+solanum_pimpinellifolium = fread("../workflow/data/SRArunInfo/SraRunInfo_solanum_pimpinellifolium_PRJNA454805.csv.gz", data.table = F)
+
+# subset just this species
+solanum_pimpinellifolium = solanum_pimpinellifolium[(solanum_pimpinellifolium$ScientificName == "Solanum pimpinellifolium"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = solanum_pimpinellifolium[,"Run"], replicate = solanum_pimpinellifolium[,"BioSample"], layout = "PE", genome = "solanum_pimpinellifolium", ploidy = 2))
+
 ```
 
 ## Solanum stenotomum
