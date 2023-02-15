@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --time=7-00:00:00
-#SBATCH --mem-per-cpu=4G
+#SBATCH --mem-per-cpu=16G
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=robe1195@msu.edu
 #SBATCH --partition=josephsnodes
