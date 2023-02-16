@@ -19,9 +19,9 @@ rule picard_mark_duplicates:
 		"""
 		if [ "{params.condaStatus}" == "True" ]; then
                         echo Conda environment enabled, using conda-specific command
-			picard MarkDuplicates I={input} O={output.markedDups} M={output.dupMetrics} &> {log}
+			picard -Xmx32g MarkDuplicates I={input} O={output.markedDups} M={output.dupMetrics} &> {log}
 		else
 			echo Conda environment disabled, using HPCC-specific command
-			java -jar $EBROOTPICARD/picard.jar MarkDuplicates I={input} O={output.markedDups} M={output.dupMetrics} &> {log}
+			java -Xmx32g -jar $EBROOTPICARD/picard.jar MarkDuplicates I={input} O={output.markedDups} M={output.dupMetrics} &> {log}
 		fi
 		"""
