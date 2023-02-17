@@ -236,8 +236,6 @@ I was thinking I could add scripts for estimating the mutation rate in each spec
 
 # To do
 
-* if there is only one technical replicate for an individual genotype, then just rename the read files instead of writing new files
-
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
 * add error checking to main snakefile
