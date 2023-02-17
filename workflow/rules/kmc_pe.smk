@@ -33,14 +33,27 @@ rule kmc_pe:
         	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read1} temporary1_{wildcards.samplePe} tmp_{wildcards.samplePe} &> {log}
         	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read2} temporary2_{wildcards.samplePe} tmp_{wildcards.samplePe} &>> {log}
         	
+		# delete working directory
+		rm -r tmp_{wildcards.samplePe}
+
 		# Unionize kmer databases
         	echo Merging kmer databases...
         	kmc_tools simple temporary1_{wildcards.samplePe} temporary2_{wildcards.samplePe} union union_1_2_{wildcards.samplePe} &>> {log}
+
+		# delete temporary databases after unionizing them
+		rm temporary1_{wildcards.samplePe}.kmc_pre
+		rm temporary1_{wildcards.samplePe}.kmc_suf
+		rm temporary2_{wildcards.samplePe}.kmc_pre
+		rm temporary2_{wildcards.samplePe}.kmc_suf
         	
 		# No need to sort unionized kmer database, union function gives sorted output
         	# Dump to text file
         	echo Dumping kmers to text file...
         	kmc_tools transform union_1_2_{wildcards.samplePe} dump raw_{output} &>> {log}
+
+		# Delete temporary union
+		rm union_1_2_{wildcards.samplePe}.kmc_pre
+		rm union_1_2_{wildcards.samplePe}.kmc_suf
 		
 		# create temp list of k-mers in sample
 		cut -f1 raw_{output} > tmp_{output}
@@ -49,18 +62,13 @@ rule kmc_pe:
 		echo Finding k-mers in sample that do not match coding sequences...
 		comm -13 {input.cdsDatabase} tmp_{output} > uniq_{output}
 
+		# delete temporary k-mer list
+		rm -r tmp_{wildcards.samplePe}
+
 		# subset just k-mers that aren't in coding sequence database
 		join -t $'\t' uniq_{output} raw_{output} > {output}
 
-		# delete working directory, temporary files
-		rm -r tmp_{wildcards.samplePe}
-		rm temporary1_{wildcards.samplePe}.kmc_pre
-		rm temporary1_{wildcards.samplePe}.kmc_suf
-		rm temporary2_{wildcards.samplePe}.kmc_pre
-		rm temporary2_{wildcards.samplePe}.kmc_suf
-		rm union_1_2_{wildcards.samplePe}.kmc_pre
-		rm union_1_2_{wildcards.samplePe}.kmc_suf
+		# delete temporary files that give final output
 		rm raw_{output}
-		rm tmp_{output}
 		rm uniq_{output}
 		"""

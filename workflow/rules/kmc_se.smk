@@ -30,14 +30,25 @@ rule kmc_se:
 		# Count kmers
 		echo Counting kmers...
 		kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe} &> {log}
+		
+		# delete working directory
+		rm -r tmp_{wildcards.sampleSe}
         	
 		# Sort kmer databases
 		echo Sorting kmer databases...
 		kmc_tools transform temporary_{wildcards.sampleSe} sort sorted_{wildcards.sampleSe} &>> {log}
+		
+		# delete unsorted k-mer count database
+		rm temporary_{wildcards.sampleSe}.kmc_pre
+		rm temporary_{wildcards.sampleSe}.kmc_suf
 
 		# Dump to text file
 		echo Dumping kmers to text file...
 		kmc_tools transform sorted_{wildcards.sampleSe} dump raw_{output} &>> {log}
+
+		# delete sorted database after text file is made
+		rm sorted_{wildcards.sampleSe}.kmc_pre
+		rm sorted_{wildcards.sampleSe}.kmc_suf
 
 		# create temp list of k-mers in sample
                 cut -f1 raw_{output} > tmp_{output}
@@ -46,16 +57,13 @@ rule kmc_se:
                 echo Finding k-mers in sample that do not match coding sequences...
                 comm -13 {input.cdsDatabase} tmp_{output} > uniq_{output}
 
+		# delete temporary list of k-mers
+		rm tmp_{output}
+
                 # subset just k-mers that aren't in coding sequence database
                 join -t $'\t' uniq_{output} raw_{output} > {output}
 		
-		# remove working directory, temporary files
-		rm -r tmp_{wildcards.sampleSe}
-		rm sorted_{wildcards.sampleSe}.kmc_pre
-		rm sorted_{wildcards.sampleSe}.kmc_suf
-		rm temporary_{wildcards.sampleSe}.kmc_pre
-		rm temporary_{wildcards.sampleSe}.kmc_suf
+		# delete temporary files that give final output
 		rm raw_{output}
-		rm tmp_{output}
 		rm uniq_{output}
 		"""
