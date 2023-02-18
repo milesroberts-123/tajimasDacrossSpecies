@@ -14,7 +14,7 @@ rule cat_replicates_se:
 	shell:
 		"""
 		echo Count number of technical replicates for this sample...
-		FILECOUNT=$(echo {input.read1} | sed 's/[^ \t]//g' | wc -c)
+		FILECOUNT=$(echo {input} | sed 's/[^ \t]//g' | wc -c)
 
 		echo The number of technical replicates is
 		echo $FILECOUNT
