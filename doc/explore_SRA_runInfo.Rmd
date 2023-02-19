@@ -6,6 +6,10 @@ library(data.table)
 
 #info = read.csv("SraRunInfo.csv")
 #sort(table(info$BioProject), decreasing = T)
+
+raphanus_sativus = fread("SraRunInfo_raphanus_sativus_2023-02-18.csv.gz", data.table = F)
+sort(table(raphanus_sativus$BioProject), decreasing = T)
+
 solanum_melongena = fread("SraRunInfo_solanum_melongena_2023-02-14.csv.gz", data.table = F)
 sort(table(solanum_melongena$BioProject), decreasing = T)
 

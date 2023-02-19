@@ -63,7 +63,7 @@ rule kmc_pe:
 		comm -13 {input.cdsDatabase} tmp_{output} > uniq_{output}
 
 		# delete temporary k-mer list
-		rm -r tmp_{wildcards.samplePe}
+		rm tmp_{output}
 
 		# subset just k-mers that aren't in coding sequence database
 		join -t $'\t' uniq_{output} raw_{output} > {output}

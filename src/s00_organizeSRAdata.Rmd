@@ -332,6 +332,18 @@ allReads = rbind(allReads, data.frame(run = brassica_napus[,"Run"], replicate = 
 
 ```
 
+## Brassica nigra
+```{r}
+# load data for species
+brassica_nigra = fread("../workflow/data/SRArunInfo/SraRunInfo_brassica_juncea_PRJNA615316.csv.gz", data.table = F)
+
+# isolate only WGS datasets
+brassica_nigra = brassica_nigra[(brassica_nigra$LibraryStrategy == "WGS" & brassica_nigra$Platform == "ILLUMINA" & brassica_nigra$ScientificName == "Brassica nigra"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = brassica_nigra[,"Run"], replicate = brassica_nigra[,"BioSample"], layout = "PE", genome = "brassica_nigra", ploidy = 2))
+```
+
 ## Brassica rapa and Brassica oleraceae
 ```{r}
 brassica = fread("../workflow/data/SRArunInfo/SraRunInfo_PRJNA312457.csv.gz", data.table = F)
@@ -1426,6 +1438,14 @@ quercus_robur = quercus_robur[(quercus_robur$ScientificName == "Quercus robur"),
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = quercus_robur[,"Run"], replicate = quercus_robur[,"BioSample"], layout = "PE", genome = "quercus_robur", ploidy = 2))
+```
+
+## Raphanus sativus
+```{r}
+raphanus_sativus = fread("../workflow/data/SRArunInfo/SraRunInfo_raphanus_sativus_PRJNA634208.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = raphanus_sativus[,"Run"], replicate = raphanus_sativus[,"BioSample"], layout = "PE", genome = "raphanus_sativus", ploidy = 2))
 ```
 
 ## Rhododendron griersonianum
