@@ -29,6 +29,7 @@ output_area_table_name = paste(genus_species, "_areas.txt", sep = "") # name of 
 
 # Print parameters to console
 print(species_string)
+print(taxon_key)
 print(gbif_user)
 print(gbif_email)
 #print(gbif_pwd)
