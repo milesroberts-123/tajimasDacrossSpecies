@@ -54,7 +54,7 @@ rule all:
 		expand("{assembly}_jac.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_readStats.txt", assembly=set(chroms.index.get_level_values("assembly"))),
-		expand("{species}_areas.txt", species = species.index.get_level_values("species"))
+		#expand("{species}_areas.txt", species = species.index.get_level_values("species"))
 
 include: "rules/download_gbif.smk"
 include: "rules/download_pe.smk"
