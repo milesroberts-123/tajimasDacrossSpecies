@@ -7,7 +7,7 @@ rule fastp_se:
 		jsonReport=temp("fastp_output/{runSe}_se_fastp.json")
 	threads: 4
 	resources:
-		mem_mb_per_cpu=4000
+		mem_mb_per_cpu=5000
 	params:
 		qualityScore=20,
 		minReadLength=30,

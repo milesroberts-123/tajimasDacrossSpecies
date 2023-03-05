@@ -9,7 +9,7 @@ rule fastp_pe:
 		jsonReport=temp("fastp_output/{runPe}_pe_fastp.json")
 	threads: 4
 	resources:
-		mem_mb_per_cpu=4000
+		mem_mb_per_cpu=5000
 	params:
 		qualityScore=20,
 		minReadLength=30,
