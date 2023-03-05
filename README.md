@@ -236,6 +236,16 @@ I was thinking I could add scripts for estimating the mutation rate in each spec
 
 # To do
 
+* Estimate average pairwise k-mer dissimilarity by calculating pairwise k-mer dissimilarity for only a subset of pairs
+
+* dynamically allocate memory to `fastp` based on the size of the input data
+
+* Why are environment variables not being passed to snakemake?
+
+* Add taxon keys to `samples.tsv`?
+
+* try submitting jobs to scavenger queue on first attempt, but switch to josephsnodes if job gets canceled
+
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
 * add error checking to main snakefile
