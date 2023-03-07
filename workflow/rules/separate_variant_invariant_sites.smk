@@ -10,7 +10,7 @@ rule separate_variant_invariant_sites:
 	resources:
 		mem_mb_per_cpu=32000
 	conda:
-		"../envs/vcftools.yml"
+		"../envs/bcftools.yml"
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 VCFtools/0.1.15-Perl-5.28.0"
 	shell:
