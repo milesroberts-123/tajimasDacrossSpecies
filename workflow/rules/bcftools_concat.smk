@@ -5,7 +5,7 @@ rule bcftools_concat:
 	output:
 		"filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz"
 	log:
-		"logs/bcftools_concat/bcftools_concat_{assembly}_{chromosome}.log"
+		"logs/bcftools_concat/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
@@ -19,6 +19,9 @@ rule bcftools_concat:
 			--allow-overlaps \
 			{input} \
 			-O z -o {output} &> {log}
+
+		# index concat file
+		tabix {output}
 
 		# remove temporary index
 		rm filtered_variant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi

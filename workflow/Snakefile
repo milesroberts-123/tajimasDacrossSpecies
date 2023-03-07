@@ -44,12 +44,8 @@ def get_mem_mb(wildcards, attempt):
 
 rule all:
 	input:
-		expand("filtered_variantAndInvariant_{assembly}_{chromosome}.frq.count", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
+		#expand("filtered_variantAndInvariant_{assembly}_{chromosome}.table", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
 		expand("{assembly}_multiqc_report.html", assembly=set(chroms.index.get_level_values("assembly"))),
-		expand("out_{assembly}_{chromosome}.frq", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
-		expand("out_{assembly}_{chromosome}.ldepth.mean", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
-		expand("out_{assembly}_{chromosome}.lqual", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
-		expand("out_{assembly}_{chromosome}.lmiss", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
 		expand("{assembly}_bcd.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_jac.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
@@ -90,11 +86,10 @@ include: "rules/gatk_haplotype_caller.smk"
 include: "rules/gatk_combine_gvcfs.smk"
 include: "rules/gatk_genotype_gvcfs.smk"
 include: "rules/separate_variant_invariant_sites.smk"
-include: "rules/vcftools_check_genotype_calls.smk"
 include: "rules/gatk_variant_filtration_variant_sites.smk"
 include: "rules/gatk_variant_filtration_invariant_sites.smk"
-include: "rules/vcftools_filter_variant_sites.smk"
-include: "rules/vcftools_filter_invariant_sites.smk"
+include: "rules/bcftools_filter_variant_sites.smk"
+include: "rules/bcftools_filter_invariant_sites.smk"
 include: "rules/bcftools_concat.smk"
-include: "rules/vcftools_counts.smk"
+include: "rules/gatk_variants_to_table.smk"
 include: "rules/genome_wide_pi.smk"

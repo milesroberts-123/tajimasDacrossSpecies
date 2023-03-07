@@ -3,7 +3,7 @@ rule gatk_variant_filtration_variant_sites:
 		genome="data/assemblies/{assembly}.fa",
 		variantSites="variant_{assembly}_{chromosome}.vcf.gz"
 	output:
-		temp("annotated_variant_{assembly}_{chromosome}.vcf.gz")
+		temp("annotated_variant_{assembly}_{chromosome}.vcf.gz"),
 	log:
 		"logs/gatk_variant_filtration_variant_sites/{assembly}_{chromosome}.log"
 	threads: 1

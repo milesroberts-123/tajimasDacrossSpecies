@@ -236,6 +236,8 @@ I was thinking I could add scripts for estimating the mutation rate in each spec
 
 # To do
 
+* swap out `vcftools` for `bcftools` because `vcftools` does not support polyploidy
+
 * Estimate average pairwise k-mer dissimilarity by calculating pairwise k-mer dissimilarity for only a subset of pairs
 
 * dynamically allocate memory to `fastp` based on the size of the input data
