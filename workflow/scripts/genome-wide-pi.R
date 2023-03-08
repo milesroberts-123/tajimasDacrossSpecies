@@ -117,7 +117,7 @@ bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 print("Replacing NA with placeholder...")
 bigmat$AN[is.na(bigmat$AN)] = -1
 
-rint("A subset of the matrix:")
+print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
 # calculate genome-wide pi
