@@ -9,15 +9,15 @@ library(data.table)
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
 
-ploidy = as.numeric(args[1]) # ploidy
-outputFile = args[2] # name of output file
-threadCount = as.numeric(args[3]) # number of cores to use
+#ploidy = as.numeric(args[1]) # ploidy
+outputFile = args[1] # name of output file
+threadCount = as.numeric(args[2]) # number of cores to use
 #indvs = args[grepl("012.indv", args)] # list of individuals in genotype matrices
 mats = args[grepl(".table$", args)] # genotype matrices
 
 # print arguments passed to script
-print("Ploidy of organism:")
-print(ploidy)
+#print("Ploidy of organism:")
+#print(ploidy)
 
 print("Output file name:")
 print(outputFile)
