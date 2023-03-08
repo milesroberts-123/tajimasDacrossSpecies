@@ -103,12 +103,26 @@ rm(mats)
 #print("A subset of the matrix:")
 #bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
+# replace NA with 0 for invariant sites
+print("Replacing NA with 0...")
+bigmat$AC[is.na(bigmat$AC)] = 0
+
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
+print("Replacing NA with placeholder...")
+bigmat$AN[is.na(bigmat$AN)] = -1
+
+rint("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
 # calculate genome-wide pi
 print("Calculating frequency of reference alleles...")
-bigmat$RF = 1 - bigmat$AF
+bigmat$alt_freq = bigmat$AC/bigmat$AN
+bigmat$ref_freq = 1 - bigmat$alt_freq
 
 print("Calculating heterozygosity at each site...")
-bigmat$HET = (1 - (bigmat$RF^2 + bigmat$AF^2))*(bigmat$AN/(bigmat$AN-1))
+bigmat$HET = (1 - (bigmat$ref_freq^2 + bigmat$alt_freq^2))*(bigmat$AN/(bigmat$AN-1))
 
 print("Summing heterozygosities across sites...")
 write.table(sum(bigmat$HET), outputFile, row.names = F, quote = F)
