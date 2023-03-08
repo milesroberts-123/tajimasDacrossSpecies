@@ -39,7 +39,7 @@ print(mats)
 print("Loading genotype matrices...")
 #mats = mclapply(mats, read.table, header = F, mc.cores = threadCount)
 #indvs = mclapply(indvs, read.table, header = F, mc.cores = threadCount)
-mats = lapply(mats, fread, nThread = threadCount, header = F, data.table = F)
+mats = lapply(mats, fread, nThread = threadCount, header = T, data.table = F, fill = T)
 #indvs = lapply(indvs, fread, nThread = threadCount, header = F, data.table = F)
 
 # check that all lists of individuals are identical
@@ -65,6 +65,10 @@ mats = lapply(mats, fread, nThread = threadCount, header = F, data.table = F)
 #}
 
 #mats = lapply(mats, remtop)
+
+# Look at loaded input for sanity check
+print("Subset of one matrix:")
+head(mats[[1]])
 
 # bind all matrices into one matrix
 print("Binding matrices together...")
