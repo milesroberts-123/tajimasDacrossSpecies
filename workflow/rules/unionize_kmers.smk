@@ -1,5 +1,5 @@
 def get_list_kmers_input(wildcards):
-	return ["nocds_" + x + "_pe.kmc_pre" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])] + ["nocds_" + x + "_pe.kmc_suf" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])] + ["nocds_" + x + "_se.kmc_pre" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])] + ["nocds_" + x + "_se.kmc_suf" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])]
+	return ["nocds_" + x + "_pe.kmc_pre" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])] + ["nocds_" + x + "_se.kmc_pre" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])]
 
 rule unionize_kmers:
 	input:
@@ -15,19 +15,12 @@ rule unionize_kmers:
 		"../envs/kmc.yml"
 	shell:
 		"""
-		# 1. concatenate kmer count files
-		# 2. remove kmers that occur less than countThresh times because they're due to sequencing errors
-		# 3. extract just kmers
-		# 4. remove duplicate kmers
-		# 5. get a random subset of kmers for downstream analyses
-		# 6. sort random k-mer subset so that merging is easier
-		# cat {input} | awk '(($2 >= {params.countThresh}))' | cut -f1 1> {output} 2> {log}
-		DBFILES=$(echo {input} | sed 's/.kmc_pre//g' | sed 's/.kmc_suf//g')
+		DBFILES=$(echo {input} | sed 's/.kmc_pre//g')
 		INDEX=1
 
 		echo "List of database files that will be merged:"
-		echo $DBFILE
-		for FILE in DBFILES
+		echo ${DBFILES[@]}
+		for FILE in ${DBFILES[@]}
 		do
 			if [[ $INDEX -eq 1 ]]; then
 				# in first round of loop, unionize first two files

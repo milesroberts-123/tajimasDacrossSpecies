@@ -7,6 +7,9 @@ library(data.table)
 #info = read.csv("SraRunInfo.csv")
 #sort(table(info$BioProject), decreasing = T)
 
+trifolium_pratense = fread("SraRunInfo_trifolium_pratense_2023-03-09.csv.gz", data.table = F)
+sort(table(trifolium_pratense$BioProject), decreasing = T)
+
 raphanus_sativus = fread("SraRunInfo_raphanus_sativus_2023-02-18.csv.gz", data.table = F)
 sort(table(raphanus_sativus$BioProject), decreasing = T)
 
@@ -253,7 +256,7 @@ sort(table(manihot_esculenta$BioProject), decreasing = T)
 medicago_truncatula = read.csv("SraRunInfo_medicago_truncatula_2022-10-13.csv")
 sort(table(medicago_truncatula$BioProject), decreasing = T)
 
-miscanthus_sinensis = read.csv("SraRunInfo_miscanthus_sinensis_2022-10-13.csv")
+miscanthus_sinensis = read.csv("SraRunInfo_miscanthus_sinensis_2022-10-13.csv.gz")
 sort(table(miscanthus_sinensis$BioProject), decreasing = T)
 
 musa_acuminata = read.csv("SraRunInfo_musa_acuminata_2022-10-13.csv")
