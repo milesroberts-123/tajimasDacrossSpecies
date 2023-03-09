@@ -234,9 +234,15 @@ I've tried to run the workflow in batches (`snakemake --batch rule=1/n`) but thi
 
 I was thinking I could add scripts for estimating the mutation rate in each species as the synonymous substitution rate. I could then combine mutation rate with diversity data to estimate population size. However, given that I'm interested in how diversity correlates with population size, this feels like I'm dipping into circular logic. This is a good idea for a future workflow in an unrelated project though.
 
-# To do
+## including multiple types of sequencing data
 
-* Estimate average pairwise k-mer dissimilarity by calculating pairwise k-mer dissimilarity for only a subset of pairs
+I'm assuming that variation in diversity between species will be greater than variation between methods (i.e. WGS vs GBS vs RAD-seq etc.)
+
+This is similar to an assumption that Buffalo 2022 **Elife** makes
+
+In other words, I think it would be okay to include different types of sequencing into the same analysis. Variation between species will be confounded with variation between methods, but again we can assume that variation between species will be greater than variation between methods.
+
+# To do
 
 * dynamically allocate memory to `fastp` based on the size of the input data
 
