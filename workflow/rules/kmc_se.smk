@@ -51,11 +51,12 @@ rule kmc_se:
 		rm temporary_{wildcards.sampleSe}.kmc_suf
 
 		# subtract off k-mers found in coding sequences
-		kmc_tools simple sorted_{wildcards.sampleSe} {params.cdsDbPrefix} kmers_subtract nocds_{wildcards.sampleSe} &>> {log}
+		echo Removing CDS k-mers...
+		kmc_tools simple sorted_{wildcards.sampleSe} {params.cdsDbPrefix} kmers_subtract nocds_{wildcards.sampleSe}_se &>> {log}
 
 		# Dump to text file
 		echo Dumping kmers to text file...
-		kmc_tools transform nocds_{wildcards.sampleSe} dump {output.kmerCounts} &>> {log}
+		kmc_tools transform nocds_{wildcards.sampleSe}_se dump {output.kmerCounts} &>> {log}
 
 		# delete sorted database after text file is made
 		rm sorted_{wildcards.sampleSe}.kmc_pre

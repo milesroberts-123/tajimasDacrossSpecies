@@ -55,12 +55,13 @@ rule kmc_pe:
 		rm temporary2_{wildcards.samplePe}.kmc_suf
         	
 		# subtract off k-mers found in coding sequences
-		kmc_tools simple union_1_2_{wildcards.samplePe} {params.cdsDbPrefix} kmers_subtract nocds_{wildcards.samplePe} &>> {log}
+		echo Removing CDS k-mers...
+		kmc_tools simple union_1_2_{wildcards.samplePe} {params.cdsDbPrefix} kmers_subtract nocds_{wildcards.samplePe}_pe &>> {log}
  
 		# No need to sort unionized kmer database, union function gives sorted output
         	# Dump to text file
         	echo Dumping kmers to text file...
-        	kmc_tools transform nocds_{wildcards.samplePe} dump {output.kmerCounts} &>> {log}
+        	kmc_tools transform nocds_{wildcards.samplePe}_pe dump {output.kmerCounts} &>> {log}
 
 		# Delete temporary union
 		rm union_1_2_{wildcards.samplePe}.kmc_pre
