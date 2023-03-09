@@ -19,13 +19,13 @@ rule unionize_kmers:
 		INDEX=1
 
 		echo "List of database files that will be merged:"
-		echo ${DBFILES[@]}
-		for FILE in ${DBFILES[@]}
+		echo ${{DBFILES[@]}}
+		for FILE in ${{DBFILES[@]}}
 		do
 			if [[ $INDEX -eq 1 ]]; then
 				# in first round of loop, unionize first two files
 				echo "Merging first two files..."
-				FILE2=("${DBFILES[@]:1:1}")
+				FILE2=("${{DBFILES[@]:1:1}}")
 				
 				echo $FILE
 				echo $FILE2
