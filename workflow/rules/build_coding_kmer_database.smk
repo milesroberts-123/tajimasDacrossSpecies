@@ -2,7 +2,8 @@ rule build_coding_kmer_database:
 	input:
 		"{assembly}_cds.fa"
 	output:
-		"{assembly}_codingKmerDatabase.txt"
+		kmcDbPre="{assembly}_codingKmerDatabase.kmc_pre",
+		kmcDbSuf="{assembly}_codingKmerDatabase.kmc_suf"
 	log:
 		"logs/build_coding_kmer_database/{assembly}.log"
 	threads: 4
@@ -25,14 +26,14 @@ rule build_coding_kmer_database:
 		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs2 -fm {input} {params.outputPrefix} tmp_{params.outputPrefix}
 
 		# dump kmers to text file
-		kmc_tools transform {params.outputPrefix} dump tmp_{output}
+		# kmc_tools transform {params.outputPrefix} dump tmp_{output}
 
 		# remove first column from text file
-		cut -f1 tmp_{output} | sort > {output}
+		# cut -f1 tmp_{output} | sort > {output}
 
 		# remove intermediate files
-		rm tmp_{output}
+		# rm tmp_{output}
 		rm -r tmp_{params.outputPrefix}
-		rm {params.outputPrefix}.kmc_pre
-		rm {params.outputPrefix}.kmc_suf
+		#rm {params.outputPrefix}.kmc_pre
+		#rm {params.outputPrefix}.kmc_suf
 		"""

@@ -1,6 +1,6 @@
 rule random_kmer_subset:
 	input:
-		"{assembly}_kmerListNoDups.txt"
+		"{assembly}_kmerList.txt"
 	output:
 		temp("{assembly}_kmerRandomSubset.txt")
 	log:
