@@ -15,7 +15,7 @@ rule unionize_kmers:
 		"../envs/kmc.yml"
 	shell:
 		"""
-		DBFILES=$(echo {input} | sed 's/.kmc_pre//g')
+		DBFILES=($(echo {input} | sed 's/.kmc_pre//g'))
 		INDEX=1
 
 		echo "List of database files that will be merged:"
