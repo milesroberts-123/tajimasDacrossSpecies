@@ -244,11 +244,11 @@ In other words, I think it would be okay to include different types of sequencin
 
 # To do
 
-* dynamically allocate memory to `fastp` based on the size of the input data
+* Add taxon keys to `samples.tsv`?
 
 * Why are environment variables not being passed to snakemake?
 
-* Add taxon keys to `samples.tsv`?
+* dynamically allocate memory to `fastp` based on the size of the input data
 
 * try submitting jobs to scavenger queue on first attempt, but switch to josephsnodes if job gets canceled
 

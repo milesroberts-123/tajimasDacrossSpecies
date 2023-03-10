@@ -1,5 +1,5 @@
 def get_taxon_key(wildcards):
-        taxon_key = species.loc[species["species"] == wildcards.species, "taxonKey"]
+        taxon_key = species.loc[species["species"] == wildcards.species, "taxonKeys"]
         return taxon_key
 
 envvars:
@@ -25,4 +25,4 @@ rule download_gbif:
 		gbifUser=os.environ["GBIF_USER"],
 		gbifPwd=os.environ["GBIF_PWD"]
 	shell:
-		"Rscript scripts/download_gbif.R {wildcards.species} {params.taxonKey} {params.gbifUser} {params.gbifEmail} {params.gbifPwd} &> {log}"
+		"Rscript scripts/download_gbif.R {wildcards.species} {params.gbifUser} {params.gbifEmail} {params.gbifPwd} {params.taxonKey} &> {log}"

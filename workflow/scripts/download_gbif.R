@@ -18,10 +18,10 @@ package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igrap
 #	"datasetName",
 #	"issues") # list of needed columns from gbif data
 genus_species = args[1] 
-taxon_key = args[2]
-gbif_user = args[3]
-gbif_email = args[4]
-gbif_pwd = args[5]
+gbif_user = args[2]
+gbif_email = args[3]
+gbif_pwd = args[4]
+taxon_keys = args[5:length(args)]
 species_string = gsub("_", " ", genus_species) # species name to pass to gbif
 output_plot_name = paste(genus_species, "_raw_gbif_data.png", sep = "") # name of output plot
 output_occ_table_name = paste(genus_species, "_raw_gbif_data.txt", sep = "") # name of output table
@@ -29,7 +29,7 @@ output_area_table_name = paste(genus_species, "_areas.txt", sep = "") # name of 
 
 # Print parameters to console
 print(species_string)
-print(taxon_key)
+print(taxon_keys)
 print(gbif_user)
 print(gbif_email)
 #print(gbif_pwd)
@@ -69,7 +69,7 @@ split_issue_codes = function(x){
 # Helpful reference: https://docs.ropensci.org/rgbif/articles/getting_occurrence_data.html
 # INPUT: character vector of species name
 # OUTPUT: dataframe of occurence data for species
-search_gbif = function(species_string, taxon_key, gbif_user, gbif_email, gbif_pwd){
+search_gbif = function(species_string, taxon_keys, gbif_user, gbif_email, gbif_pwd){
 
 	#obtain data from GBIF via rgbif
 	print(paste("Searching GBIF for occurence data of ", species_string, " ...", sep = ""))
@@ -82,7 +82,7 @@ search_gbif = function(species_string, taxon_key, gbif_user, gbif_email, gbif_pw
 	#	fields = kept_columns,
 	#	basisOfRecord = "HUMAN_OBSERVATION")
 	gbif_download <- occ_download(
-		pred("taxonKey", taxon_key),
+		pred_in("taxonKey", taxon_keys),
 		pred("hasGeospatialIssue", FALSE),
 		pred("hasCoordinate", TRUE),
 		pred("occurrenceStatus","PRESENT"),
@@ -333,13 +333,13 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 }
 
 # combine the above functions into one workflow
-main = function(package_list, species_string, taxon_key, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd){
+main = function(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd){
 	
 	# load packages
 	load_packages(package_list)
 
 	# search gbif for occurence data
-	all_data = search_gbif(species_string, taxon_key, gbif_user, gbif_email, gbif_pwd)
+	all_data = search_gbif(species_string, taxon_keys, gbif_user, gbif_email, gbif_pwd)
 
 	# plot gbif data
 	plot_gbif(all_data, output_plot_name)
@@ -370,4 +370,4 @@ main = function(package_list, species_string, taxon_key, output_plot_name, outpu
 }
 
 # execute workflow
-main(package_list, species_string, taxon_key, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd)
+main(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd)

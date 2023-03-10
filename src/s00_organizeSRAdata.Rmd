@@ -35,7 +35,7 @@ actinidia_chinensis$replicate[grepl("KFF", actinidia_chinensis$SampleName)] = "F
 
 # add reads to growing list
 # not sure about this ploidy
-allReads = rbind(allReads, data.frame(run = actinidia_chinensis[,"Run"], replicate = actinidia_chinensis[,"replicate"], layout = "SE", genome = "actinidia_chinensis", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = actinidia_chinensis[,"Run"], replicate = actinidia_chinensis[,"replicate"], layout = "SE", genome = "actinidia_chinensis", ploidy = 2, taxonKeys = "3644693 7270743 3644698 3644711"))
 ```
 
 ## Aegilops tauschii
@@ -54,7 +54,7 @@ any(duplicated(aegilops_tauschii$BioSample))
 any(aegilops_tauschii$spots_with_mates == 0)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = aegilops_tauschii[,"Run"], replicate = aegilops_tauschii[,"BioSample"], layout = "PE", genome = "aegilops_tauschii", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = aegilops_tauschii[,"Run"], replicate = aegilops_tauschii[,"BioSample"], layout = "PE", genome = "aegilops_tauschii", ploidy = 2, taxonKeys = "5289779 5677746 5677750 7226877 5677755 5677762 5677759 5677753"))
 ```
 
 ## Amaranthus hypochondriacus
@@ -73,7 +73,7 @@ any(duplicated(amaranthus_hypochondriacus$BioSample))
 any(amaranthus_hypochondriacus$spots_with_mates == 0)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = amaranthus_hypochondriacus[,"Run"], replicate = amaranthus_hypochondriacus[,"BioSample"], layout = "PE", genome = "amaranthus_hypochondriacus", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = amaranthus_hypochondriacus[,"Run"], replicate = amaranthus_hypochondriacus[,"BioSample"], layout = "PE", genome = "amaranthus_hypochondriacus", ploidy = 2, taxonKeys = "5384364 7554918 8111324 7442708 10145116 10538632 10634896 10279930 5547885 7867601"))
 ```
 
 ## Ananas comosus
@@ -92,7 +92,7 @@ any(duplicated(ananas_comosus$SampleName))
 any(ananas_comosus$spots_with_mates == 0)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = ananas_comosus[,"Run"], replicate = ananas_comosus[,"BioSample"], layout = "PE", genome = "ananas_comosus", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = ananas_comosus[,"Run"], replicate = ananas_comosus[,"BioSample"], layout = "PE", genome = "ananas_comosus", ploidy = 2, taxonKeys = "5288770"))
 ```
 
 ## Arabidopsis halleri
@@ -107,7 +107,7 @@ arabidopsis_halleri = arabidopsis_halleri[(arabidopsis_halleri$Model == "Illumin
 any(arabidopsis_halleri$spots_with_mates == 0)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = arabidopsis_halleri[,"Run"], replicate = arabidopsis_halleri[,"BioSample"], layout = "PE", genome = "arabidopsis_halleri", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = arabidopsis_halleri[,"Run"], replicate = arabidopsis_halleri[,"BioSample"], layout = "PE", genome = "arabidopsis_halleri", ploidy = 2, taxonKeys = "3052450 9403166 3052459 11097917 3689665 7225571 10906894 3052455 10999708 10940826"))
 ```
 
 ## Arabidopsis lyrata
@@ -128,7 +128,7 @@ arabidopsis_lyrata = rbind(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidops
 any(arabidopsis_lyrata$spots_with_mates == 0)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = arabidopsis_lyrata[,"Run"], replicate = arabidopsis_lyrata[,"BioSample"], layout = "PE", genome = "arabidopsis_lyrata", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = arabidopsis_lyrata[,"Run"], replicate = arabidopsis_lyrata[,"BioSample"], layout = "PE", genome = "arabidopsis_lyrata", ploidy = 2, taxonKeys = "3052468 3052469 3052478 7225570 9372560"))
 ```
 
 
@@ -138,7 +138,7 @@ allReads = rbind(allReads, data.frame(run = arabidopsis_lyrata[,"Run"], replicat
 arabidopsis_suecica = fread("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_suecica_PRJNA309929.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = arabidopsis_suecica[,"Run"], replicate = arabidopsis_suecica[,"BioSample"], layout = "PE", genome = "arabidopsis_suecica", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = arabidopsis_suecica[,"Run"], replicate = arabidopsis_suecica[,"BioSample"], layout = "PE", genome = "arabidopsis_suecica", ploidy = 4, taxonKeys = "7915981 3052544"))
 
 ```
 
@@ -153,7 +153,7 @@ arabidopsis_thaliana$layout[(arabidopsis_thaliana$spots_with_mates > 0)] = "PE"
 arabidopsis_thaliana$layout[(arabidopsis_thaliana$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = arabidopsis_thaliana[,"Run"], replicate = arabidopsis_thaliana[,"BioSample"], layout = arabidopsis_thaliana[,"layout"], genome = "arabidopsis_thaliana", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = arabidopsis_thaliana[,"Run"], replicate = arabidopsis_thaliana[,"BioSample"], layout = arabidopsis_thaliana[,"layout"], genome = "arabidopsis_thaliana", ploidy = 2, taxonKeys = "3052436 7758053 3052446"))
 ```
 
 ## Arabis alpina
@@ -173,7 +173,6 @@ arabis_alpina$layout = "PE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = arabis_alpina[,"Run"], replicate = arabis_alpina[,"BioSample"], layout = arabis_alpina[,"layout"], genome = "arabis_alpina", ploidy = 2))
-
 ```
 
 
