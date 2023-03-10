@@ -23,6 +23,8 @@ rule unionize_kmers:
 		for FILE in ${{DBFILES[@]}}
 		do
 			if [[ $INDEX -eq 1 ]]; then
+				echo Index is: $INDEX
+
 				# in first round of loop, unionize first two files
 				echo "Merging first two files..."
 				FILE2=("${{DBFILES[@]:1:1}}")
@@ -32,9 +34,11 @@ rule unionize_kmers:
 
 				kmc_tools simple $FILE $FILE2 union grandsum &>> {log}
 			elif [[ $INDEX -eq 2 ]]; then
+				echo Index is: $INDEX
 				# in second round of loop, just skip to third round because second file already unionized
-				continue
+				echo Do nothing because second file already merged
 			else
+				echo Index is: $INDEX
 				echo "Merging $FILE into grand total..."
  
 				# in round 3 and beyond, just add each subsequent file to union
@@ -46,7 +50,7 @@ rule unionize_kmers:
 			fi
 			echo Increment index...
 			((INDEX++))
-			echo $INDEX
+			echo Index is now: $INDEX
 		done
 
 		# after all files are merged, dump result to text file
