@@ -7,6 +7,12 @@ library(data.table)
 #info = read.csv("SraRunInfo.csv")
 #sort(table(info$BioProject), decreasing = T)
 
+zizania_palustris = fread("SraRunInfo_zizania_palustris_2023-03-10.csv.gz", data.table = F)
+sort(table(zizania_palustris$BioProject), decreasing = T)
+
+vanilla_planifolia = fread("SraRunInfo_vanilla_planifolia_2023-03-10.csv.gz", data.table = F)
+sort(table(vanilla_planifolia$BioProject), decreasing = T)
+
 trifolium_pratense = fread("SraRunInfo_trifolium_pratense_2023-03-09.csv.gz", data.table = F)
 sort(table(trifolium_pratense$BioProject), decreasing = T)
 

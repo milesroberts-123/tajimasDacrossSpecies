@@ -18,6 +18,26 @@ allReads = NULL
 ```
 
 # Compile SRA run info for each species into master list, separate paired end and single-end reads
+
+## Actinidia chinensis
+```{r}
+# load data for species
+actinidia_chinensis = fread("../workflow/data/SRArunInfo/SraRunInfo_actinidia_chinensis_PRJNA302330.csv.gz", data.table = F)
+
+# assign reads to replicates based on info in publication
+# KFA and KFB are clones
+actinidia_chinensis$replicate = NA
+actinidia_chinensis$replicate[grepl("KFA|KFB", actinidia_chinensis$SampleName)] = "AB"
+actinidia_chinensis$replicate[grepl("KFC", actinidia_chinensis$SampleName)] = "C"
+actinidia_chinensis$replicate[grepl("KFD", actinidia_chinensis$SampleName)] = "D"
+actinidia_chinensis$replicate[grepl("KFE", actinidia_chinensis$SampleName)] = "E"
+actinidia_chinensis$replicate[grepl("KFF", actinidia_chinensis$SampleName)] = "F"
+
+# add reads to growing list
+# not sure about this ploidy
+allReads = rbind(allReads, data.frame(run = actinidia_chinensis[,"Run"], replicate = actinidia_chinensis[,"replicate"], layout = "SE", genome = "actinidia_chinensis", ploidy = 2))
+```
+
 ## Aegilops tauschii
 ```{r}
 # load data for species
@@ -392,6 +412,21 @@ cajanus_cajan = fread("../workflow/data/SRArunInfo/SraRunInfo_cajanus_cajan_PRJN
 allReads = rbind(allReads, data.frame(run = cajanus_cajan[,"Run"], replicate = cajanus_cajan[,"BioSample"], layout = "PE", genome = "cajanus_cajan", ploidy = 2))
 ```
 
+## Camelina sativa
+```{r}
+# load data for species
+camelina_sativa = fread("../workflow/data/SRArunInfo/SraRunInfo_camelina_sativa_PRJNA477644.csv.gz", data.table = F)
+
+# subset just C. sativa
+unique(camelina_sativa$ScientificName)
+
+camelina_sativa = camelina_sativa[(camelina_sativa$ScientificName == "Camelina sativa"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = camelina_sativa[,"Run"], replicate = camelina_sativa[,"BioSample"], layout = "PE", genome = "camelina_sativa", ploidy = 6))
+
+```
+
 ## Camellia sinensis
 ```{r}
 # load data for species
@@ -464,14 +499,27 @@ allReads = rbind(allReads, data.frame(run = capsella_rubella[,"Run"], replicate 
 
 ## Capsicum annuum
 ```{r}
-# load data
-capsicum_annuum = fread("../workflow/data/SRArunInfo/SraRunInfo_capsicum_annuum_PRJDB14137.csv.gz", data.table = F)
+capsicum_annuum = fread("../workflow/data/SRArunInfo/SraRunInfo_capsicum_annuum_PRJEB45375.csv.gz", data.table = F)
 
-# Subset only WGS reads for this species
-capsicum_annuum = capsicum_annuum[(capsicum_annuum$LibraryStrategy == "WGS" & capsicum_annuum$Platform == "ILLUMINA" & capsicum_annuum$ScientificName == "Capsicum annuum"),]
+# subset just C. annuum
+unique(capsicum_annuum$ScientificName)
+
+capsicum_annuum = capsicum_annuum[grepl("Capsicum annuum", capsicum_annuum$ScientificName),]
+
+length(unique(capsicum_annuum$BioSample))
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = capsicum_annuum[,"Run"], replicate = capsicum_annuum[,"BioSample"], layout = "PE", genome = "capsicum_annuum", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = capsicum_annuum[,"Run"], replicate = capsicum_annuum[,"BioSample"], layout = "SE", genome = "capsicum_annuum", ploidy = 2))
+
+# WGS data
+# load data
+# capsicum_annuum = fread("../workflow/data/SRArunInfo/SraRunInfo_capsicum_annuum_PRJDB14137.csv.gz", data.table = F)
+
+# Subset only WGS reads for this species
+#capsicum_annuum = capsicum_annuum[(capsicum_annuum$LibraryStrategy == "WGS" & capsicum_annuum$Platform == "ILLUMINA" & capsicum_annuum$ScientificName == "Capsicum annuum"),]
+
+# add reads to growing list
+# allReads = rbind(allReads, data.frame(run = capsicum_annuum[,"Run"], replicate = capsicum_annuum[,"BioSample"], layout = "PE", genome = "capsicum_annuum", ploidy = 2))
 ```
 
 ## Castanea mollissima
@@ -584,6 +632,20 @@ allReads = rbind(allReads, data.frame(run = coffea_canephora[,"Run"], replicate 
 
 ```
 
+## Corylus avellana
+```{r}
+# load data
+corylus_avellana = fread("../workflow/data/SRArunInfo/SraRunInfo_corylus_avellana_PRJEB32239.csv.gz", data.table = F)
+
+# subset just C. avellana
+unique(corylus_avellana$ScientificName)
+
+corylus_avellana = corylus_avellana[(corylus_avellana$ScientificName == "Corylus avellana"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = corylus_avellana[,"Run"], replicate = corylus_avellana[,"BioSample"], layout = "PE", genome = "corylus_avellana", ploidy = 2))
+```
+
 ## Cucumis melo
 ```{r}
 # load data
@@ -621,6 +683,24 @@ cucumis_sativus$layout = "PE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = cucumis_sativus[,"Run"], replicate = cucumis_sativus[,"BioSample"], layout = cucumis_sativus[,"layout"], genome = "cucumis_sativus", ploidy = 2))
+```
+
+## Cucurbita argyrosperma
+```{r}
+# load data
+cucurbita_argyrosperma = fread("../workflow/data/SRArunInfo/SraRunInfo_cucurbita_argyrosperma_PRJNA485527.csv.gz", data.table = F)
+
+# subset just C. argyrosperma
+unique(cucurbita_argyrosperma$ScientificName)
+cucurbita_argyrosperma = cucurbita_argyrosperma[grepl("Cucurbita argyrosperma", cucurbita_argyrosperma$ScientificName),]
+
+# get just RAD-seq data
+cucurbita_argyrosperma = cucurbita_argyrosperma[(cucurbita_argyrosperma$LibraryStrategy == "RAD-Seq"),]
+
+# add reads to growing list
+# not super sure about this ploidy
+# seems like most cucurbits are diploids
+allReads = rbind(allReads, data.frame(run = cucurbita_argyrosperma[,"Run"], replicate = cucurbita_argyrosperma[,"BioSample"], layout = "SE", genome = "cucurbita_argyrosperma", ploidy = 2))
 ```
 
 ## Cucurbita pepo
@@ -677,6 +757,15 @@ dioscorea_rotundata = dioscorea_rotundata[(dioscorea_rotundata$ScientificName ==
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = dioscorea_rotundata[,"Run"], replicate = dioscorea_rotundata[,"BioSample"], layout = "PE", genome = "dioscorea_rotundata", ploidy = 4))
+```
+
+## Durio zibethinus
+```{r}
+# load data
+durio_zibethinus = fread("../workflow/data/SRArunInfo/SraRunInfo_durio_zibethinus_PRJNA867527.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = durio_zibethinus[,"Run"], replicate = durio_zibethinus[,"BioSample"], layout = "PE", genome = "durio_zibethinus", ploidy = 2))
 ```
 
 ## Elaeis guineensis
@@ -850,6 +939,19 @@ helianthus_annuus$layout[(helianthus_annuus$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = helianthus_annuus[,"Run"], replicate = helianthus_annuus[,"BioSample"], layout = helianthus_annuus[,"layout"], genome = "helianthus_annuus", ploidy = 2))
+```
+
+## Heliosperma pusillum
+```{r}
+heliosperma_pusillum = fread("../workflow/data/SRArunInfo/SraRunInfo_heliosperma_pusillum_PRJNA308183.csv.gz", data.table = F)
+
+# subset just heliosperma pusillum
+unique(heliosperma_pusillum$ScientificName)
+
+heliosperma_pusillum = heliosperma_pusillum[(heliosperma_pusillum$ScientificName == "Heliosperma pusillum"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = heliosperma_pusillum[,"Run"], replicate = heliosperma_pusillum[,"BioSample"], layout = "SE", genome = "heliosperma_pusillum", ploidy = 2))
 ```
 
 ## Hordeum vulgare
@@ -1365,6 +1467,14 @@ panicum_virgatum$layout[(panicum_virgatum$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = panicum_virgatum[,"Run"], replicate = panicum_virgatum[,"BioSample"], layout = panicum_virgatum[,"layout"], genome = "panicum_virgatum", ploidy = 4))
 ```
 
+## Papaver somniferum
+```{r}
+papaver_somniferum = fread("../workflow/data/SRArunInfo/SraRunInfo_papaver_somniferum_PRJNA759347.csv.gz", data.table = F)
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = papaver_somniferum[,"Run"], replicate = papaver_somniferum[,"BioSample"], layout = "SE", genome = "papaver_somniferum", ploidy = 2))
+```
+
 ## Phaseolus vulgaris
 ```{r}
 phaseolus_vulgaris = fread("../workflow/data/SRArunInfo/SraRunInfo_phaseolus_vulgaris_PRJNA515107.csv.gz", data.table = F)
@@ -1822,6 +1932,21 @@ allReads = rbind(allReads, data.frame(run = triticum_aestivum[,"Run"], replicate
 
 ```
 
+## Triticum dicoccoides
+```{r}
+triticum_dicoccoides = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_dicoccoides_PRJEB42105.csv.gz", data.table = F)
+
+# subset just RAD-seq because WGS data is for chloroplast only
+triticum_dicoccoides = triticum_dicoccoides[(triticum_dicoccoides$LibraryStrategy == "RAD-Seq"),]
+
+# subset just T. dicoccoides or it's synonym
+unique(triticum_dicoccoides$ScientificName)
+
+triticum_dicoccoides = triticum_dicoccoides[(triticum_dicoccoides$ScientificName == "Triticum dicoccoides" | triticum_dicoccoides$ScientificName == "Triticum dicoccum"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = triticum_dicoccoides[,"Run"], replicate = triticum_dicoccoides[,"BioSample"], layout = "SE", genome = "triticum_dicoccoides", ploidy = 4))
+```
 
 ## Triticum turgidum
 ```{r}
@@ -1840,6 +1965,19 @@ triticum_turgidum$layout = "PE"
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = triticum_turgidum[,"Run"], replicate = triticum_turgidum[,"BioSample"], layout = triticum_turgidum[,"layout"], genome = "triticum_turgidum", ploidy = 4))
 
+```
+
+## Vanilla planifolia
+```{r}
+vanilla_planifolia = fread("../workflow/data/SRArunInfo/SraRunInfo_vanilla_planifolia_PRJNA733522.csv.gz", data.table = F)
+
+# subset just V. planifolia
+unique(vanilla_planifolia$ScientificName)
+
+vanilla_planifolia = vanilla_planifolia[(vanilla_planifolia$ScientificName == "Vanilla planifolia"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = vanilla_planifolia[,"Run"], replicate = vanilla_planifolia[,"BioSample"], layout = "SE", genome = "vanilla_planifolia", ploidy = 2))
 ```
 
 ## Vigna radiata
@@ -1944,6 +2082,19 @@ zea_mays$layout[(zea_mays$spots_with_mates == 0)] = "SE"
 allReads = rbind(allReads, data.frame(run = zea_mays[,"Run"], replicate = zea_mays[,"BioSample"], layout = zea_mays[,"layout"], genome = "zea_mays", ploidy = 2))
 ```
 
+## Zizania palustris
+```{r}
+# load data
+zizania_palustris = fread("../workflow/data/SRArunInfo/SraRunInfo_zizania_palustris_PRJNA774842.csv.gz", data.table = F)
+
+# subset just Z. palustris
+unique(zizania_palustris$ScientificName)
+zizania_palustris = zizania_palustris[(zizania_palustris$ScientificName == "Zizania palustris"),]
+
+# add reads to growing list
+allReads = rbind(allReads, data.frame(run = zizania_palustris[,"Run"], replicate = zizania_palustris[,"BioSample"], layout = "SE", genome = "zizania_palustris", ploidy = 2))
+```
+
 ## Ziziphus jujuba
 ```{r}
 # load data
@@ -1980,12 +2131,12 @@ nrow(allReads)
 # write.csv(cbind(readBreakdown, indvBreakdown[,-1]), "breakdownOfReadSetsByGenome.csv")
 
 # remove intermediate objects
-rm(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3, brassica, boechera_stricta_1, boechera_stricta_2, glycine_max_1, glycine_max_2, glycine_max_3, oryza, pisum_sativum_1, pisum_sativum_2, triticum_aestivum_1, triticum_aestivum_2, zea_mays_1, zea_mays_2, zea_mays_3, musa, malus, arachis_1, arachis_2, arachis_3, arachis, prunus_persica_supp)
+rm(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3, brassica, boechera_stricta_1, boechera_stricta_2, glycine_max_1, glycine_max_2, glycine_max_3, oryza, pisum_sativum_1, pisum_sativum_2, triticum_aestivum_1, triticum_aestivum_2, zea_mays_1, zea_mays_2, zea_mays_3, musa, malus, arachis_1, arachis_2, arachis_3, arachis, prunus_persica_supp, indvBreakdown, readBreakdown, samples, runs2drop, dioscorea_alata_ploidy, sraprojects, countUnique, ids)
 
 # Estimate number of basepairs included in dataset
 # bind all metadata together
 # paste(ls(), collapse = ", ")
-runsAllMetaData = list(aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, cucumis_melo, cucumis_sativus, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, hordeum_vulgare, juglans_regia, lactuca_sativa, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_glumipatula, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_halli, panicum_virgatum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thlaspi_arvense, triticum_aestivum, triticum_turgidum, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, ziziphus_jujuba)
+runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_avellana, cucumis_melo, cucumis_sativus, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, juglans_regia, lactuca_sativa, lens_culinaris, lens_ervoides, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_glumipatula, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_halli, panicum_virgatum, papaver_somniferum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thinopyrum_intermedium, thlaspi_arvense, trifolium_pratense, triticum_aestivum, triticum_dicoccoides, triticum_turgidum, vanilla_planifolia, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, zizania_palustris, ziziphus_jujuba)
 
 sumColumnInList = function(x){
   sum(as.numeric(x[,"bases"]))
