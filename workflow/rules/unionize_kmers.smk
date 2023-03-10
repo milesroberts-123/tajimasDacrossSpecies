@@ -1,9 +1,13 @@
-def get_list_kmers_input(wildcards):
+def get_list_kmers_input_pre(wildcards):
 	return ["nocds_" + x + "_pe.kmc_pre" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])] + ["nocds_" + x + "_se.kmc_pre" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])]
+
+def get_list_kmers_input_suf(wildcards):
+	return ["nocds_" + x + "_pe.kmc_suf" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])] + ["nocds_" + x + "_se.kmc_suf" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])]
 
 rule unionize_kmers:
 	input:
-		get_list_kmers_input
+		pre=get_list_kmers_input_pre,
+		suf=get_list_kmers_input_suf
 	output:
 		temp("{assembly}_kmerList.txt")
 	log:
@@ -15,31 +19,31 @@ rule unionize_kmers:
 		"../envs/kmc.yml"
 	shell:
 		"""
-		DBFILES=($(echo {input} | sed 's/.kmc_pre//g'))
+		DBFILES=($(echo {input.pre} | sed 's/.kmc_pre//g'))
 		INDEX=1
 
-		echo "List of database files that will be merged:"
-		echo ${{DBFILES[@]}}
+		echo "List of database files that will be merged:" &>> {log}
+		echo ${{DBFILES[@]}} &>> {log}
 		for FILE in ${{DBFILES[@]}}
 		do
 			if [[ $INDEX -eq 1 ]]; then
-				echo Index is: $INDEX
+				echo Index is: $INDEX &>> {log}
 
 				# in first round of loop, unionize first two files
-				echo "Merging first two files..."
+				echo "Merging first two files..." &>> {log}
 				FILE2=("${{DBFILES[@]:1:1}}")
 				
-				echo $FILE
-				echo $FILE2
+				echo $FILE &>> {log}
+				echo $FILE2 &>> {log}
 
 				kmc_tools simple $FILE $FILE2 union grandsum &>> {log}
 			elif [[ $INDEX -eq 2 ]]; then
-				echo Index is: $INDEX
+				echo Index is: $INDEX &>> {log}
 				# in second round of loop, just skip to third round because second file already unionized
-				echo Do nothing because second file already merged
+				echo Do nothing because second file already merged &>> {log}
 			else
-				echo Index is: $INDEX
-				echo "Merging $FILE into grand total..."
+				echo Index is: $INDEX &>> {log}
+				echo "Merging $FILE into grand total..." &>> {log}
  
 				# in round 3 and beyond, just add each subsequent file to union
 				kmc_tools simple grandsum $FILE union tmp_union &>> {log}
@@ -48,12 +52,12 @@ rule unionize_kmers:
 				mv tmp_union.kmc_pre grandsum.kmc_pre 
 				mv tmp_union.kmc_suf grandsum.kmc_suf
 			fi
-			echo Increment index...
+			echo Increment index... &>> {log}
 			((INDEX++))
-			echo Index is now: $INDEX
+			echo Index is now: $INDEX &>> {log}
 		done
 
 		# after all files are merged, dump result to text file
-		echo Dumping kmers to text file...
+		echo Dumping kmers to text file... &>> {log}
                 kmc_tools transform grandsum dump {output} &>> {log}
 		"""
