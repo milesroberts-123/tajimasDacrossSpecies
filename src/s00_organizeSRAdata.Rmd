@@ -2182,6 +2182,8 @@ length(unique(allReadsFinal$genome))
 testSet = allReads[(allReads$genome %in% c("arabidopsis_halleri", "arabidopsis_lyrata", "arabidopsis_thaliana", "arabidopsis_suecica", "boechera_stricta", "brachypodium_distachyon", "brassica_oleracea", "brassica_rapa", "capsella_grandiflora", "capsella_rubella")),]
 write.table(testSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
+write.table(allReads, file = "../workflow/data/samples.tsv", sep = "\t", quote = F, row.names = F)
+
 # write run numbers and metadata to workflow input
 # need to replace write path with "../workflow/data/samples_pe.tsv" when I'm ready
 #write.table(seReads, file = "samples_se.tsv", sep = "\t", quote = F, row.names = F)

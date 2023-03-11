@@ -1,6 +1,6 @@
-def get_taxon_key(wildcards):
-        taxon_key = species.loc[species["species"] == wildcards.species, "taxonKeys"]
-        return taxon_key
+def get_taxon_keys(wildcards):
+        taxon_keys = samples.loc[samples["genome"] == wildcards.assembly, "taxonKeys"]
+        return taxon_keys
 
 envvars:
 	"GBIF_EMAIL",
@@ -9,9 +9,9 @@ envvars:
 
 rule download_gbif:
 	output:
-		"{species}_areas.txt"
+		"{assembly}_areas.txt"
 	log:
-		"logs/download_gbif/{species}.log"
+		"logs/download_gbif/{assembly}.log"
 	conda:
 		"../envs/download_gbif.yml"
 	envmodules:
@@ -20,9 +20,9 @@ rule download_gbif:
 	resources:
 		mem_mb_per_cpu=4000,
 	params:
-		taxonKey = get_taxon_key,
+		taxonKeys = get_taxon_keys,
 		gbifEmail=os.environ["GBIF_EMAIL"],
 		gbifUser=os.environ["GBIF_USER"],
 		gbifPwd=os.environ["GBIF_PWD"]
 	shell:
-		"Rscript scripts/download_gbif.R {wildcards.species} {params.gbifUser} {params.gbifEmail} {params.gbifPwd} {params.taxonKey} &> {log}"
+		"Rscript scripts/download_gbif.R {wildcards.assembly} {params.gbifUser} {params.gbifEmail} {params.gbifPwd} {params.taxonKeys} &> {log}"

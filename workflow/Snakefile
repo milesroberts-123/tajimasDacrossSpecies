@@ -19,7 +19,7 @@ samplesSe = samples[samples["layout"] == "SE"]
 chroms = pd.read_table("data/chromosomes.tsv", sep="\t", dtype={"assembly": str, "chromosome": str}).set_index(["assembly", "chromosome"], drop=False)
 
 # load list of species names
-species = pd.read_table("data/species.tsv", sep = "\t", dtype={"species": str}).set_index(["species"], drop=False)
+# species = pd.read_table("data/species.tsv", sep = "\t", dtype={"species": str}).set_index(["species"], drop=False)
 # print(species.index.get_level_values("species"))
 
 # constrain wildcards so that paired end and single-end samples can be considered simultaneously
@@ -50,7 +50,7 @@ rule all:
 		expand("{assembly}_jac.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_readStats.txt", assembly=set(chroms.index.get_level_values("assembly"))),
-		#expand("{species}_areas.txt", species = species.index.get_level_values("species"))
+		expand("{assembly}_areas.txt", assembly = set(chroms.index.get_level_values("assembly")))
 
 include: "rules/download_gbif.smk"
 include: "rules/download_pe.smk"

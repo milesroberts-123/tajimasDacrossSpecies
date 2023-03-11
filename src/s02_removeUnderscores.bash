@@ -16,3 +16,11 @@ do
 	sed 's/_//g' $FILE > tmp.gff3
 	mv tmp.gff3 $FILE
 done
+
+# specific commands for specific species
+# Amaranthus hypochondriacus
+#seqkit replace -p " pilon" -r ""  ../workflow/data/assemblies/amaranthus_hypochondriacus.fa > tmp.fa 
+#mv tmp.fa ../workflow/data/assemblies/amaranthus_hypochondriacus.fa
+
+#sed 's/ pilon//g' ../workflow/data/annotations/amaranthus_hypochondriacus.gff3 > tmp.gff3
+#mv tmp.gff3 ../workflow/data/annotations/amaranthus_hypochondriacus.gff3
