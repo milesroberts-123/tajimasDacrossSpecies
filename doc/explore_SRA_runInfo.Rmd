@@ -513,15 +513,41 @@ genomes = genomes[!grepl("Oryza sativa", genomes)]
 genomes = genomes[(genomes != "Brassica oleracea")]
 ```
 
-# explore bodysize data
+# explore body size data
 ```{r}
+
+library(readxl)
+library(ggplot2)
 
 bmass = fread("../workflow/data/bodysize/bodymass_eol_2023-01-25.tsv.gz")
 
 bmass = fread("../workflow/data/bodysize/25430.txt.gz", data.table = F)
 
+bmass = bmass[(bmass$DataName == "Whole Plant Dry Mass"),]
+
 nrow(bmass[(grepl("Arabidopsis", bmass$SpeciesName) & !is.na(bmass$StdValue)),])
 
-bmass[(grepl("Ananas", bmass$SpeciesName) & !is.na(bmass$StdValue)),]
+bmass[(grepl("Mimulus", bmass$SpeciesName) & !is.na(bmass$StdValue)),]
 
+bmass[(grepl("Triticum", bmass$SpeciesName) & !is.na(bmass$StdValue)),]
+
+bmass[(grepl("Arabis", bmass$SpeciesName) & !is.na(bmass$StdValue)),]
+
+bmass[(grepl("Beta", bmass$SpeciesName) & !is.na(bmass$StdValue)),]
+
+bmass[(grepl("Brachypodium", bmass$SpeciesName) & !is.na(bmass$StdValue)),]
+
+#
+massVdensity = list(
+  read_excel("../workflow/data/bodysize/sd01.xls", sheet = 1)[,c(3,4)],
+  read_excel("../workflow/data/bodysize/sd01.xls", sheet = 2)[,c(4,5)],
+  read_excel("../workflow/data/bodysize/sd01.xls", sheet = 3)[,c(4,5)],
+  read_excel("../workflow/data/bodysize/sd01.xls", sheet = 4)[,c(4,5)]
+)
+
+massVdensity = do.call("rbind", massVdensity)
+
+plot(log(massVdensity$`Shoot mass(g)`), log(massVdensity$`Actual stand density(no./m2)`/1e6))
+
+lm(log(massVdensity$`Actual stand density(no./m2)`/1e6) ~ log(massVdensity$`Shoot mass(g)`))
 ```
