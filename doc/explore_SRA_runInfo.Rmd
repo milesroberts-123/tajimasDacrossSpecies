@@ -512,3 +512,16 @@ genomes = genomes[!grepl("Oryza sativa", genomes)]
 
 genomes = genomes[(genomes != "Brassica oleracea")]
 ```
+
+# explore bodysize data
+```{r}
+
+bmass = fread("../workflow/data/bodysize/bodymass_eol_2023-01-25.tsv.gz")
+
+bmass = fread("../workflow/data/bodysize/25430.txt.gz", data.table = F)
+
+nrow(bmass[(grepl("Arabidopsis", bmass$SpeciesName) & !is.na(bmass$StdValue)),])
+
+bmass[(grepl("Ananas", bmass$SpeciesName) & !is.na(bmass$StdValue)),]
+
+```

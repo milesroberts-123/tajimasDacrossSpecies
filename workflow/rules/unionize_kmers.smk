@@ -36,7 +36,7 @@ rule unionize_kmers:
 				echo $FILE &>> {log}
 				echo $FILE2 &>> {log}
 
-				kmc_tools simple $FILE $FILE2 union grandsum &>> {log}
+				kmc_tools simple $FILE $FILE2 union grandsum_{wildcards.assembly} &>> {log}
 			elif [[ $INDEX -eq 2 ]]; then
 				echo Index is: $INDEX &>> {log}
 				# in second round of loop, just skip to third round because second file already unionized
@@ -46,11 +46,11 @@ rule unionize_kmers:
 				echo "Merging $FILE into grand total..." &>> {log}
  
 				# in round 3 and beyond, just add each subsequent file to union
-				kmc_tools simple grandsum $FILE union tmp_union &>> {log}
+				kmc_tools simple grandsum_{wildcards.assembly} $FILE union tmp_union_{wildcards.assembly} &>> {log}
 
 				# rename temporary output to growing output
-				mv tmp_union.kmc_pre grandsum.kmc_pre 
-				mv tmp_union.kmc_suf grandsum.kmc_suf
+				mv tmp_union_{wildcards.assembly}.kmc_pre grandsum_{wildcards.assembly}.kmc_pre 
+				mv tmp_union_{wildcards.assembly}.kmc_suf grandsum_{wildcards.assembly}.kmc_suf
 			fi
 			echo Increment index... &>> {log}
 			((INDEX++))
@@ -59,5 +59,5 @@ rule unionize_kmers:
 
 		# after all files are merged, dump result to text file
 		echo Dumping kmers to text file... &>> {log}
-                kmc_tools transform grandsum dump {output} &>> {log}
+                kmc_tools transform grandsum_{wildcards.assembly} dump {output} &>> {log}
 		"""
