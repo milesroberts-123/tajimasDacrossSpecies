@@ -1,5 +1,6 @@
 def get_taxon_keys(wildcards):
         taxon_keys = samples.loc[samples["genome"] == wildcards.assembly, "taxonKeys"]
+	taxon_keys = taxon_keys[0]
         return taxon_keys
 
 envvars:
