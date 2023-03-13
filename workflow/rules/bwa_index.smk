@@ -11,7 +11,7 @@ rule bwa_index:
 		"logs/bwa_index/{assembly}.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=4000
+		mem_mb_per_cpu=8000
 	conda:
 		"../envs/bwa_mem.yml"
 	envmodules:

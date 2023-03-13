@@ -86,7 +86,7 @@ search_gbif = function(species_string, taxon_keys, gbif_user, gbif_email, gbif_p
 		pred("hasGeospatialIssue", FALSE),
 		pred("hasCoordinate", TRUE),
 		pred("occurrenceStatus","PRESENT"),
-		pred_gte("year", 2003),
+		pred_gte("year", 1943),
 		pred_lte("year", 2023), 
 		pred_lte("coordinateUncertaintyInMeters", 1000),
 		pred_not(pred_in("basisOfRecord",c("FOSSIL_SPECIMEN","LIVING_SPECIMEN"))),
