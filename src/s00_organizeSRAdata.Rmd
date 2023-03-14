@@ -172,7 +172,7 @@ arabis_alpina$layout = NA
 arabis_alpina$layout = "PE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = arabis_alpina[,"Run"], replicate = arabis_alpina[,"BioSample"], layout = arabis_alpina[,"layout"], genome = "arabis_alpina", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = arabis_alpina[,"Run"], replicate = arabis_alpina[,"BioSample"], layout = arabis_alpina[,"layout"], genome = "arabis_alpina", ploidy = 2, taxonKeys = "5375020 5374885 8576900 9044273 7694599 8349130 5375026 5551157 7785553 9614998"))
 ```
 
 

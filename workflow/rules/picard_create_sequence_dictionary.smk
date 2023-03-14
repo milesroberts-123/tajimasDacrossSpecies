@@ -9,7 +9,7 @@ rule picard_create_sequence_dictionary:
 		"picard/2.22.1-Java-11"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=8000
+		mem_mb_per_cpu=16000
 	log:
 		"logs/picard_create_sequence_dictionary/{assembly}.log"
 	conda:

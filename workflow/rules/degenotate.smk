@@ -9,7 +9,7 @@ rule degenotate:
 		outputFolder="data/degenotateOutput/{assembly}"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=32000
+		mem_mb_per_cpu=64000
 	conda:
 		"../envs/degenotate.yml"
 	shell:

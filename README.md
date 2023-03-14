@@ -244,6 +244,8 @@ In other words, I think it would be okay to include different types of sequencin
 
 # To do
 
+* calculate variance in heterozygosity and k-mer patterns across sites or comparisons, so that you can compare SNP variation to k-mer variation
+
 * dynamically allocate memory to `fastp` based on the size of the input data
 
 * try submitting jobs to scavenger queue on first attempt, but switch to josephsnodes if job gets canceled
