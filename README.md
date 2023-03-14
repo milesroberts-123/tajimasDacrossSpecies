@@ -244,10 +244,6 @@ In other words, I think it would be okay to include different types of sequencin
 
 # To do
 
-* Add taxon keys to `samples.tsv`?
-
-* Why are environment variables not being passed to snakemake?
-
 * dynamically allocate memory to `fastp` based on the size of the input data
 
 * try submitting jobs to scavenger queue on first attempt, but switch to josephsnodes if job gets canceled
@@ -255,3 +251,8 @@ In other words, I think it would be okay to include different types of sequencin
 * extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
 
 * add error checking to main snakefile
+
+* It looks like large genomes (e.g. **Aegilops tauschii**) pose problems for `degenotate` and `picardtools` even when I allocate more memory to these steps. 
+
+* I occassionaly get a `graph not circular` error from my `download_gbif` script inside the `ashape2poly` function. I'm not sure what causes this... My guess is that the start and end points of the graph need to be the same and sometimes this function doesn't generate that for some reasons, even though it usually does.
+

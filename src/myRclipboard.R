@@ -421,4 +421,10 @@ Ziziphus jujuba
 # Arabidopsis thaliana
 3052436 7758053 3052446
 
+# Beta vulgaris
+8372932 7657202
+
+# Arabis alpina
+taxon_key=5375020&taxon_key=5374885&taxon_key=8576900&taxon_key=9044273&taxon_key=7694599&taxon_key=8349130&taxon_key=5375026&taxon_key=5551157&taxon_key=7785553&taxon_key=9614998
+
 

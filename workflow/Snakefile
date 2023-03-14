@@ -50,7 +50,7 @@ rule all:
 		expand("{assembly}_jac.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_readStats.txt", assembly=set(chroms.index.get_level_values("assembly"))),
-		expand("{assembly}_areas.txt", assembly = set(chroms.index.get_level_values("assembly")))
+		#expand("{assembly}_areas.txt", assembly = set(chroms.index.get_level_values("assembly")))
 
 include: "rules/download_gbif.smk"
 include: "rules/download_pe.smk"

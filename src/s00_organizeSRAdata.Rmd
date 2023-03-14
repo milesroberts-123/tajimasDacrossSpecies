@@ -238,7 +238,7 @@ beta_vulgaris$layout = "PE"
 # beta_vulgaris$layout[(beta_vulgaris$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = beta_vulgaris[,"Run"], replicate = beta_vulgaris[,"BioSample"], layout = beta_vulgaris[,"layout"], genome = "beta_vulgaris", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = beta_vulgaris[,"Run"], replicate = beta_vulgaris[,"BioSample"], layout = beta_vulgaris[,"layout"], genome = "beta_vulgaris", ploidy = 2, taxonKeys = "8372932 7657202"))
 
 ```
 
