@@ -44,11 +44,11 @@ def get_mem_mb(wildcards, attempt):
 
 rule all:
 	input:
-		#expand("filtered_variantAndInvariant_{assembly}_{chromosome}.table", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
+		expand("filtered_variantAndInvariant_{assembly}_{chromosome}.table", zip, assembly=chroms.index.get_level_values("assembly"), chromosome=chroms.index.get_level_values("chromosome")),
 		expand("{assembly}_multiqc_report.html", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_bcd.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_jac.txt", assembly=set(chroms.index.get_level_values("assembly"))),
-		expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
+		#expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_readStats.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		#expand("{assembly}_areas.txt", assembly = set(chroms.index.get_level_values("assembly")))
 
@@ -65,7 +65,6 @@ include: "rules/build_coding_kmer_database.smk"
 include: "rules/kmc_pe.smk"
 include: "rules/kmc_se.smk"
 include: "rules/unionize_kmers.smk"
-# include: "rules/remove_kmer_dups.smk"
 include: "rules/random_kmer_subset.smk"
 include: "rules/join_kmer_counts_se.smk"
 include: "rules/join_kmer_counts_pe.smk"

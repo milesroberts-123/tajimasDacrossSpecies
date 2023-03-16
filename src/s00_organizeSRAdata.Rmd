@@ -17,6 +17,14 @@ library(data.table)
 allReads = NULL
 ```
 
+## Function to calculate average coverage
+```{r eval=FALSE, include=FALSE}
+dp = function(x, G){
+  mean(x[,"bases"]/G)
+}
+
+```
+
 # Compile SRA run info for each species into master list, separate paired end and single-end reads
 
 ## Actinidia chinensis
