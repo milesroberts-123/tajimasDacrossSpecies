@@ -14,6 +14,7 @@ library(rworldmap)
 library(raster)
 library(dismo)
 library(igraph)
+library(caper)
 # install.packages("rgdal", dependencies = T)
 # can't install rgdal
 # library(rgdal)
@@ -21,10 +22,74 @@ library(igraph)
 # library(ppcor)
 # 
 # install.packages("CoordinateCleaner")
-library(CoordinateCleaner)
+# library(CoordinateCleaner)
 
 today = Sys.Date()
 ```
+
+# Data preparation
+
+## Prepare diversity data 
+```{r}
+# List input files
+pi = list.files("../results/2023-03-14/heterozygosity", full.names = T)
+bcd = list.files("../results/2023-03-14/bray-curtis-dissimilarities", full.names = T)
+jac = list.files("../results/2023-03-14/jaccard-dissimilarities", full.names = T)
+
+# get species IDs
+species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-14/heterozygosity/", "", pi))
+
+# Load input files
+pi = lapply(pi, read.table, header = T)
+bcd = lapply(bcd, read.table, header = F)
+jac = lapply(jac, read.table, header = F)
+
+# calculate mean pairwise dissimilarity
+bcdMean = lapply(bcd, function(x){mean(x[,2])})
+jacMean = lapply(jac, function(x){mean(x[,2])})
+
+# cbind all diversity data into one dataframe per species
+alldiv = Map(cbind, pi, bcdMean, jacMean)
+
+# rbind all species data into one dataframe
+alldiv = lapply(alldiv, setNames, c("h", "n", "pi", "bcd", "jac"))
+
+alldiv = do.call(rbind, alldiv)
+
+# add species names
+alldiv$species = species
+```
+
+## Prepare phylogenetic tree
+```{r}
+phy = read.tree("speciesTree.nwk")
+```
+
+## Combine tree and data to get comparative object
+```{r}
+compdata = comparative.data(phy, alldiv, names.col = "species", vcv = TRUE)
+```
+
+# Initial data analysis
+```{r}
+# histograms of diversity data
+
+# Does BCD correlate with JAC within species?
+plot(bcd[[6]][,2], jac[[6]][,2])
+
+# Does bray-curtis dissimilarity correlate with jaccard dissimilarity across species?
+plot(alldiv$bcd, alldiv$jac)
+```
+
+# Confirmatory data analysis
+```{r}
+# How does SNP diversity correlate with k-mer diversity?
+pgls(pi ~ bcd, compdata)
+pgls(pi ~ jac, compdata)
+
+plot(alldiv$pi, alldiv$bcd)
+```
+
 
 # Explore GBIF data
 ```{r}

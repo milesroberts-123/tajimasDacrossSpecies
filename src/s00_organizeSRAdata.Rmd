@@ -185,11 +185,12 @@ arabis_nemorensis = fread("../workflow/data/SRArunInfo/SraRunInfo_arabis_nemoren
 arabis_nemorensis = arabis_nemorensis[(arabis_nemorensis$LibraryStrategy == "WGS" & arabis_nemorensis$ScientificName == "Arabis nemorensis"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = arabis_nemorensis[,"Run"], replicate = arabis_nemorensis[,"BioSample"], layout = "SE", genome = "arabis_nemorensis", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = arabis_nemorensis[,"Run"], replicate = arabis_nemorensis[,"BioSample"], layout = "SE", genome = "arabis_nemorensis", ploidy = 2, taxonKeys = "8288982 5374937 5552336 7292834 5374934"))
 ```
 
-## Arachis hypogaea and Arachis duranensis
+## Arachis hypogaea and Arachis duranensis and Arachis ipaensis
 ```{r}
+# 
 # load data for species
 arachis_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_PRJNA490832.csv.gz", data.table = F)
 arachis_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_PRJNA511155.csv.gz", data.table = F)
@@ -205,11 +206,11 @@ arachis_duranensis = arachis[(arachis$ScientificName == "Arachis duranensis"),]
 arachis_ipaensis = arachis[(arachis$ScientificName == "Arachis ipaensis"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = arachis_hypogaea[,"Run"], replicate = arachis_hypogaea[,"BioSample"], layout = "PE", genome = "arachis_hypogaea", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = arachis_hypogaea[,"Run"], replicate = arachis_hypogaea[,"BioSample"], layout = "PE", genome = "arachis_hypogaea", ploidy = 4, taxonKeys = "5353758"))
 
-allReads = rbind(allReads, data.frame(run = arachis_duranensis[,"Run"], replicate = arachis_duranensis[,"BioSample"], layout = "PE", genome = "arachis_duranensis", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = arachis_duranensis[,"Run"], replicate = arachis_duranensis[,"BioSample"], layout = "PE", genome = "arachis_duranensis", ploidy = 2, taxonKeys = "5353841"))
 
-allReads = rbind(allReads, data.frame(run = arachis_ipaensis[,"Run"], replicate = arachis_ipaensis[,"BioSample"], layout = "PE", genome = "arachis_ipaensis", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = arachis_ipaensis[,"Run"], replicate = arachis_ipaensis[,"BioSample"], layout = "PE", genome = "arachis_ipaensis", ploidy = 2, taxonKeys = "5353793"))
 ```
 
 ## Benincasa hispida
@@ -218,7 +219,7 @@ allReads = rbind(allReads, data.frame(run = arachis_ipaensis[,"Run"], replicate 
 benincasa_hispida = fread("../workflow/data/SRArunInfo/SraRunInfo_benincasa_hispida_PRJNA576075.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = benincasa_hispida[,"Run"], replicate = benincasa_hispida[,"BioSample"], layout = "PE", genome = "benincasa_hispida", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = benincasa_hispida[,"Run"], replicate = benincasa_hispida[,"BioSample"], layout = "PE", genome = "benincasa_hispida", ploidy = 2, taxonKeys = "3623456 7317644 2874524 3623445 3623491 8312084 2874525 7317643"))
 ```
 
 ## Beta vulgaris
@@ -263,7 +264,7 @@ boechera_stricta$layout[(boechera_stricta$spots_with_mates > 0)] = "PE"
 boechera_stricta$layout[(boechera_stricta$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = boechera_stricta[,"Run"], replicate = boechera_stricta[,"BioSample"], layout = boechera_stricta[,"layout"], genome = "boechera_stricta", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = boechera_stricta[,"Run"], replicate = boechera_stricta[,"BioSample"], layout = boechera_stricta[,"layout"], genome = "boechera_stricta", ploidy = 2, taxonKeys = "3043392"))
 
 # remove technical replicates from dataset 2
 # for each technical replicate, just take the sample with the most bases

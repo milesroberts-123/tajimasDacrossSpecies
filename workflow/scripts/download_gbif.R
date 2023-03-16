@@ -21,7 +21,8 @@ genus_species = args[1]
 gbif_user = args[2]
 gbif_email = args[3]
 gbif_pwd = args[4]
-taxon_keys = args[5:length(args)]
+occCountThreshold = args[5]
+taxon_keys = args[6:length(args)]
 species_string = gsub("_", " ", genus_species) # species name to pass to gbif
 output_plot_name = paste(genus_species, "_raw_gbif_data.png", sep = "") # name of output plot
 output_occ_table_name = paste(genus_species, "_raw_gbif_data.txt", sep = "") # name of output table
@@ -234,7 +235,7 @@ get_diff_bw_world_and_hull = function(spatpol){
 }
 
 # split up occurence data by continent, fit alpha hull and calculate area for each continent
-area_by_continent = function(data, output_plot_name, output_area_table_name, species_string){
+area_by_continent = function(data, output_plot_name, output_area_table_name, species_string, occCountThreshold){
 
 	# output vector for list of areas
         areas = NULL
@@ -277,7 +278,7 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 		print(head(data_sub))
 
 		# If there are too few occurences on a continent, don't draw a hull
-		if(data_sub_nrow < 50){
+		if(data_sub_nrow < occCountThreshold){
 			print("Too few occurrences on this continent to draw a hull. Skipping to next continent")
 			next
 		}
@@ -333,7 +334,7 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 }
 
 # combine the above functions into one workflow
-main = function(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd){
+main = function(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd, occCountThreshold){
 	
 	# load packages
 	load_packages(package_list)
@@ -366,8 +367,8 @@ main = function(package_list, species_string, taxon_keys, output_plot_name, outp
 	print(nrow(all_data))
 
 	# measure range on each continent
-	area_by_continent(all_data, output_plot_name, output_area_table_name, species_string)
+	area_by_continent(all_data, output_plot_name, output_area_table_name, species_string, occCountThreshold)
 }
 
 # execute workflow
-main(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd)
+main(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd, occCountThreshold)

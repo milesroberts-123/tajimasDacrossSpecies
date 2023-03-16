@@ -21,9 +21,10 @@ rule download_gbif:
 	resources:
 		mem_mb_per_cpu=4000,
 	params:
+		occCountThreshold = 20,
 		taxonKeys = get_taxon_keys,
 		gbifEmail=os.environ["GBIF_EMAIL"],
 		gbifUser=os.environ["GBIF_USER"],
 		gbifPwd=os.environ["GBIF_PWD"]
 	shell:
-		"Rscript scripts/download_gbif.R {wildcards.assembly} {params.gbifUser} {params.gbifEmail} {params.gbifPwd} {params.taxonKeys} &> {log}"
+		"Rscript scripts/download_gbif.R {wildcards.assembly} {params.gbifUser} {params.gbifEmail} {params.gbifPwd} {params.occCountThreshold} {params.taxonKeys} &> {log}"

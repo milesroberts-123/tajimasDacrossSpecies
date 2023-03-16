@@ -12,5 +12,5 @@ rule gatk_variants_to_table:
 		"../envs/gatk.yml"
 	shell:
 		"""
-		gatk VariantsToTable -V {input} -F CHROM -F POS -F AN -F AC -O {output}
+		gatk VariantsToTable -V {input} -F CHROM -F POS -F DP -F AN -F AC -O {output}
 		"""
