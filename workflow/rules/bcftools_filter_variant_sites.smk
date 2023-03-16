@@ -1,7 +1,7 @@
-def get_avg_dp(wildcards):
-        avgDP = samples.loc[samples["genome"] == wildcards.assembly, "avgDP"]
-        avgDP = avgDP[0]
-        return int(avgDP)
+#def get_avg_dp(wildcards):
+#        avgDP = samples.loc[samples["genome"] == wildcards.assembly, "avgDP"]
+#        avgDP = avgDP[0]
+#        return int(avgDP)
 
 rule bcftools_filter_variant_sites:
 	input:
@@ -17,8 +17,6 @@ rule bcftools_filter_variant_sites:
 		"../envs/bcftools.yml"
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 VCFtools/0.1.15-Perl-5.28.0"
-	params:
-		avgDP=get_avg_dp
 	shell:
 		"""
 		# filter variants
