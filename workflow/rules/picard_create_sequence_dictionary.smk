@@ -18,9 +18,9 @@ rule picard_create_sequence_dictionary:
 		"""
 		if [ "{params.condaStatus}" == "True" ]; then
 			echo Conda environment enabled, using conda-specific command
-			picard CreateSequenceDictionary R={input} O={output} &> {log}
+			picard -Xmx16G CreateSequenceDictionary R={input} O={output} &> {log}
 		else
 			echo Conda environment disabled, using HPCC-specific command
-			java -jar $EBROOTPICARD/picard.jar CreateSequenceDictionary R={input} O={output} &> {log}
+			java -Xmx16G -jar $EBROOTPICARD/picard.jar CreateSequenceDictionary R={input} O={output} &> {log}
 		fi
 		"""
