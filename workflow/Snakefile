@@ -49,13 +49,13 @@ rule all:
 		expand("{assembly}_bcd.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		expand("{assembly}_jac.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		#expand("{assembly}_pairwise-pi.txt", assembly=set(chroms.index.get_level_values("assembly"))),
-		expand("{assembly}_readStats.txt", assembly=set(chroms.index.get_level_values("assembly"))),
+		#expand("{assembly}_readStats.txt", assembly=set(chroms.index.get_level_values("assembly"))),
 		#expand("{assembly}_areas.txt", assembly = set(chroms.index.get_level_values("assembly")))
 
 include: "rules/download_gbif.smk"
 include: "rules/download_pe.smk"
 include: "rules/download_se.smk"
-include: "rules/seqkit_stats.smk"
+#include: "rules/seqkit_stats.smk"
 include: "rules/fastp_se.smk"
 include: "rules/fastp_pe.smk"
 include: "rules/cat_replicates_se.smk"

@@ -244,8 +244,6 @@ In other words, I think it would be okay to include different types of sequencin
 
 # To do
 
-* when unionizing k-mer counts across individuals, only include k-mers with a count of at least 5. If a k-mer is found once in just one accession, can you confidently say it's real?
-
 * add alpha and threshold number of occurences as paramters to `download_gbif.R`
 
 * In `download_gbif.R` if a "graph not circular" error is returned, change alpha parameter
