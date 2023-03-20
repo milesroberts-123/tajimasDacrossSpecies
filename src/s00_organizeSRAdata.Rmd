@@ -369,7 +369,7 @@ brassica_nigra = fread("../workflow/data/SRArunInfo/SraRunInfo_brassica_juncea_P
 brassica_nigra = brassica_nigra[(brassica_nigra$LibraryStrategy == "WGS" & brassica_nigra$Platform == "ILLUMINA" & brassica_nigra$ScientificName == "Brassica nigra"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = brassica_nigra[,"Run"], replicate = brassica_nigra[,"BioSample"], layout = "PE", genome = "brassica_nigra", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = brassica_nigra[,"Run"], replicate = brassica_nigra[,"BioSample"], layout = "PE", genome = "brassica_nigra", ploidy = 2, taxonKeys = "3042658 8010384 7509066 3042673 3692032 3042665 7437326 6306670 7844947"))
 ```
 
 ## Brassica rapa and Brassica oleraceae
@@ -431,7 +431,7 @@ unique(camelina_sativa$ScientificName)
 camelina_sativa = camelina_sativa[(camelina_sativa$ScientificName == "Camelina sativa"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = camelina_sativa[,"Run"], replicate = camelina_sativa[,"BioSample"], layout = "PE", genome = "camelina_sativa", ploidy = 6))
+allReads = rbind(allReads, data.frame(run = camelina_sativa[,"Run"], replicate = camelina_sativa[,"BioSample"], layout = "PE", genome = "camelina_sativa", ploidy = 6, taxonKeys = "3042439 7528991 3042443 3042441 3689020 3042425 3042427 3042396"))
 
 ```
 
@@ -804,7 +804,7 @@ allReads = rbind(allReads, data.frame(run = eleusine_coracana[,"Run"], replicate
 ficus_carica = fread("../workflow/data/SRArunInfo/SraRunInfo_ficus_carica_PRJDB11005.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = ficus_carica[,"Run"], replicate = ficus_carica[,"BioSample"], layout = "PE", genome = "ficus_carica", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = ficus_carica[,"Run"], replicate = ficus_carica[,"BioSample"], layout = "PE", genome = "ficus_carica", ploidy = 2, taxonKeys = "5571945 6135850 7616056 9534337 7433549 5834128 8126416 7581614 11354470 11283465"))
 
 ```
 
@@ -1297,7 +1297,7 @@ allReads = rbind(allReads, data.frame(run = nelumbo_nucifera[,"Run"], replicate 
 nicotiana_tabacum = fread("../workflow/data/SRArunInfo/SraRunInfo_nicotiana_tabacum_PRJNA904563.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = nicotiana_tabacum[,"Run"], replicate = nicotiana_tabacum[,"BioSample"], layout = "PE", genome = "nicotiana_tabacum", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = nicotiana_tabacum[,"Run"], replicate = nicotiana_tabacum[,"BioSample"], layout = "PE", genome = "nicotiana_tabacum", ploidy = 4, taxonKeys = "2928767"))
 ```
 
 ## Olea europaea
@@ -1381,7 +1381,7 @@ oryza_nivara = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_nivara_PRJNA6
 ```{r}
 oryza_punctata = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_punctata_PRJDB4620.csv.gz", data.table = F)
 
-allReads = rbind(allReads, data.frame(run = oryza_punctata[,"Run"], replicate = oryza_punctata[,"BioSample"], layout = "PE", genome = "oryza_punctata", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = oryza_punctata[,"Run"], replicate = oryza_punctata[,"BioSample"], layout = "PE", genome = "oryza_punctata", ploidy = 2, taxonKeys = "2703461 8663541 11356139 5941998"))
 ```
 
 ## Oryza rufipogon
@@ -1794,7 +1794,7 @@ solanum_stenotomum = fread("../workflow/data/SRArunInfo/SraRunInfo_solanum_steno
 solanum_stenotomum = solanum_stenotomum[grepl("Solanum stenotomum", solanum_stenotomum$ScientificName),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = solanum_stenotomum[,"Run"], replicate = solanum_stenotomum[,"BioSample"], layout = "PE", genome = "solanum_stenotomum", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = solanum_stenotomum[,"Run"], replicate = solanum_stenotomum[,"BioSample"], layout = "PE", genome = "solanum_stenotomum", ploidy = 2, taxonKeys = "3799678 9673874 4937418"))
 ```
 
 ## Sorghum bicolor
@@ -2179,6 +2179,17 @@ nrow(allReadsFinal)
 
 # number of genomes
 length(unique(allReadsFinal$genome))
+```
+
+# split data into batches
+```{r}
+sort(table(allReads$genome))
+
+# batch 1: 40 species with the fewest samples
+sum(sort(table(allReads$genome))[1:40])
+
+sum(sort(table(allReads$genome))[41:55])
+
 ```
 
 # output read metadata for snakemake input

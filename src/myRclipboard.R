@@ -397,6 +397,11 @@ Zingiber officinale
 Zizania palustris
 Ziziphus jujuba
 
+# 12 species with the fewest samples
+arachis_duranensis            camelina_sativa          nicotiana_tabacum           arachis_ipaensis 
+brassica_nigra             cucurbita_pepo          arabis_nemorensis             oryza_punctata 
+arabidopsis_suecica         solanum_stenotomum               ficus_carica          solanum_melongena 
+
 #
 7915981 3052544
 
@@ -445,3 +450,20 @@ Ziziphus jujuba
 # Boechera stricta
 3043392
 
+# Camelina sativa
+3042439 7528991 3042443 3042441 3689020 3042425 3042427 3042396
+
+# Nicotiana sylvestris
+2928767
+
+# Brassica nigra
+3042658 8010384 7509066 3042673 3692032 3042665 7437326 6306670 7844947
+
+# Oryza punctata
+2703461 8663541 11356139 5941998
+
+# Solanum stenotomum
+3799678 9673874 4937418
+
+# Ficus erecta
+5571945 6135850 7616056 9534337 7433549 5834128 8126416 7581614 11354470 11283465
