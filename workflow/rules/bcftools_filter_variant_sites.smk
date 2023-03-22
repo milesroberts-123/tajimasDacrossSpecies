@@ -29,7 +29,7 @@ rule bcftools_filter_variant_sites:
 		#	--recode-INFO-all \
 		#	--stdout | bgzip -c > {output}
 
-		bcftools view --max-alleles 2 --exclude-types indels -i 'FILTER="PASS" && F_MISSING<0.2 && MAX(DP)>=5' -o {output} -O z {input}
+		bcftools view --max-alleles 2 --exclude-types indels -i 'FILTER="PASS" && F_MISSING<0.2 && MAX(FORMAT/DP)>=5' -o {output} -O z {input}
 
 		# index filtered variants
 		tabix {output}
