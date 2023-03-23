@@ -16,6 +16,12 @@ echo Loading snakemake...
 #ml -* iccifort/2020.1.217 impi/2019.7.217 snakemake/5.26.1-Python-3.8.2
 conda activate snakemake
 
+# change directory of cache to scratch
+echo Changing cache directory...
+XDG_CACHE_HOME="/mnt/scratch/robe1195/cache"
+export $XDG_CACHE_HOME
+echo $XDG_CACHE_HOME
+
 # go to workflow directory with Snakefile
 echo Changing directory...
 cd ../workflow
