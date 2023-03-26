@@ -82,30 +82,31 @@ bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 print("Removing intermediate object...")
 rm(mats)
 
-# add sample names
-#print("Adding column names...")
-#colnames(bigmat) = indvs$V1
+# filter out sites with really high depth
+print("Summary of depth across all sites:")
+summary(bigmat$DP)
 
-#print("A subset of the matrix:")
-#bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+print("Calculate average depth...")
+vardp = mean(bigmat$DP[!is.na(bigmat$AC)])
+invardp = mean(bigmat$DP[is.na(bigmat$AC)])
 
-# remove indvs, no longer needed
-#print("Removing intermediate object...")
-#rm(indvs)
+print("Average depth at variant sites:")
+print(vardp)
 
-# subsample dataframe to speed up calculations
-# print("Sampling dataframe...")
-# bigmat = bigmat[sample(1:nrow(bigmat), 100000, replace = F),]
+print("Average depth at invariant sites:")
+print(invardp)
 
-# print("A subset of the matrix:")
-# bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
 
-# replace -1 with NA
-#print("Replacing -1 with NA...")
-#bigmat[bigmat == -1] = NA
+print("Number of sites before filtering:")
+nrow(bigmat)
 
-#print("A subset of the matrix:")
-#bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+bigmat = rbind(
+	bigmat[(!is.na(bigmat$AC) & bigmat$DP <= 3*vardp),], # variant sites 
+	bigmat[(is.na(bigmat$AC) & bigmat$DP <= 3*invardp),] # invariant sites
+)
+
+print("Number of sites after filtering:")
+nrow(bigmat)
 
 # replace NA with 0 for invariant sites
 print("Replacing NA with 0...")
@@ -135,36 +136,3 @@ print("Writing results to table...")
 write.table(result, outputFile, row.names = F, quote = F)
 
 print("DONE :)")
-
-# function to calculate pi
-#heterozygosity = function(data, p){
-#  
-#  # number of sites in calculation (both invariant and variant)
-#  S = nrow(data)
-#
-#  # number of non-missing chromosomes per site = ploidy * number of non-missing genotypes
-#  n = p*rowSums(!is.na(data))
-#  
-#  # alternate allele frequency = number of alternate allele calls/number of non-missing chromosomes
-#  alt_frq = rowSums(data, na.rm = T)/n
-#
-#  # reference allele frequency = 1 - alternative allele frequency
-#  ref_frq = 1 - alt_frq
-#  
-#  # heterozygosity = frequency of heterozygotes * factor to correct for bias in estimator
-#  # frequency of heterozygoes = 1 - frequency of homozygotes
-#  # frequency of homozygotes = allele frequency^2
-#  het = (1 - (alt_frq^2 + ref_frq^2))*(n/(n - 1))
-#  
-#  # return average heterozygosity per site (i.e. pi)
-#  # sum of heterozygosities / number of segregating sites
-#  H = sum(het)
-#  result = c(c(mean(n), H, S, H/S))
-#  names(result) = c("avgN", "H", "S", "heterozygosity")
-#  return(result)
-#}
-
-# calculate pairwise pi
-#print("Calculating average heterozygosity across the genome...")
-#write.table(heterozygosity(bigmat, ploidy), outputFile, row.names = F, quote = F)
-
