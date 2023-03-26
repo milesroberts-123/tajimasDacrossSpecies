@@ -87,8 +87,8 @@ print("Summary of depth across all sites:")
 summary(bigmat$DP)
 
 print("Calculate average depth...")
-vardp = mean(bigmat$DP[!is.na(bigmat$AC)])
-invardp = mean(bigmat$DP[is.na(bigmat$AC)])
+vardp = mean(bigmat$DP[!is.na(bigmat$AC)], na.rm = T)
+invardp = mean(bigmat$DP[is.na(bigmat$AC)], na.rm = T)
 
 print("Average depth at variant sites:")
 print(vardp)
