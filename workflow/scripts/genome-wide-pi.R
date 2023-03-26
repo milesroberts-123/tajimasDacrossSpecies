@@ -96,16 +96,15 @@ print(vardp)
 print("Average depth at invariant sites:")
 print(invardp)
 
-
-print("Number of sites before filtering:")
+print("Number of sites before filtering by depth:")
 nrow(bigmat)
 
 bigmat = rbind(
-	bigmat[(!is.na(bigmat$AC) & bigmat$DP <= 3*vardp),], # variant sites 
-	bigmat[(is.na(bigmat$AC) & bigmat$DP <= 3*invardp),] # invariant sites
+	bigmat[(!is.na(bigmat$AC) & bigmat$DP <= 3*vardp & bigmat$DP >= 5),], # variant sites 
+	bigmat[(is.na(bigmat$AC) & bigmat$DP <= 3*invardp & bigmat$DP >= 5),] # invariant sites
 )
 
-print("Number of sites after filtering:")
+print("Number of sites after filtering by depth:")
 nrow(bigmat)
 
 # replace NA with 0 for invariant sites
