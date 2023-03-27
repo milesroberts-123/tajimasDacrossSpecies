@@ -109,7 +109,7 @@ allReads = rbind(allReads, data.frame(run = ananas_comosus[,"Run"], replicate = 
 arabidopsis_halleri = fread("../workflow/data/SRArunInfo/SraRunInfo_arabidopsis_halleri_PRJDB3777.csv.gz", data.table = F)
 
 # just use hiseq2000 reads so that you don't have to merge technical reps
-arabidopsis_halleri = arabidopsis_halleri[(arabidopsis_halleri$Model == "Illumina HiSeq 2000"),]
+# arabidopsis_halleri = arabidopsis_halleri[(arabidopsis_halleri$Model == "Illumina HiSeq 2000"),]
 
 # check if any reads are single-end
 any(arabidopsis_halleri$spots_with_mates == 0)
@@ -2199,8 +2199,8 @@ sum(sort(table(allReads$genome))[41:55])
 #write.table(mergeTestSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # analyze just a couple species as an example
-testSet = allReads[(allReads$genome %in% c("arabidopsis_halleri", "arabidopsis_lyrata", "arabidopsis_thaliana", "arabidopsis_suecica", "boechera_stricta", "brachypodium_distachyon", "brassica_oleracea", "brassica_rapa", "capsella_grandiflora", "capsella_rubella")),]
-write.table(testSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
+# testSet = allReads[(allReads$genome %in% c("arabidopsis_halleri", "arabidopsis_lyrata", "arabidopsis_thaliana", "arabidopsis_suecica", "boechera_stricta", "brachypodium_distachyon", "brassica_oleracea", "brassica_rapa", "capsella_grandiflora", "capsella_rubella")),]
+# write.table(testSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
 write.table(allReads, file = "../workflow/data/samples.tsv", sep = "\t", quote = F, row.names = F)
 
