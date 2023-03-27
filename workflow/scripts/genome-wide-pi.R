@@ -129,7 +129,7 @@ print("Calculating heterozygosity at each site...")
 bigmat$HET = (1 - (bigmat$ref_freq^2 + bigmat$alt_freq^2))*(bigmat$AN/(bigmat$AN-1))
 
 print("Summing heterozygosities across sites...")
-result = data.frame(h = sum(bigmat$HET), n = nrow(bigmat), pi = sum(bigmat$HET)/nrow(bigmat))
+result = data.frame(h = sum(bigmat$HET), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = sum(bigmat$HET)/nrow(bigmat))
 
 print("Writing results to table...")
 write.table(result, outputFile, row.names = F, quote = F)
