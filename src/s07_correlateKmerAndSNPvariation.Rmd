@@ -15,6 +15,8 @@ library(raster)
 library(dismo)
 library(igraph)
 library(caper)
+library(rotl)
+library(stringr)
 # install.packages("rgdal", dependencies = T)
 # can't install rgdal
 # library(rgdal)
@@ -32,12 +34,12 @@ today = Sys.Date()
 ## Prepare diversity data 
 ```{r}
 # List input files
-pi = list.files("../results/2023-03-14/heterozygosity", full.names = T)
-bcd = list.files("../results/2023-03-14/bray-curtis-dissimilarities", full.names = T)
-jac = list.files("../results/2023-03-14/jaccard-dissimilarities", full.names = T)
+pi = list.files("../results/2023-03-26/genome-wide-pi", full.names = T)
+bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names = T)
+jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
 # get species IDs
-species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-14/heterozygosity/", "", pi))
+species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
 
 # Load input files
 pi = lapply(pi, read.table, header = T)
@@ -48,26 +50,48 @@ jac = lapply(jac, read.table, header = F)
 bcdMean = lapply(bcd, function(x){mean(x[,2])})
 jacMean = lapply(jac, function(x){mean(x[,2])})
 
+# calculate average number of k-mers included in union
+unionMean = lapply(jac, function(x){mean(x[,4])})
+
 # cbind all diversity data into one dataframe per species
-alldiv = Map(cbind, pi, bcdMean, jacMean)
+alldiv = Map(cbind, pi, bcdMean, jacMean, unionMean)
 
 # rbind all species data into one dataframe
-alldiv = lapply(alldiv, setNames, c("h", "n", "pi", "bcd", "jac"))
+alldiv = lapply(alldiv, setNames, c("h", "ntotal", "nvariant", "ninvariant", "pi", "bcd", "jac", "umean"))
 
 alldiv = do.call(rbind, alldiv)
 
 # add species names
 alldiv$species = species
+
+alldiv$speciesName = str_to_sentence(gsub("_", " ", alldiv$species))
 ```
 
 ## Prepare phylogenetic tree
 ```{r}
-phy = read.tree("speciesTree.nwk")
+# search Open Tree of Life for my species, add ids to my data
+# taxon_search = tnrs_match_names(names = gsub("_", " ", alldiv$species))
+# alldiv$ott_id = taxon_search$ott_id
+
+# get synthetic tree with all species included
+# ott_in_tree <- ott_id(taxon_search)[is_in_tree(ott_id(taxon_search))]
+# tr <- tol_induced_subtree(ott_ids = ott_in_tree)
+
+# remove ott ids
+# tr$tip.label <- strip_ott_ids(tr$tip.label, remove_underscores = TRUE)
+# plot(tr)
+
+# modify weird labels
+# tr$tip.label[tr$tip.label == "Ficus carica (species in kingdom Archaeplastida)"] = "Ficus carica"
+
+# load time tree
+phy = read.tree("../results/2023-03-26/speciesList.nwk")
+phy$tip.label = gsub("_", " ", phy$tip.label)
 ```
 
 ## Combine tree and data to get comparative object
 ```{r}
-compdata = comparative.data(phy, alldiv, names.col = "species", vcv = TRUE)
+compdata = comparative.data(phy, alldiv, names.col = "speciesName", vcv = T)
 ```
 
 # Initial data analysis
@@ -84,10 +108,11 @@ plot(alldiv$bcd, alldiv$jac)
 # Confirmatory data analysis
 ```{r}
 # How does SNP diversity correlate with k-mer diversity?
-pgls(pi ~ bcd, compdata)
-pgls(pi ~ jac, compdata)
+pgls(log(pi) ~ bcd + nvariant, compdata)
+pgls(log(pi) ~ jac + nvariant, compdata)
 
-plot(alldiv$pi, alldiv$bcd)
+plot(log(alldiv$pi), alldiv$bcd)
+plot(log(alldiv$pi), alldiv$jac)
 ```
 
 

@@ -403,6 +403,22 @@ brassica_nigra             cucurbita_pepo          arabis_nemorensis            
 arabidopsis_suecica         solanum_stenotomum               ficus_carica          solanum_melongena 
 
 #
+ott_in_tree <- ott_id(taxon_search)[is_in_tree(ott_id(taxon_search))]
+tr <- tol_induced_subtree(ott_ids = ott_in_tree)
+
+tr$tip.label <- strip_ott_ids(tr$tip.label, remove_underscores = TRUE)
+
+#
+"Arabidopsis suecica" 
+"Arabis nemorensis"   
+"Arachis hypogaea"    
+"Arachis ipaensis"    
+"Camelina sativa"    
+"Ficus carica"        
+"Nicotiana tabacum"   
+"Oryza punctata"
+
+#
 7915981 3052544
 
 # Actinidia eriantha
