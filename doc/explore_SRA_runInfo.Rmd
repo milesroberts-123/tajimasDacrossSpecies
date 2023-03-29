@@ -6,6 +6,8 @@ library(data.table)
 
 #info = read.csv("SraRunInfo.csv")
 #sort(table(info$BioProject), decreasing = T)
+brachypodium_sylvaticum = fread("SraRunInfo_brachypodium_sylvaticum_2023-03-29.csv.gz", data.table = F)
+sort(table(brachypodium_sylvaticum$BioProject), decreasing = T)
 
 zizania_palustris = fread("SraRunInfo_zizania_palustris_2023-03-10.csv.gz", data.table = F)
 sort(table(zizania_palustris$BioProject), decreasing = T)
@@ -151,6 +153,9 @@ sort(table(camellia_sinensis$BioProject), decreasing = T)
 castanea_mollissima = fread("SraRunInfo_castanea_mollissima_2023-02-02.csv.gz", data.table = F)
 sort(table(castanea_mollissima$BioProject), decreasing = T)
 
+castanea_mollissima = fread("SraRunInfo_castanea_mollissima_2023-03-29.csv.gz", data.table = F)
+sort(table(castanea_mollissima$BioProject), decreasing = T)
+
 coffea_arabica = fread("SraRunInfo_coffea_arabica_2023-02-02.csv.gz", data.table = F)
 sort(table(coffea_arabica$BioProject), decreasing = T)
 
@@ -220,7 +225,7 @@ sort(table(tintermedium$BioProject), decreasing = T)
 arabidopsis_lyrata = fread("SraRunInfo_arabidopsis_lyrata_2022-10-14.csv.gz", data.table = F, header = T)
 sort(table(arabidopsis_lyrata$BioProject), decreasing = T)
 
-arachis_hypogaea = read.csv("SraRunInfo_arachis_hypogaea_2022-10-11.csv")
+arachis_hypogaea = fread("SraRunInfo_arachis_hypogaea_2022-10-11.csv.gz", data.table = F, header = T)
 sort(table(arachis_hypogaea$BioProject), decreasing = T)
 
 brassica_oleracea = read.csv("SraRunInfo_brassica_oleracea_2022-10-11.csv")
