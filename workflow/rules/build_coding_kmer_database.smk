@@ -2,8 +2,8 @@ rule build_coding_kmer_database:
 	input:
 		"{assembly}_cds.fa"
 	output:
-		kmcDbPre="{assembly}_codingKmerDatabase.kmc_pre",
-		kmcDbSuf="{assembly}_codingKmerDatabase.kmc_suf"
+		kmcDbPre=temp("{assembly}_codingKmerDatabase.kmc_pre"),
+		kmcDbSuf=temp("{assembly}_codingKmerDatabase.kmc_suf")
 	log:
 		"logs/build_coding_kmer_database/{assembly}.log"
 	threads: 4

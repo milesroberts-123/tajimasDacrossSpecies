@@ -12,6 +12,7 @@ rule join_kmer_counts_pe:
 	log:
 		"logs/join_kmer_counts_pe/{samplePe}.log"
 	threads: 1
+	priority: 50
 	resources:
 		mem_mb_per_cpu=8000
 	shell:

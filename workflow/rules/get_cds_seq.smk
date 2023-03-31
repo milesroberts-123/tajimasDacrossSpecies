@@ -3,7 +3,8 @@ rule get_cds_seq:
 		fasta="data/assemblies/{assembly}.fa",
 		gff="data/annotations/{assembly}.gff3"
 	output:
-		"{assembly}_cds.fa"
+		temp("{assembly}_cds.fa"),
+		temp("{assembly}_cds.gff")
 	log:
 		"logs/get_cds_seq/{assembly}.log"
 	threads: 1
