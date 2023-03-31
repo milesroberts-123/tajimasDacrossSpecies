@@ -13,7 +13,6 @@ echo "This job is running on $HOSTNAME on `date`"
 
 # load snakemake
 echo Loading snakemake...
-#ml -* iccifort/2020.1.217 impi/2019.7.217 snakemake/5.26.1-Python-3.8.2
 conda activate snakemake
 
 # change directory of cache to scratch
@@ -35,5 +34,4 @@ snakemake --unlock --cores 1
 # Max cpu count for my SLURM account is 1040, subtract 1 to account for scheduler
 # Max job submit count is 1000, subtract 1 to account for scheduler
 echo Running snakemake...
-snakemake --cluster "sbatch --time 7-00:00:00 --partition=josephsnodes --account=josephsnodes --cpus-per-task={threads} --mem-per-cpu={resources.mem_mb_per_cpu}" --jobs 900 --cores 1024 --use-conda --rerun-incomplete --rerun-triggers mtime --retries 2
-# snakemake --cluster "sbatch --time 7-00:00:00 --cpus-per-task={threads} --mem-per-cpu={resources.mem_mb_per_cpu}" --jobs 990 --cores 1024 --use-conda --rerun-incomplete --rerun-triggers mtime
+snakemake --cluster "sbatch --time 7-00:00:00 --partition=josephsnodes --account=josephsnodes --cpus-per-task={threads} --mem-per-cpu={resources.mem_mb_per_cpu}" --jobs 900 --cores 1024 --use-conda --rerun-incomplete --rerun-triggers mtime --retries 2 --prioritize cbind_kmer_counts
