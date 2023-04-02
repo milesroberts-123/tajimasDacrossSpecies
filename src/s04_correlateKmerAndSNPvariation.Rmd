@@ -63,8 +63,16 @@ alldiv = do.call(rbind, alldiv)
 
 # add species names
 alldiv$species = species
+alldiv$species = str_to_sentence(gsub("_", " ", alldiv$species))
 
-alldiv$speciesName = str_to_sentence(gsub("_", " ", alldiv$species))
+# add coverage covariate
+coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
+alldiv = merge(alldiv, coverage, by = "species")
+
+gsize = read.table("../results/2023-03-26/genome_size.txt", header = T, sep = "\t")
+alldiv = merge(alldiv, gsize, by = "species")
+
+alldiv$totalcov = alldiv$totalbp/alldiv$assemblySize
 ```
 
 ## Prepare phylogenetic tree
@@ -91,7 +99,7 @@ phy$tip.label = gsub("_", " ", phy$tip.label)
 
 ## Combine tree and data to get comparative object
 ```{r}
-compdata = comparative.data(phy, alldiv, names.col = "speciesName", vcv = T)
+compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
 ```
 
 # Initial data analysis
@@ -103,16 +111,56 @@ plot(bcd[[6]][,2], jac[[6]][,2])
 
 # Does bray-curtis dissimilarity correlate with jaccard dissimilarity across species?
 plot(alldiv$bcd, alldiv$jac)
+abline(a = 0, b = 1)
+cor(alldiv$bcd, alldiv$jac)
+
+plot(alldiv$pi, alldiv$bcd)
+plot(alldiv$pi, alldiv$jac)
+
+plot(log(alldiv$pi), alldiv$bcd)
+plot(log(alldiv$pi), alldiv$jac)
 ```
 
 # Confirmatory data analysis
 ```{r}
-# How does SNP diversity correlate with k-mer diversity?
-pgls(log(pi) ~ bcd + nvariant, compdata)
-pgls(log(pi) ~ jac + nvariant, compdata)
+# raw correlations
+lm(jac ~ bcd, alldiv)
+lm(pi ~ bcd, alldiv)
+lm(pi ~ jac, alldiv)
 
-plot(log(alldiv$pi), alldiv$bcd)
-plot(log(alldiv$pi), alldiv$jac)
+# raw correlations, accounting for phylogeny
+pgls(jac ~ bcd, compdata)
+pgls(pi ~ bcd, compdata)
+pgls(pi ~ jac, compdata)
+
+# Try log transform
+pgls(log(pi) ~ bcd, compdata)
+pgls(log(pi) ~ jac, compdata)
+
+# Try log transform + accounting for coverage
+pgls(log(pi) ~ bcd + cvbp, compdata)
+pgls(log(pi) ~ jac + cvbp, compdata)
+
+pgls(log(pi) ~ bcd + totalcov, compdata)
+pgls(log(pi) ~ jac + totalcov, compdata)
+
+plot(alldiv$pi, alldiv$bcd)
+plot(alldiv$pi, alldiv$jac)
+  
+# try removing outliers
+compdataNoOut = subset.comparative.data(compdata, subset =  !(species %in% c("Actinidia chinensis", "Camelina sativa")))
+
+pgls(pi ~ bcd, compdataNoOut)
+pgls(pi ~ jac, compdataNoOut)
+
+pgls(log(pi) ~ bcd, compdataNoOut)
+pgls(log(pi) ~ jac, compdataNoOut)
+
+pgls(pi ~ bcd + cvbp, compdataNoOut)
+pgls(pi ~ jac + cvbp, compdataNoOut)
+
+pgls(pi ~ scale(bcd) + scale(cvbp), compdataNoOut)
+pgls(pi ~ scale(jac) + scale(cvbp), compdataNoOut)
 ```
 
 
