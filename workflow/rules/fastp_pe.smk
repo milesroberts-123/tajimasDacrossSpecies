@@ -8,6 +8,7 @@ rule fastp_pe:
 		htmlReport=temp("fastp_output/{runPe}_fastp.html"),
 		jsonReport=temp("fastp_output/{runPe}_pe_fastp.json")
 	threads: 4
+	priority: 50
 	resources:
 		mem_mb_per_cpu=5000
 	params:

@@ -11,6 +11,7 @@ rule bcftools_filter_variant_sites:
 	log:
 		"logs/bcftools_filter_variant_sites/{assembly}_{chromosome}.log"
 	threads: 1
+	priority: 50
 	resources:
 		mem_mb_per_cpu=16000
 	conda:
