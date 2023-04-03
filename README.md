@@ -244,21 +244,27 @@ In other words, I think it would be okay to include different types of sequencin
 
 # To do
 
-* add alpha and threshold number of occurences as paramters to `download_gbif.R`
+- [ ] calculate watterson's theta for each site
 
-* In `download_gbif.R` if a "graph not circular" error is returned, change alpha parameter
+- [ ] calculate Tajima's D for each site 
 
-* calculate variance in heterozygosity and k-mer patterns across sites or comparisons, so that you can compare SNP variation to k-mer variation
+- [ ] break large chromosomes into sequences no longer than 500 Mb, otherwise `samtools index` will fail
 
-* dynamically allocate memory to `fastp` based on the size of the input data
+- [ ] add alpha and threshold number of occurences as paramters to `download_gbif.R`
 
-* try submitting jobs to scavenger queue on first attempt, but switch to josephsnodes if job gets canceled
+- [ ] In `download_gbif.R` if a "graph not circular" error is returned, change alpha parameter
 
-* extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
+- [ ] calculate variance in heterozygosity and k-mer patterns across sites or comparisons, so that you can compare SNP variation to k-mer variation
 
-* add error checking to main snakefile
+- [ ] dynamically allocate memory to `fastp` based on the size of the input data
 
-* It looks like large genomes (e.g. **Aegilops tauschii**) pose problems for `degenotate` and `picardtools` even when I allocate more memory to these steps. 
+- [ ] try submitting jobs to scavenger queue on first attempt, but switch to josephsnodes if job gets canceled
 
-* I occassionaly get a `graph not circular` error from my `download_gbif` script inside the `ashape2poly` function. I'm not sure what causes this... My guess is that the start and end points of the graph need to be the same and sometimes this function doesn't generate that for some reasons, even though it usually does.
+- [ ] extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
+
+- [ ] add error checking to main snakefile
+
+- [ ] It looks like large genomes (e.g. **Aegilops tauschii**) pose problems for `degenotate` and `picardtools` even when I allocate more memory to these steps. 
+
+- [ ] I occassionaly get a `graph not circular` error from my `download_gbif` script inside the `ashape2poly` function. I'm not sure what causes this... My guess is that the start and end points of the graph need to be the same and sometimes this function doesn't generate that for some reasons, even though it usually does.
 
