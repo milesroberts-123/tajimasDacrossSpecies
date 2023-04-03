@@ -10,7 +10,7 @@ rule jaccard_dissimilarity:
 		countThresh=5 # mark a k-mer as present if it has a count equal to or greater than this threshold
 	threads: 1
 	resources:
-		mem_mb_per_cpu=128000
+		mem_mb_per_cpu=256000
 	conda:
 		"../envs/R.yml"
 	envmodules:

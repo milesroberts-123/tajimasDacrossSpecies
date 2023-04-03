@@ -55,7 +55,7 @@ myNormalize = function(x,data){
 	y/sum(y)
 }
 
-kmerCounts = mclapply(1:ncol(kmerCounts), myNormalize, data = kmerCounts, mc.cores = threadCount)
+kmerCounts = lapply(1:ncol(kmerCounts), myNormalize, data = kmerCounts)
 
 # cbind normalized counts into one frame
 print("Column-binding normalized counts...")
