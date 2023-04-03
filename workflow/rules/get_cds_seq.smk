@@ -3,8 +3,8 @@ rule get_cds_seq:
 		fasta="data/assemblies/{assembly}.fa",
 		gff="data/annotations/{assembly}.gff3"
 	output:
-		temp("{assembly}_cds.fa"),
-		temp("{assembly}_cds.gff")
+		faOut = temp("{assembly}_cds.fa"),
+		gffOut = temp("{assembly}_cds.gff")
 	log:
 		"logs/get_cds_seq/{assembly}.log"
 	threads: 1
@@ -17,8 +17,8 @@ rule get_cds_seq:
 	shell:
 		"""
 		# subset gff to just CDS
-		awk '(($3 == "CDS"))' {input.gff} > {wildcards.assembly}_cds.gff
+		awk '(($3 == "CDS"))' {input.gff} > {output.gffOut}
 		
 		# extract CDS from fasta
-		bedtools getfasta -fi {input.fasta} -bed {wildcards.assembly}_cds.gff > {output}
+		bedtools getfasta -fi {input.fasta} -bed {output.gffOut} > {output.faOut}
 		"""
