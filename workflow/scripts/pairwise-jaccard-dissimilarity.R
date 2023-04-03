@@ -120,7 +120,8 @@ length(indices)
 
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
-mclapply(1:length(indices), jaccardDissimilarity, idxs = indices, data = kmerCounts, outputFileName = dissimOutput, coreCount = threadCount, mc.cores = threadCount, mc.silent = TRUE)
+#mclapply(1:length(indices), jaccardDissimilarity, idxs = indices, data = kmerCounts, outputFileName = dissimOutput, coreCount = threadCount, mc.cores = threadCount, mc.silent = TRUE)
+lapply(1:length(indices), jaccardDissimilarity, idxs = indices, data = kmerCounts, outputFileName = dissimOutput, coreCount = threadCount)
 
 # write normalized k-mer matrix
 print("Writing normalized k-mer matrix...")

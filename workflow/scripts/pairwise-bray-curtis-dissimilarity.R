@@ -120,7 +120,8 @@ length(indices)
 
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
-mclapply(1:length(indices), brayCurtisDissimilarity, idxs = indices, data = kmerCounts, outputFileName = bcdOutputFile, coreCount = threadCount, mc.cores = threadCount, mc.silent = T)
+#mclapply(1:length(indices), brayCurtisDissimilarity, idxs = indices, data = kmerCounts, outputFileName = bcdOutputFile, coreCount = threadCount, mc.cores = threadCount, mc.silent = T)
+lapply(1:length(indices), brayCurtisDissimilarity, idxs = indices, data = kmerCounts, outputFileName = bcdOutputFile, coreCount = threadCount)
 
 # write normalized k-mer matrix
 print("Writing normalized k-mer matrix...")
