@@ -46,6 +46,13 @@ kmerCounts = kmerCounts[,-1]
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
+# convert matrix to numeric to prevent integer overflow
+print("Converting values to numeric...")
+kmerCounts = as.data.frame(sapply(kmerCounts, function(x) as.numeric(x)))
+
+print("Kmer matrix looks like this:")
+kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
+
 # mark k-mers as present or absent based on their count for each genotype
 print("Replace numbers < count threshold with 0...")
 kmerCounts[(kmerCounts < countThresh)] = 0
@@ -82,7 +89,8 @@ jaccardDissimilarity=function(y, idxs, data, outputFileName, coreCount){
 
   # k-mers marked by 2 are in intersection
   kmerInter = length(kmerCols[(kmerCols == 2)])
-
+  rm(kmerCols)
+  
   # dissimilarity = 1 - similarity
   result = 1 - (kmerInter/kmerUnion)
 
