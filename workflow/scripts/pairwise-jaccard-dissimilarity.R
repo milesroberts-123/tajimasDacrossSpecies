@@ -39,6 +39,9 @@ kmerCounts = fread(kmerFile, nThread = threadCount, header = T, data.table = F)
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
+# save header to add back later
+myHeader = colnames(kmerCounts)[-1]
+
 # remove kmer column to save on memory
 print("Removing k-mer column to save on memory...")
 kmerCounts = kmerCounts[,-1]
@@ -70,6 +73,13 @@ kmerCounts = do.call("cbind", kmerCounts)
 
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
+
+# add headers back to matrix
+print("Adding headers back to column-bound counts...")
+colnames(kmerCounts) = myHeader
+
+print("Kmer matrix looks like this:")
+kmerCounts[1:min(5,nrow(kmerCounts)),1:min(5,ncol(kmerCounts))]
 
 # calculate dissimilarity between kmer profiles
 # y = index for pair of individuals to compare
