@@ -47,18 +47,26 @@ print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
 # convert matrix to numeric to prevent integer overflow
-print("Converting values to numeric...")
-kmerCounts = as.data.frame(sapply(kmerCounts, function(x) as.numeric(x)))
+#print("Converting values to numeric...")
+#kmerCounts = as.data.frame(sapply(kmerCounts, function(x) as.numeric(x)))
 
-print("Kmer matrix looks like this:")
-kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
+#print("Kmer matrix looks like this:")
+#kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 
 # mark k-mers as present or absent based on their count for each genotype
-print("Replace numbers < count threshold with 0...")
-kmerCounts[(kmerCounts < countThresh)] = 0
+print("Replace k-mers as present or absent based on count threshold...")
+markPresAbs = function(x, data, countThresh){
+	y = data[,x]
+	y[y < countThresh] = 0
+  y[y >= countThresh] = 1
+	return(y)
+}
 
-print("Replace numbers >= count threshold with 1...")
-kmerCounts[(kmerCounts >= countThresh)] = 1
+kmerCounts = lapply(1:ncol(kmerCounts), data = kmerCounts, countThresh = countThresh)
+
+# cbind normalized counts into one frame
+print("Column-binding presence/absence values...")
+kmerCounts = do.call("cbind", kmerCounts)
 
 print("Kmer matrix looks like this:")
 kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]

@@ -31,6 +31,9 @@ core.**
 **.frq.count
 cbind.sh
 workflow/data/testDatasets/**
+**.png
+**.zip
+
 
 !speciesList.txt
 !panicum_halli_search.txt
