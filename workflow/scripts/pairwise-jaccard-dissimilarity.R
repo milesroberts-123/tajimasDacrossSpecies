@@ -62,7 +62,7 @@ markPresAbs = function(x, data, countThresh){
 	return(y)
 }
 
-kmerCounts = lapply(1:ncol(kmerCounts), data = kmerCounts, countThresh = countThresh)
+kmerCounts = lapply(1:ncol(kmerCounts), FUN = markPresAbs, data = kmerCounts, countThresh = countThresh)
 
 # cbind normalized counts into one frame
 print("Column-binding presence/absence values...")

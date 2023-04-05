@@ -20,6 +20,7 @@ rule download_gbif:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=4000,
+		load = 1
 	params:
 		occCountThreshold = 20,
 		taxonKeys = get_taxon_keys,
