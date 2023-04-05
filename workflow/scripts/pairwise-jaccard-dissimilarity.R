@@ -67,7 +67,7 @@ kmerCounts[1:min(5, nrow(kmerCounts)),1:min(5, ncol(kmerCounts))]
 # y = index for pair of individuals to compare
 # idxs = list of pairs
 # data = dataframe of normalized k-mer counts
-jaccardDissimilarity=function(y, idxs, data, outputFileName, coreCount){
+jaccardDissimilarity=function(y, idxs, data, outputFileName){
 
   idx = idxs[[y]]
   rm(idxs)
@@ -95,16 +95,17 @@ jaccardDissimilarity=function(y, idxs, data, outputFileName, coreCount){
   result = 1 - (kmerInter/kmerUnion)
 
   # write output to separate files, one file per core
-  subFile = y %% coreCount
+  #subFile = y %% coreCount
 
   line = paste(paste(idx, collapse = "-"), result, kmerInter, kmerUnion, sep = " ")
-  write(line, file = paste(subFile, "_", outputFileName, sep = ""), append = TRUE)
+  #write(line, file = paste(subFile, "_", outputFileName, sep = ""), append = TRUE)
+  write(line, file = outputFileName, append = TRUE)
 
   #if(y %% 1000 == 0){
   #  print(paste(y, "pairwise dissimilarities calculated", sep = " "))
   #}
 
-  #return(result)
+  return(NULL)
 
 }
 
@@ -129,7 +130,7 @@ length(indices)
 # calculate dissimilarity
 print("Calculating dissimilarity for each pairwise comparison...")
 #mclapply(1:length(indices), jaccardDissimilarity, idxs = indices, data = kmerCounts, outputFileName = dissimOutput, coreCount = threadCount, mc.cores = threadCount, mc.silent = TRUE)
-lapply(1:length(indices), jaccardDissimilarity, idxs = indices, data = kmerCounts, outputFileName = dissimOutput, coreCount = threadCount)
+lapply(1:length(indices), jaccardDissimilarity, idxs = indices, data = kmerCounts, outputFileName = dissimOutput)
 
 # write normalized k-mer matrix
 print("Writing normalized k-mer matrix...")

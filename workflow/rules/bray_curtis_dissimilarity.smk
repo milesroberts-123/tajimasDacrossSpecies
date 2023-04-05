@@ -6,9 +6,9 @@ rule bray_curtis_dissimilarity:
 		kmerMatrix="{assembly}_mergedKmerCountsNorm.txt"
 	log:
 		"logs/bray_curtis_dissimilarity/{assembly}.log"
-	threads: 1
+	threads: 4
 	resources:
-		mem_mb_per_cpu=256000
+		mem_mb_per_cpu=64000
 	conda:
 		"../envs/R.yml"
 	envmodules:
