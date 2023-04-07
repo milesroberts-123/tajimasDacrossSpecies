@@ -84,13 +84,13 @@ search_gbif = function(species_string, taxon_keys, gbif_user, gbif_email, gbif_p
 	#	basisOfRecord = "HUMAN_OBSERVATION")
 	gbif_download <- occ_download(
 		pred_in("taxonKey", taxon_keys),
-		pred("hasGeospatialIssue", FALSE),
+		#pred("hasGeospatialIssue", FALSE),
 		pred("hasCoordinate", TRUE),
 		pred("occurrenceStatus","PRESENT"),
 		pred_gte("year", 1943),
 		pred_lte("year", 2023), 
-		pred_lte("coordinateUncertaintyInMeters", 1000),
-		pred_not(pred_in("basisOfRecord",c("FOSSIL_SPECIMEN","LIVING_SPECIMEN"))),
+		#pred_lte("coordinateUncertaintyInMeters", 5000),
+		pred_not(pred_in("basisOfRecord",c("FOSSIL_SPECIMEN"))),
 		format = "SIMPLE_CSV",
 		user = gbif_user,
 		pwd = gbif_pwd,
@@ -117,7 +117,7 @@ search_gbif = function(species_string, taxon_keys, gbif_user, gbif_email, gbif_p
 	
 	# Getting list of issues to check for
 	print("Filtering records with these issue codes:")
-	issues_to_check = sort(gbif_issues()[c(-3,-10,-48),2])
+	issues_to_check = sort(gbif_issues()[c(-3,-10, -15:-23, -48, -52:-60),2])
 	print(issues_to_check)
 
 	# check for specific issue codes and remove any records with at least one of said codes

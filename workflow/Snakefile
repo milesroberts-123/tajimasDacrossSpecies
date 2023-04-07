@@ -3,7 +3,7 @@ import pandas as pd
 import re
 
 # load samples
-samples = pd.read_table("data/samples.tsv", sep="\t", dtype={"run": str, "replicate": str, "genome": str}).set_index(["run","replicate","genome"], drop=False)
+samples = pd.read_table("../config/samples.tsv", sep="\t", dtype={"run": str, "replicate": str, "genome": str}).set_index(["run","replicate","genome"], drop=False)
 
 # can't have print statements if buidling DAG with dot
 # print(samples)
@@ -16,7 +16,7 @@ samplesSe = samples[samples["layout"] == "SE"]
 #print(samplesSe)
 
 # load list of chromosome names
-chroms = pd.read_table("data/chromosomes.tsv", sep="\t", dtype={"assembly": str, "chromosome": str}).set_index(["assembly", "chromosome"], drop=False)
+chroms = pd.read_table("../config/chromosomes.tsv", sep="\t", dtype={"assembly": str, "chromosome": str}).set_index(["assembly", "chromosome"], drop=False)
 
 # load list of species names
 # species = pd.read_table("data/species.tsv", sep = "\t", dtype={"species": str}).set_index(["species"], drop=False)

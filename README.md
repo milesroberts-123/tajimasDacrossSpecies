@@ -244,15 +244,15 @@ In other words, I think it would be okay to include different types of sequencin
 
 # To do
 
-- [ ] calculate watterson's theta for each site
+## Genetic diversity estimation
 
-- [ ] calculate Tajima's D for each site 
+- [x] Move input data to `config/`
+
+- [ ] calculate watterson's theta for each site and genome-wide
+
+- [ ] calculate Tajima's D for each site and genome wide
 
 - [ ] break large chromosomes into sequences no longer than 500 Mb, otherwise `samtools index` will fail
-
-- [ ] add alpha and threshold number of occurences as paramters to `download_gbif.R`
-
-- [ ] In `download_gbif.R` if a "graph not circular" error is returned, change alpha parameter
 
 - [ ] calculate variance in heterozygosity and k-mer patterns across sites or comparisons, so that you can compare SNP variation to k-mer variation
 
@@ -260,11 +260,14 @@ In other words, I think it would be okay to include different types of sequencin
 
 - [ ] try submitting jobs to scavenger queue on first attempt, but switch to josephsnodes if job gets canceled
 
-- [ ] extract 4-fold degenerate sites using `degenotate` instead of `bedtools`?
-
 - [ ] add error checking to main snakefile
 
-- [ ] It looks like large genomes (e.g. **Aegilops tauschii**) pose problems for `degenotate` and `picardtools` even when I allocate more memory to these steps. 
+## Population size estimation
+
+- [ ] filter GBIF occurences by country, only include occurences within native ranges as described by [plants of the world online](https://powo.science.kew.org/)
+
+- [ ] add alpha and threshold number of occurences as paramters to `download_gbif.R`
+
+- [ ] In `download_gbif.R` if a "graph not circular" error is returned, change alpha parameter
 
 - [ ] I occassionaly get a `graph not circular` error from my `download_gbif` script inside the `ashape2poly` function. I'm not sure what causes this... My guess is that the start and end points of the graph need to be the same and sometimes this function doesn't generate that for some reasons, even though it usually does.
-

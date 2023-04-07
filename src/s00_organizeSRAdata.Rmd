@@ -43,7 +43,7 @@ actinidia_chinensis$replicate[grepl("KFF", actinidia_chinensis$SampleName)] = "F
 
 # add reads to growing list
 # not sure about this ploidy
-allReads = rbind(allReads, data.frame(run = actinidia_chinensis[,"Run"], replicate = actinidia_chinensis[,"replicate"], layout = "SE", genome = "actinidia_chinensis", ploidy = 2, taxonKeys = "3644693 7270743 3644698 3644711"))
+allReads = rbind(allReads, data.frame(run = actinidia_chinensis[,"Run"], replicate = actinidia_chinensis[,"replicate"], layout = "SE", genome = "actinidia_chinensis", ploidy = 2, taxonKeys = "7270822"))
 ```
 
 ## Aegilops tauschii

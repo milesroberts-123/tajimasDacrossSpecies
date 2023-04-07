@@ -10,7 +10,7 @@ rule jaccard_dissimilarity:
 		countThresh=5 # mark a k-mer as present if it has a count equal to or greater than this threshold
 	threads: 4
 	resources:
-		mem_mb_per_cpu=64000
+		mem_mb_per_cpu=16000
 	conda:
 		"../envs/R.yml"
 	envmodules:
@@ -20,8 +20,8 @@ rule jaccard_dissimilarity:
 		Rscript scripts/pairwise-jaccard-dissimilarity.R {input} {output.dissim} {output.kmerMatrix} {threads} {params.countThresh} &> {log}
 		
 		# merge output of R script into one file
-		cat *_{output.dissim} > {output.dissim}
+		#cat *_{output.dissim} > {output.dissim}
 
 		# remove intermediate files
-		rm *_{output.dissim}
+		#rm *_{output.dissim}
 		"""
