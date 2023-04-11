@@ -6,9 +6,9 @@ if (!require(parallel)) install.packages('data.table')
 library(data.table)
 
 # Functions
-# harmonic series
-harmonicSeries = function(n){
-  sum(1/(1:(n-1)))
+# watterson's theta for one site with sample size n
+thetaForOneS = function(n){
+  1/sum(1/(1:(n-1)))
 }
 
 # tajima's D variance, simplified for when S = 1
@@ -90,7 +90,7 @@ bigmat = as.data.frame(do.call("rbind", mats))
 rownames(bigmat) = NULL
 
 print("A subset of the matrix:")
-bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+bigmat[1:min(5, nrow(bigmat)),]
 
 # remove mats object, no longer needed
 print("Removing intermediate object...")
@@ -126,13 +126,13 @@ print("Replacing NA with 0...")
 bigmat$AC[is.na(bigmat$AC)] = 0
 
 print("A subset of the matrix:")
-bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+bigmat[1:min(5, nrow(bigmat)),]
 
 print("Replacing NA with placeholder...")
 bigmat$AN[is.na(bigmat$AN)] = -1
 
 print("A subset of the matrix:")
-bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+bigmat[1:min(5, nrow(bigmat)),]
 
 # calculate genome-wide pi
 print("Calculating frequency of reference alleles...")
@@ -143,30 +143,30 @@ print("Calculating heterozygosity at each site...")
 bigmat$HET = (1 - (bigmat$ref_freq^2 + bigmat$alt_freq^2))*(bigmat$AN/(bigmat$AN-1))
 
 print("A subset of the matrix:")
-bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+bigmat[1:min(5, nrow(bigmat)),]
 
 # calculate genome wide watterson's theta
 print("Calculating watterson's theta for each site...")
 
 bigmat$THETA = NA
-bigmat$THETA[bigmat$AC > 0] = 1/harmonicSeries(bigmat$AN[bigmat$AC > 0])
+bigmat$THETA[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = thetaForOneS))
 
 print("A subset of the matrix:")
-bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+bigmat[1:min(5, nrow(bigmat)),]
 
 # calculate standard deviation in Tajima's D at each site
 bigmat$TAJIMAVAR = NA
-bigmat$TAJIMAVAR[bigmat$AC > 0] = tajimasDeltaVarForOneS(bigmat$AN[bigmat$AC > 0])
+bigmat$TAJIMAVAR[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = tajimasDeltaVarForOneS))
 
 print("A subset of the matrix:")
-bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+bigmat[1:min(5, nrow(bigmat)),]
 
 # calculate tajima's D for each site
 print("Calculating tajima's D for each site...")
 bigmat$TAJIMASD = (bigmat$HET - bigmat$THETA)/sqrt(bigmat$TAJIMAVAR)
 
 print("A subset of the matrix:")
-bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+bigmat[1:min(5, nrow(bigmat)),]
 
 # compile results into a table
 print("Summing heterozygosities across sites...")
