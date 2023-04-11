@@ -11,8 +11,8 @@ harmonicSeries = function(n){
   sum(1/(1:(n-1)))
 }
 
-# watterson's theta for one site with sample size n
-thetaWForOneS = function(n){
+# watterson's THETAW for one site with sample size n
+THETAWWForOneS = function(n){
   a = harmonicSeries(n)
   1/a
 }
@@ -151,12 +151,12 @@ bigmat$HET = (1 - (bigmat$ref_freq^2 + bigmat$alt_freq^2))*(bigmat$AN/(bigmat$AN
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
 
-# calculate genome wide watterson's theta
-print("Calculating watterson's theta for each site...")
+# calculate genome wide watterson's THETAW
+print("Calculating watterson's THETAW for each site...")
 
-bigmat$THETA = NA
-bigmat$THETA[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = thetaWForOneS)) # variant sites
-bigmat$THETA[bigmat$AC == 0] = 0 # invariant sites
+bigmat$THETAW = NA
+bigmat$THETAW[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = THETAWWForOneS)) # variant sites
+bigmat$THETAW[bigmat$AC == 0] = 0 # invariant sites
 
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
@@ -170,14 +170,14 @@ bigmat[1:min(5, nrow(bigmat)),]
 
 # calculate tajima's D for each site
 print("Calculating tajima's D for each site...")
-bigmat$TAJIMASD = (bigmat$HET - bigmat$THETA)/sqrt(bigmat$TAJIMAVAR)
+bigmat$TAJIMASD = (bigmat$HET - bigmat$THETAW)/sqrt(bigmat$TAJIMAVAR)
 
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
 
 # compile results into a table
 print("Summing heterozygosities across sites...")
-result = data.frame(h = sum(bigmat$HET), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = sum(bigmat$HET)/nrow(bigmat), theta = sum(bigmat$THETA), d = mean(bigmat$TAJIMASD))
+result = data.frame(h = sum(bigmat$HET), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = sum(bigmat$HET)/nrow(bigmat), thetaw = sum(bigmat$THETAW), d = mean(bigmat$TAJIMASD, na.rm = T))
 
 print("Writing results to table...")
 write.table(result, outputFile, row.names = F, quote = F)
