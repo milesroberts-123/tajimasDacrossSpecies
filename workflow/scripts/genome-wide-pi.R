@@ -129,7 +129,7 @@ print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
 
 print("Replacing NA with placeholder...")
-bigmat$AN[is.na(bigmat$AN)] = -1
+bigmat$AN[is.na(bigmat$AN)] = -1 # this prevents NAs (0/0) from popping up in heterozygosity calculation
 
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
@@ -149,7 +149,8 @@ bigmat[1:min(5, nrow(bigmat)),]
 print("Calculating watterson's theta for each site...")
 
 bigmat$THETA = NA
-bigmat$THETA[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = thetaForOneS))
+bigmat$THETA[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = thetaForOneS)) # variant sites
+bigmat$THETA[bigmat$AC == 0] = 0 # invariant sites
 
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
@@ -170,7 +171,7 @@ bigmat[1:min(5, nrow(bigmat)),]
 
 # compile results into a table
 print("Summing heterozygosities across sites...")
-result = data.frame(h = sum(bigmat$HET), theta = sum(bigmat$THETA), d = mean(bigmat$TAJIMASD), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = sum(bigmat$HET)/nrow(bigmat))
+result = data.frame(h = sum(bigmat$HET), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = sum(bigmat$HET)/nrow(bigmat), theta = sum(bigmat$THETA), d = mean(bigmat$TAJIMASD))
 
 print("Writing results to table...")
 write.table(result, outputFile, row.names = F, quote = F)
