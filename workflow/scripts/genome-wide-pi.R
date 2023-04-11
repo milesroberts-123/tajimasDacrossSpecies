@@ -152,7 +152,7 @@ print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
 
 # calculate genome wide watterson's THETAW
-print("Calculating watterson's THETAW for each site...")
+print("Calculating Watterson's theta for each site...")
 
 bigmat$THETAW = NA
 bigmat$THETAW[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = THETAWWForOneS)) # variant sites
@@ -169,15 +169,15 @@ print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
 
 # calculate tajima's D for each site
-print("Calculating tajima's D for each site...")
+print("Calculating Tajima's D for each site...")
 bigmat$TAJIMASD = (bigmat$HET - bigmat$THETAW)/sqrt(bigmat$TAJIMAVAR)
 
 print("A subset of the matrix:")
 bigmat[1:min(5, nrow(bigmat)),]
 
 # compile results into a table
-print("Summing heterozygosities across sites...")
-result = data.frame(h = sum(bigmat$HET), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = mean(bigmat$HET, na.rm = T), thetaw = mean(bigmat$THETAW, na.rm = T), d = mean(bigmat$TAJIMASD, na.rm = T))
+print("Summing variation across sites...")
+result = data.frame(h = sum(bigmat$HET), w = sum(bigmat$THETAW), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = mean(bigmat$HET, na.rm = T), thetaw = mean(bigmat$THETAW, na.rm = T), d = mean(bigmat$TAJIMASD, na.rm = T))
 
 print("Writing results to table...")
 write.table(result, outputFile, row.names = F, quote = F)
