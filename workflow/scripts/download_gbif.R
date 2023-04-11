@@ -1,7 +1,7 @@
 # PARAMETERS
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
-package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igraph", "raster", "rgeos", "maps", "sf") # list of needed packages
+package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igraph", "raster", "rgeos", "maps", "sf", "rnaturalearth") # list of needed packages
 #kept_columns = c(
 #	"species", 
 #	"decimalLongitude",
@@ -21,8 +21,9 @@ genus_species = args[1]
 gbif_user = args[2]
 gbif_email = args[3]
 gbif_pwd = args[4]
-occCountThreshold = args[5]
-taxon_keys = args[6:length(args)]
+occCountThreshold = as.numeric(args[5])
+alphaValue = as.numeric(args[6])
+taxon_keys = args[7:length(args)]
 species_string = gsub("_", " ", genus_species) # species name to pass to gbif
 output_plot_name = paste(genus_species, "_raw_gbif_data.png", sep = "") # name of output plot
 output_occ_table_name = paste(genus_species, "_raw_gbif_data.txt", sep = "") # name of output table
@@ -34,6 +35,7 @@ print(taxon_keys)
 print(gbif_user)
 print(gbif_email)
 #print(gbif_pwd)
+print(occCountThreshold)
 print(output_plot_name)
 print(output_occ_table_name)
 print(output_area_table_name)
@@ -142,6 +144,7 @@ search_gbif = function(species_string, taxon_keys, gbif_user, gbif_email, gbif_p
 
 # get continent from coordinates
 # function from: https://github.com/vsbuffalo/paradox_variation/blob/master/R/range_funcs.r
+# and it looks like Buffalo got the function from stack overflow
 coords2continent = function(lon, lat, countriesSP) {
   # https://stackoverflow.com/questions/21708488/get-country-and-continent-from-longitude-and-latitude-point-in-r
   points <- data.frame(lon=lon, lat=lat)
@@ -152,8 +155,22 @@ coords2continent = function(lon, lat, countriesSP) {
   # use 'over' to get indices of the Polygons object containing each point
   indices = sp:::over(pointsSP, countriesSP)
 
-  #indices$REGION   # returns the continent (7 continent model)
-  indices$continent
+  indices$REGION   # returns the continent (7 continent model)
+  #indices$continent # returns the continent (6 continent model)
+}
+
+coords2country = function(lon, lat, countriesSP){
+  
+  points <- data.frame(lon=lon, lat=lat)
+  
+  # converting points to a SpatialPoints object
+  # setting CRS directly to that from rworldmap
+  pointsSP = sp:::SpatialPoints(points, proj4string=sp:::CRS(sp:::proj4string(countriesSP)))
+
+  # use 'over' to get indices of the Polygons object containing each point
+  indices = sp:::over(pointsSP, countriesSP)
+
+  indices$ADMIN  #returns country name
 }
 
 
@@ -213,13 +230,14 @@ get_diff_bw_world_and_hull = function(spatpol){
 	sf_use_s2(FALSE)
 
         # world data
-	print("loading world data...")
-        data("wrld_simpl", package = 'maptools')
+	#print("loading world data...")
+        #data("wrld_simpl", package = 'maptools')
 
         # coerce sp object to sf
         print("converting sp objects to sf...")
-	world <- st_as_sf(wrld_simpl)
-        rectangle <- st_as_sf(spatpol)
+	#world <- st_as_sf(wrld_simpl)
+        world = rnaturalearth::ne_countries(returnclass = "sf")
+	rectangle <- st_as_sf(spatpol)
 
         # difference between world polygons and the rectangle
         print("calculating difference...")
@@ -227,7 +245,7 @@ get_diff_bw_world_and_hull = function(spatpol){
 
         # coerce back to sp
 	print("convert sf back to sp...")
-        difference <- as(difference, 'Spatial')
+        difference <- as(st_geometry(difference), "Spatial")
 
 	return(difference)
         # plot the result
@@ -235,7 +253,7 @@ get_diff_bw_world_and_hull = function(spatpol){
 }
 
 # split up occurence data by continent, fit alpha hull and calculate area for each continent
-area_by_continent = function(data, output_plot_name, output_area_table_name, species_string, occCountThreshold){
+area_by_continent = function(data, output_plot_name, output_area_table_name, species_string, occCountThreshold, alphaValue){
 
 	# output vector for list of areas
         areas = NULL
@@ -262,7 +280,19 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 		print("Number of occurrences on this continent after rounding and removing duplicates:")
                 data_sub_nrow = nrow(data_sub)
                 print(data_sub_nrow)
-	
+
+		# If continent is Europe, don't include data at tail of Alaska
+		if(continent == "Europe"){
+			print("Removing points at tail of Alaska...")
+			data_sub = data_sub[(data_sub$decimalLongitude > -50),]
+		}
+
+		# If North America, don't include data at tail of Russia
+		if(continent == "North America"){
+			print("Removing points at tail of Russia...")
+			data_sub = data_sub[(data_sub$decimalLongitude < 0),]
+		}
+
 		# remove points that are so close they're basically duplicates
 		#print("Removing points that are so close they're basically duplicates...")
 		#data_sub = SpatialPoints(coords = cbind(data_sub$decimalLongitude, data_sub$decimalLatitude))
@@ -285,7 +315,7 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 
                 # draw alpha hull around points
                 print("Drawing alpha hull around points...")
-                alphashape = ashape(data_sub$decimalLongitude, data_sub$decimalLatitude, alpha = 200)
+                alphashape = ashape(data_sub$decimalLongitude, data_sub$decimalLatitude, alpha = alphaValue)
 
                 # from alpha shape get indices of polygon edges
                 print("Extracting polygon edges...")
@@ -295,6 +325,7 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
                 print("Building spatial polygon...")
                 mypol = Polygon(data_sub[pol,c(1,2)])
                 spatpol = SpatialPolygons(list(Polygons(list(mypol), ID = 1)), proj4string = CRS("+proj=longlat +datum=WGS84"))
+                #spatpol = SpatialPolygons(list(Polygons(list(mypol), ID = 1)), proj4string = CRS("+init=epsg:4326 +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"))
 
 		# get difference between spatial polygon and world map
 		print("Getting difference between spatial polygon and world map...")
@@ -330,11 +361,11 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 	}
 
         # save results as a dataframe
-        write.table(areas, output_area_table_name, row.names = F, quote = F)
+        write.table(areas, output_area_table_name, row.names = F, quote = F, sep = "\t")
 }
 
 # combine the above functions into one workflow
-main = function(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd, occCountThreshold){
+main = function(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd, occCountThreshold, alphaValue){
 	
 	# load packages
 	load_packages(package_list)
@@ -346,7 +377,7 @@ main = function(package_list, species_string, taxon_keys, output_plot_name, outp
 	plot_gbif(all_data, output_plot_name)
 	
 	# write gbif output
-	write.table(all_data, output_occ_table_name, row.names = F, quote = F, sep = ";")
+	write.table(all_data, output_occ_table_name, row.names = F, quote = F, sep = "\t")
 
 	# separate points by continent, so that I can draw alpha hull for each continent separately
 	countriesSP <- rworldmap:::getMap(resolution='low')
@@ -367,8 +398,8 @@ main = function(package_list, species_string, taxon_keys, output_plot_name, outp
 	print(nrow(all_data))
 
 	# measure range on each continent
-	area_by_continent(all_data, output_plot_name, output_area_table_name, species_string, occCountThreshold)
+	area_by_continent(all_data, output_plot_name, output_area_table_name, species_string, occCountThreshold, alphaValue)
 }
 
 # execute workflow
-main(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd, occCountThreshold)
+main(package_list, species_string, taxon_keys, output_plot_name, output_occ_table_name, output_area_table_name, gbif_user, gbif_email, gbif_pwd, occCountThreshold, alphaValue)

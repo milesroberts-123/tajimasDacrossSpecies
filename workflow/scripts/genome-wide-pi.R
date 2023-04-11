@@ -5,6 +5,20 @@ print("Loading packages...")
 if (!require(parallel)) install.packages('data.table')
 library(data.table)
 
+# Functions
+# harmonic series
+harmonicSeries = function(n){
+  sum(1/(1:(n-1)))
+}
+
+# tajima's D variance, simplified for when S = 1
+# will be used to calculate tajima's D for individual sites
+tajimasDeltaVarForOneS  = function(n){
+  a = harmonicSeries(n)
+  ( (n+1)/(3*(n-1)) - (1/a) ) / a
+}
+
+
 # get file names passed to script as arguments
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
@@ -128,8 +142,35 @@ bigmat$ref_freq = 1 - bigmat$alt_freq
 print("Calculating heterozygosity at each site...")
 bigmat$HET = (1 - (bigmat$ref_freq^2 + bigmat$alt_freq^2))*(bigmat$AN/(bigmat$AN-1))
 
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
+# calculate genome wide watterson's theta
+print("Calculating watterson's theta for each site...")
+
+bigmat$THETA = NA
+bigmat$THETA[bigmat$AC > 0] = 1/harmonicSeries(bigmat$AN[bigmat$AC > 0])
+
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
+# calculate standard deviation in Tajima's D at each site
+bigmat$TAJIMAVAR = NA
+bigmat$TAJIMAVAR[bigmat$AC > 0] = tajimasDeltaVarForOneS(bigmat$AN[bigmat$AC > 0])
+
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
+# calculate tajima's D for each site
+print("Calculating tajima's D for each site...")
+bigmat$TAJIMASD = (bigmat$HET - bigmat$THETA)/sqrt(bigmat$TAJIMAVAR)
+
+print("A subset of the matrix:")
+bigmat[1:min(5, nrow(bigmat)), 1:min(5, ncol(bigmat))]
+
+# compile results into a table
 print("Summing heterozygosities across sites...")
-result = data.frame(h = sum(bigmat$HET), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = sum(bigmat$HET)/nrow(bigmat))
+result = data.frame(h = sum(bigmat$HET), theta = sum(bigmat$THETA), d = mean(bigmat$TAJIMASD), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = sum(bigmat$HET)/nrow(bigmat))
 
 print("Writing results to table...")
 write.table(result, outputFile, row.names = F, quote = F)

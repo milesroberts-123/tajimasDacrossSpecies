@@ -75,6 +75,29 @@ alldiv = merge(alldiv, gsize, by = "species")
 alldiv$totalcov = alldiv$totalbp/alldiv$assemblySize
 ```
 
+## Load range data
+```{r}
+# load range data
+areas = list.files("../results/2023-03-26/ranges/tables", full.names = T)
+
+areas_species = gsub("_areas.txt", "", gsub("../results/2023-03-26/ranges/tables/", "", areas))
+areas_species = str_to_sentence(gsub("_", " ", areas_species))
+
+areas = lapply(areas, read.table, header = T, sep = "\t")
+
+get_nonwater_area = function(x){
+  sum(x[,"total_area"] - x[,"water_area"])
+}
+
+areas = data.frame(
+  species = areas_species,
+  rangeArea = unlist(lapply(areas, get_nonwater_area))
+)
+
+# merge with diversity data
+alldiv = merge(alldiv, areas, by = "species", all.x = T)
+```
+
 ## Prepare phylogenetic tree
 ```{r}
 # search Open Tree of Life for my species, add ids to my data
@@ -119,10 +142,22 @@ plot(alldiv$pi, alldiv$jac)
 
 plot(log(alldiv$pi), alldiv$bcd)
 plot(log(alldiv$pi), alldiv$jac)
+
+# Look at relationship of range area (i.e. population size) to diversity
+plot(log(alldiv$rangeArea), alldiv$pi)
+
+plot(log(alldiv$rangeArea), alldiv$bcd)
+
+plot(log(alldiv$rangeArea), alldiv$jac)
+
 ```
 
 # Confirmatory data analysis
 ```{r}
+minmaxnorm = function(x){
+  (x - min(x))/(max(x) - min(x))
+}
+
 # raw correlations
 lm(jac ~ bcd, alldiv)
 lm(pi ~ bcd, alldiv)
@@ -132,6 +167,10 @@ lm(pi ~ jac, alldiv)
 pgls(jac ~ bcd, compdata)
 pgls(pi ~ bcd, compdata)
 pgls(pi ~ jac, compdata)
+
+pgls(scale(pi) ~ scale(rangeArea), compdata)
+pgls(scale(jac) ~ scale(rangeArea), compdata)
+pgls(scale(bcd) ~ scale(rangeArea), compdata)
 
 # Try log transform
 pgls(log(pi) ~ bcd, compdata)
@@ -164,8 +203,10 @@ pgls(pi ~ scale(jac) + scale(cvbp), compdataNoOut)
 ```
 
 
+# UNUSED CODE
+
 # Explore GBIF data
-```{r}
+```{r eval=FALSE, include=FALSE}
 #obtain data from GBIF via rgbif
 dat <- occ_search(scientificName = "Arabidopsis thaliana", limit = 5000, hasCoordinate = T)
 
