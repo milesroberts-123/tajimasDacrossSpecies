@@ -6,9 +6,15 @@ if (!require(parallel)) install.packages('data.table')
 library(data.table)
 
 # Functions
+# harmonic series
+harmonicSeries = function(n){
+  sum(1/(1:(n-1)))
+}
+
 # watterson's theta for one site with sample size n
-thetaForOneS = function(n){
-  1/sum(1/(1:(n-1)))
+thetaWForOneS = function(n){
+  a = harmonicSeries(n)
+  1/a
 }
 
 # tajima's D variance, simplified for when S = 1
@@ -149,7 +155,7 @@ bigmat[1:min(5, nrow(bigmat)),]
 print("Calculating watterson's theta for each site...")
 
 bigmat$THETA = NA
-bigmat$THETA[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = thetaForOneS)) # variant sites
+bigmat$THETA[bigmat$AC > 0] = unlist(lapply(bigmat$AN[bigmat$AC > 0], FUN = thetaWForOneS)) # variant sites
 bigmat$THETA[bigmat$AC == 0] = 0 # invariant sites
 
 print("A subset of the matrix:")
