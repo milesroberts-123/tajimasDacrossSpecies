@@ -177,7 +177,7 @@ bigmat[1:min(5, nrow(bigmat)),]
 
 # compile results into a table
 print("Summing heterozygosities across sites...")
-result = data.frame(h = sum(bigmat$HET), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = sum(bigmat$HET)/nrow(bigmat), thetaw = sum(bigmat$THETAW), d = mean(bigmat$TAJIMASD, na.rm = T))
+result = data.frame(h = sum(bigmat$HET), ntotal = nrow(bigmat), nvariant = nrow(bigmat[(bigmat$AC > 0),]), ninvariant = nrow(bigmat[(bigmat$AC == 0),]), pi = mean(bigmat$HET, na.rm = T), thetaw = mean(bigmat$THETAW, na.rm = T), d = mean(bigmat$TAJIMASD, na.rm = T))
 
 print("Writing results to table...")
 write.table(result, outputFile, row.names = F, quote = F)
