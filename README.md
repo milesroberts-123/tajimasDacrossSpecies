@@ -242,17 +242,25 @@ This is similar to an assumption that Buffalo 2022 **Elife** makes
 
 In other words, I think it would be okay to include different types of sequencing into the same analysis. Variation between species will be confounded with variation between methods, but again we can assume that variation between species will be greater than variation between methods.
 
+## choosing wild relatives to measure historical range size for domesticated species
+
+For each domesticated species in our dataset, we looked at a wild relative to estimate range size. The relative species has to be in the same genus as the domesticated species. When there are multiple wild relatives to choose from, we looked at the one with the most recorded occurences on GBIF
+
 # To do
 
 ## Genetic diversity estimation
 
 - [x] Move input data to `config/`
 
-- [ ] calculate watterson's theta for each site and genome-wide
+- [x] calculate watterson's theta for each site and genome-wide
 
-- [ ] calculate Tajima's D for each site and genome wide
+- [x] calculate Tajima's D for each site and genome wide
 
 - [ ] break large chromosomes into sequences no longer than 500 Mb, otherwise `samtools index` will fail
+
+- [ ] Move genome assembly and annotations to `config/`
+
+- [ ] Define workflow parameters in a yaml file
 
 - [ ] calculate variance in heterozygosity and k-mer patterns across sites or comparisons, so that you can compare SNP variation to k-mer variation
 
@@ -264,10 +272,8 @@ In other words, I think it would be okay to include different types of sequencin
 
 ## Population size estimation
 
-- [ ] filter GBIF occurences by country, only include occurences within native ranges as described by [plants of the world online](https://powo.science.kew.org/)
+- [x] filter GBIF occurences by country, only include occurences within native ranges as described by [plants of the world online](https://powo.science.kew.org/)
 
-- [ ] add alpha and threshold number of occurences as paramters to `download_gbif.R`
-
-- [ ] In `download_gbif.R` if a "graph not circular" error is returned, change alpha parameter
+- [x] add alpha and threshold number of occurences as paramters to `download_gbif.R`
 
 - [ ] I occassionaly get a `graph not circular` error from my `download_gbif` script inside the `ashape2poly` function. I'm not sure what causes this... My guess is that the start and end points of the graph need to be the same and sometimes this function doesn't generate that for some reasons, even though it usually does.

@@ -242,14 +242,19 @@ get_diff_bw_world_and_hull = function(spatpol){
         # difference between world polygons and the rectangle
         print("calculating difference...")
 	difference <- st_difference(rectangle, st_union(world))
-
-        # coerce back to sp
-	print("convert sf back to sp...")
-        difference <- as(st_geometry(difference), "Spatial")
-
-	return(difference)
-        # plot the result
-        # plot(difference)
+	#print(difference)
+	
+	# If polygon does not overlap water, empty polygon is returned
+	if(nrow(difference) == 0){
+		print("Polygon does not overlap water. Returning water area of zero...")
+		return(0) # water area is 0 square kilometers in this case
+	} else {
+		print("Polygon overlaps water. Returning water area...")
+	        # coerce back to sp
+		print("convert sf back to sp...")
+        	difference <- as(st_geometry(difference), "Spatial")
+		return(area(difference)/1e6) # calculate area in square kilometers (1 million square meters)
+	}
 }
 
 # split up occurence data by continent, fit alpha hull and calculate area for each continent
@@ -284,7 +289,7 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 		# If continent is Europe, don't include data at tail of Alaska
 		if(continent == "Europe"){
 			print("Removing points at tail of Alaska...")
-			data_sub = data_sub[(data_sub$decimalLongitude > -50),]
+			data_sub = data_sub[(data_sub$decimalLongitude > -100),]
 		}
 
 		# If North America, don't include data at tail of Russia
@@ -321,6 +326,26 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
                 print("Extracting polygon edges...")
                 pol = ashape2poly(alphashape)
 
+                # plot hull on world map
+                print("Getting map of world borders...")
+                wm <- borders("world", colour="gray50", fill="gray50")
+
+                #print("spatial polygon of world")
+                #print(map(database = "world", plot = F))
+                #worldpol = SpatialPolygons(list(Polygons(list(map(database = "world", plot = F)[c("x", "y")]), ID = 1)), proj4string = CRS("+proj=longlat +datum=WGS84"))
+                #print(worldpol)
+
+                print("Plotting occurence data on world borders...")
+                ggplot(data_sub, aes(x = decimalLongitude, y = decimalLatitude)) +
+                        wm +
+                        geom_point(colour = "darkred", size = 0.5) +
+                        geom_polygon(data_sub[pol[-1],], mapping = aes(x = decimalLongitude, y = decimalLatitude), fill = "blue", alpha = 0.5) +
+                        coord_fixed() +
+                        theme_bw()
+
+                print("Saving plot...")
+                ggsave(paste(gsub(" ", "_", continent), "_", output_plot_name, sep = ""))
+
                 # convert to polygon
                 print("Building spatial polygon...")
                 mypol = Polygon(data_sub[pol,c(1,2)])
@@ -329,35 +354,15 @@ area_by_continent = function(data, output_plot_name, output_area_table_name, spe
 
 		# get difference between spatial polygon and world map
 		print("Getting difference between spatial polygon and world map...")
-		waterpol = get_diff_bw_world_and_hull(spatpol)
+		waterarea = get_diff_bw_world_and_hull(spatpol)
 
                 # calculate area, convert to square kilometers (1000 meters x 1000 meters = 1 million square meters per square kilometer)
                 print("Measuring polygon area...")
-                area_frame = data.frame(species = species_string, continent = continent, total_area = area(spatpol)/1e6, water_area = area(waterpol)/1e6)
+                area_frame = data.frame(species = species_string, continent = continent, total_area = area(spatpol)/1e6, water_area = waterarea)
                 areas = rbind(areas, area_frame)
         
 		#print("Coordinates of hull:")
 		#print(data_sub[pol[-1],])
-
-		# plot hull on world map
-		print("Getting map of world borders...")
-		wm <- borders("world", colour="gray50", fill="gray50")
-
-		#print("spatial polygon of world")
-		#print(map(database = "world", plot = F))
-		#worldpol = SpatialPolygons(list(Polygons(list(map(database = "world", plot = F)[c("x", "y")]), ID = 1)), proj4string = CRS("+proj=longlat +datum=WGS84"))
-		#print(worldpol)
-
-		print("Plotting occurence data on world borders...")
-		ggplot(data_sub, aes(x = decimalLongitude, y = decimalLatitude)) +
-			wm +
-			geom_point(colour = "darkred", size = 0.5) +
-			geom_polygon(data_sub[pol[-1],], mapping = aes(x = decimalLongitude, y = decimalLatitude), fill = "blue", alpha = 0.5) +
-			coord_fixed() +
-			theme_bw()
-
-		print("Saving plot...")
-		ggsave(paste(gsub(" ", "_", continent), "_", output_plot_name, sep = ""))
 	}
 
         # save results as a dataframe
@@ -395,7 +400,18 @@ main = function(package_list, species_string, taxon_keys, output_plot_name, outp
 	print("Removing duplicate data points...")
 	all_data = unique(all_data)
 	print("Points remaining after removing duplicates:")
-	print(nrow(all_data))
+	sampleSize = nrow(all_data)
+	print(sampleSize)
+
+	# add jitter to datapoints to avoid collapsed triangles, which are caused by points being collinear
+	print("Adding jitter to coordinates to avoid collapsed triangles...")
+	all_data$decimalLongitude = all_data$decimalLongitude + rnorm(sampleSize, mean = 0, sd = 1e-4)
+	all_data$decimalLatitude = all_data$decimalLatitude + rnorm(sampleSize, mean = 0, sd = 1e-4)
+
+	# sort data points
+	print("Sorting coordinates...")
+	all_data = all_data[order(all_data$decimalLongitude, all_data$decimalLatitude),]
+	#all_data = all_data[sample(1:nrow(all_data), size = nrow(all_data), replace = F),]
 
 	# measure range on each continent
 	area_by_continent(all_data, output_plot_name, output_area_table_name, species_string, occCountThreshold, alphaValue)

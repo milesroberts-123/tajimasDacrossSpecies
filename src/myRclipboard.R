@@ -418,6 +418,17 @@ tr$tip.label <- strip_ott_ids(tr$tip.label, remove_underscores = TRUE)
 "Nicotiana tabacum"   
 "Oryza punctata"
 
+# Arachis glabrata
+5353813
+
+
+# Actinidia polygama
+3189692 7379759 7620678 7879124
+
+#
+5353784
+
+
 # Actinidia callosa
 7270822
 

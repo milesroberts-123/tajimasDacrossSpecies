@@ -55,6 +55,7 @@ unionMean = lapply(jac, function(x){mean(x[,4])})
 
 # cbind all diversity data into one dataframe per species
 alldiv = Map(cbind, pi, bcdMean, jacMean, unionMean)
+alldiv[[7]] = alldiv[[7]][,c(1, 3:6, 9:11)]
 
 # rbind all species data into one dataframe
 alldiv = lapply(alldiv, setNames, c("h", "ntotal", "nvariant", "ninvariant", "pi", "bcd", "jac", "umean"))
@@ -78,17 +79,23 @@ alldiv$totalcov = alldiv$totalbp/alldiv$assemblySize
 ## Load range data
 ```{r}
 # load range data
-areas = list.files("../results/2023-03-26/ranges/tables", full.names = T)
+areas = list.files("../results/2023-03-26/ranges/areas", full.names = T)
 
-areas_species = gsub("_areas.txt", "", gsub("../results/2023-03-26/ranges/tables/", "", areas))
+areas_species = gsub("_areas.txt", "", gsub("../results/2023-03-26/ranges/areas/", "", areas))
 areas_species = str_to_sentence(gsub("_", " ", areas_species))
 
 areas = lapply(areas, read.table, header = T, sep = "\t")
 
+# function to get non-water area
 get_nonwater_area = function(x){
   sum(x[,"total_area"] - x[,"water_area"])
 }
 
+# remove areas outside of native range
+# Arachis glabrata is native to Brazil, remove North America
+areas[[8]] = areas[[8]][1,]
+
+# format area data as frame
 areas = data.frame(
   species = areas_species,
   rangeArea = unlist(lapply(areas, get_nonwater_area))
@@ -130,15 +137,18 @@ compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
 # histograms of diversity data
 
 # Does BCD correlate with JAC within species?
-plot(bcd[[6]][,2], jac[[6]][,2])
+# plot(bcd[[6]][,2], jac[[6]][,2])
 
 # Does bray-curtis dissimilarity correlate with jaccard dissimilarity across species?
 plot(alldiv$bcd, alldiv$jac)
 abline(a = 0, b = 1)
-cor(alldiv$bcd, alldiv$jac)
+cor(alldiv$bcd, alldiv$jac, method = "spearman")
 
 plot(alldiv$pi, alldiv$bcd)
+cor(alldiv$pi, alldiv$bcd, method = "spearman")
+
 plot(alldiv$pi, alldiv$jac)
+cor(alldiv$pi, alldiv$jac, method = "spearman")
 
 plot(log(alldiv$pi), alldiv$bcd)
 plot(log(alldiv$pi), alldiv$jac)
@@ -154,23 +164,29 @@ plot(log(alldiv$rangeArea), alldiv$jac)
 
 # Confirmatory data analysis
 ```{r}
-minmaxnorm = function(x){
-  (x - min(x))/(max(x) - min(x))
-}
+#minmaxnorm = function(x){
+#  (x - min(x))/(max(x) - min(x))
+#}
 
 # raw correlations
-lm(jac ~ bcd, alldiv)
-lm(pi ~ bcd, alldiv)
-lm(pi ~ jac, alldiv)
+#lm(jac ~ bcd, alldiv)
+#lm(pi ~ bcd, alldiv)
+#lm(pi ~ jac, alldiv)
+cor(alldiv$pi, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
+cor(alldiv$bcd, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
+cor(alldiv$jac, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 
 # raw correlations, accounting for phylogeny
 pgls(jac ~ bcd, compdata)
 pgls(pi ~ bcd, compdata)
 pgls(pi ~ jac, compdata)
 
-pgls(scale(pi) ~ scale(rangeArea), compdata)
-pgls(scale(jac) ~ scale(rangeArea), compdata)
-pgls(scale(bcd) ~ scale(rangeArea), compdata)
+pgls(scale(pi) ~ rangeArea, compdata)
+pgls(scale(jac) ~ rangeArea, compdata)
+pgls(scale(bcd) ~ rangeArea, compdata)
+
+pgls(rangeArea ~ scale(pi) + scale(bcd), compdata)
+pgls(scale(rangeArea) ~ scale(pi) + scale(jac), compdata)
 
 # Try log transform
 pgls(log(pi) ~ bcd, compdata)
