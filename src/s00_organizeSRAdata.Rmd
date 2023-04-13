@@ -815,7 +815,7 @@ allReads = rbind(allReads, data.frame(run = eleusine_coracana[,"Run"], replicate
 ficus_carica = fread("../workflow/data/SRArunInfo/SraRunInfo_ficus_carica_PRJDB11005.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = ficus_carica[,"Run"], replicate = ficus_carica[,"BioSample"], layout = "PE", genome = "ficus_carica", ploidy = 2, taxonKeys = "5571945 6135850 7616056 9534337 7433549 5834128 8126416 7581614 11354470 11283465"))
+allReads = rbind(allReads, data.frame(run = ficus_carica[,"Run"], replicate = ficus_carica[,"BioSample"], layout = "PE", genome = "ficus_carica", ploidy = 2, taxonKeys = "5361926"))
 
 ```
 
@@ -1308,7 +1308,7 @@ allReads = rbind(allReads, data.frame(run = nelumbo_nucifera[,"Run"], replicate 
 nicotiana_tabacum = fread("../workflow/data/SRArunInfo/SraRunInfo_nicotiana_tabacum_PRJNA904563.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = nicotiana_tabacum[,"Run"], replicate = nicotiana_tabacum[,"BioSample"], layout = "PE", genome = "nicotiana_tabacum", ploidy = 4, taxonKeys = "2928767"))
+allReads = rbind(allReads, data.frame(run = nicotiana_tabacum[,"Run"], replicate = nicotiana_tabacum[,"BioSample"], layout = "PE", genome = "nicotiana_tabacum", ploidy = 4, taxonKeys = "2928783"))
 ```
 
 ## Olea europaea

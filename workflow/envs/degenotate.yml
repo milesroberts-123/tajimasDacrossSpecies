@@ -1,4 +1,4 @@
 name: degenotate
 
 dependencies:
- - degenotate=1.0.0
+ - degenotate=1.1.2

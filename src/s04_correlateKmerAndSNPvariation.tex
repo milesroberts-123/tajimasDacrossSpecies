@@ -1,0 +1,633 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={2023-04-12 results},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{2023-04-12 results}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+\hypertarget{load-packages}{%
+\section{load packages}\label{load-packages}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{rm}\NormalTok{(}\AttributeTok{list =} \FunctionTok{ls}\NormalTok{())}
+
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(caper)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: ape
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: MASS
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: mvtnorm
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(stringr)}
+
+\NormalTok{today }\OtherTok{=} \FunctionTok{Sys.Date}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{data-preparation}{%
+\section{Data preparation}\label{data-preparation}}
+
+\hypertarget{prepare-diversity-data}{%
+\subsection{Prepare diversity data}\label{prepare-diversity-data}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# List input files}
+\NormalTok{pi }\OtherTok{=} \FunctionTok{list.files}\NormalTok{(}\StringTok{"../results/2023{-}03{-}26/genome{-}wide{-}pi"}\NormalTok{, }\AttributeTok{full.names =}\NormalTok{ T)}
+\NormalTok{bcd }\OtherTok{=} \FunctionTok{list.files}\NormalTok{(}\StringTok{"../results/2023{-}03{-}26/bray{-}curtis{-}dissimilarities"}\NormalTok{, }\AttributeTok{full.names =}\NormalTok{ T)}
+\NormalTok{jac }\OtherTok{=} \FunctionTok{list.files}\NormalTok{(}\StringTok{"../results/2023{-}03{-}26/jaccard{-}dissimilarities"}\NormalTok{, }\AttributeTok{full.names =}\NormalTok{ T)}
+
+\CommentTok{\# get species IDs}
+\NormalTok{species }\OtherTok{=} \FunctionTok{gsub}\NormalTok{(}\StringTok{"\_pairwise{-}pi.txt"}\NormalTok{, }\StringTok{""}\NormalTok{, }\FunctionTok{gsub}\NormalTok{(}\StringTok{"../results/2023{-}03{-}26/genome{-}wide{-}pi/"}\NormalTok{, }\StringTok{""}\NormalTok{, pi))}
+
+\CommentTok{\# Load input files}
+\NormalTok{pi }\OtherTok{=} \FunctionTok{lapply}\NormalTok{(pi, read.table, }\AttributeTok{header =}\NormalTok{ T)}
+\NormalTok{bcd }\OtherTok{=} \FunctionTok{lapply}\NormalTok{(bcd, read.table, }\AttributeTok{header =}\NormalTok{ F)}
+\NormalTok{jac }\OtherTok{=} \FunctionTok{lapply}\NormalTok{(jac, read.table, }\AttributeTok{header =}\NormalTok{ F)}
+
+\CommentTok{\# calculate mean pairwise dissimilarity}
+\NormalTok{bcdMean }\OtherTok{=} \FunctionTok{lapply}\NormalTok{(bcd, }\ControlFlowTok{function}\NormalTok{(x)\{}\FunctionTok{mean}\NormalTok{(x[,}\DecValTok{2}\NormalTok{])\})}
+\NormalTok{jacMean }\OtherTok{=} \FunctionTok{lapply}\NormalTok{(jac, }\ControlFlowTok{function}\NormalTok{(x)\{}\FunctionTok{mean}\NormalTok{(x[,}\DecValTok{2}\NormalTok{])\})}
+
+\CommentTok{\# calculate average number of k{-}mers included in union}
+\NormalTok{unionMean }\OtherTok{=} \FunctionTok{lapply}\NormalTok{(jac, }\ControlFlowTok{function}\NormalTok{(x)\{}\FunctionTok{mean}\NormalTok{(x[,}\DecValTok{4}\NormalTok{])\})}
+
+\CommentTok{\# cbind all diversity data into one dataframe per species}
+\NormalTok{alldiv }\OtherTok{=} \FunctionTok{Map}\NormalTok{(cbind, pi, bcdMean, jacMean, unionMean)}
+
+\CommentTok{\# A. thaliana has extra data, remove for now}
+\NormalTok{alldiv[[}\DecValTok{7}\NormalTok{]] }\OtherTok{=}\NormalTok{ alldiv[[}\DecValTok{7}\NormalTok{]][,}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\SpecialCharTok{:}\DecValTok{6}\NormalTok{, }\DecValTok{9}\SpecialCharTok{:}\DecValTok{11}\NormalTok{)]}
+
+\CommentTok{\# rbind all species data into one dataframe}
+\NormalTok{alldiv }\OtherTok{=} \FunctionTok{lapply}\NormalTok{(alldiv, setNames, }\FunctionTok{c}\NormalTok{(}\StringTok{"h"}\NormalTok{, }\StringTok{"ntotal"}\NormalTok{, }\StringTok{"nvariant"}\NormalTok{, }\StringTok{"ninvariant"}\NormalTok{, }\StringTok{"pi"}\NormalTok{, }\StringTok{"bcd"}\NormalTok{, }\StringTok{"jac"}\NormalTok{, }\StringTok{"umean"}\NormalTok{))}
+
+\NormalTok{alldiv }\OtherTok{=} \FunctionTok{do.call}\NormalTok{(rbind, alldiv)}
+
+\CommentTok{\# add species names}
+\NormalTok{alldiv}\SpecialCharTok{$}\NormalTok{species }\OtherTok{=}\NormalTok{ species}
+\NormalTok{alldiv}\SpecialCharTok{$}\NormalTok{species }\OtherTok{=} \FunctionTok{str\_to\_sentence}\NormalTok{(}\FunctionTok{gsub}\NormalTok{(}\StringTok{"\_"}\NormalTok{, }\StringTok{" "}\NormalTok{, alldiv}\SpecialCharTok{$}\NormalTok{species))}
+
+\CommentTok{\# add coverage covariate}
+\CommentTok{\# coverage = read.table("../results/2023{-}03{-}26/bp\_sequenced.txt", header = T, sep = "\textbackslash{}t")}
+\CommentTok{\# alldiv = merge(alldiv, coverage, by = "species")}
+\CommentTok{\# }
+\CommentTok{\# gsize = read.table("../results/2023{-}03{-}26/genome\_size.txt", header = T, sep = "\textbackslash{}t")}
+\CommentTok{\# alldiv = merge(alldiv, gsize, by = "species")}
+\CommentTok{\# }
+\CommentTok{\# alldiv$totalcov = alldiv$totalbp/alldiv$assemblySize}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{load-range-data}{%
+\subsection{Load range data}\label{load-range-data}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# load range data}
+\NormalTok{areas }\OtherTok{=} \FunctionTok{list.files}\NormalTok{(}\StringTok{"../results/2023{-}03{-}26/ranges/areas"}\NormalTok{, }\AttributeTok{full.names =}\NormalTok{ T)}
+
+\NormalTok{areas\_species }\OtherTok{=} \FunctionTok{gsub}\NormalTok{(}\StringTok{"\_areas.txt"}\NormalTok{, }\StringTok{""}\NormalTok{, }\FunctionTok{gsub}\NormalTok{(}\StringTok{"../results/2023{-}03{-}26/ranges/areas/"}\NormalTok{, }\StringTok{""}\NormalTok{, areas))}
+\NormalTok{areas\_species }\OtherTok{=} \FunctionTok{str\_to\_sentence}\NormalTok{(}\FunctionTok{gsub}\NormalTok{(}\StringTok{"\_"}\NormalTok{, }\StringTok{" "}\NormalTok{, areas\_species))}
+
+\NormalTok{areas }\OtherTok{=} \FunctionTok{lapply}\NormalTok{(areas, read.table, }\AttributeTok{header =}\NormalTok{ T, }\AttributeTok{sep =} \StringTok{"}\SpecialCharTok{\textbackslash{}t}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{remove-areas-outside-of-native-range}{%
+\subsection{remove areas outside of native
+range}\label{remove-areas-outside-of-native-range}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Refer to plants of the world online for native range maps}
+
+\CommentTok{\# Amaranthus hybridus native to only North and South America}
+\NormalTok{areas[[}\DecValTok{2}\NormalTok{]] }\OtherTok{=}\NormalTok{ areas[[}\DecValTok{2}\NormalTok{]][}\FunctionTok{c}\NormalTok{(}\DecValTok{4}\NormalTok{,}\DecValTok{6}\NormalTok{),]}
+
+\CommentTok{\# Arabidopsis thaliana is only native to Europe, Asia, and Africa}
+\NormalTok{areas[[}\DecValTok{7}\NormalTok{]] }\OtherTok{=}\NormalTok{ areas[[}\DecValTok{7}\NormalTok{]][}\DecValTok{2}\SpecialCharTok{:}\DecValTok{4}\NormalTok{,]}
+
+\CommentTok{\# Nicotiana glauca only native to South America}
+\NormalTok{areas[[}\DecValTok{14}\NormalTok{]] }\OtherTok{=}\NormalTok{ areas[[}\DecValTok{14}\NormalTok{]][}\DecValTok{2}\NormalTok{,]}
+
+\CommentTok{\# Arachis glabrata is native to Brazil, remove North America}
+\NormalTok{areas[[}\DecValTok{10}\NormalTok{]] }\OtherTok{=}\NormalTok{ areas[[}\DecValTok{10}\NormalTok{]][}\DecValTok{1}\NormalTok{,]}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{merge-range-data-with-diversity-data}{%
+\subsection{Merge range data with diversity
+data}\label{merge-range-data-with-diversity-data}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# function to get non{-}water area}
+\NormalTok{get\_nonwater\_area }\OtherTok{=} \ControlFlowTok{function}\NormalTok{(x)\{}
+  \FunctionTok{sum}\NormalTok{(x[,}\StringTok{"total\_area"}\NormalTok{] }\SpecialCharTok{{-}}\NormalTok{ x[,}\StringTok{"water\_area"}\NormalTok{])}
+\NormalTok{\}}
+
+\CommentTok{\# format area data as frame}
+\NormalTok{areas }\OtherTok{=} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{species =}\NormalTok{ areas\_species,}
+  \AttributeTok{rangeArea =} \FunctionTok{unlist}\NormalTok{(}\FunctionTok{lapply}\NormalTok{(areas, get\_nonwater\_area))}
+\NormalTok{)}
+
+\CommentTok{\# merge with diversity data}
+\NormalTok{alldiv }\OtherTok{=} \FunctionTok{merge}\NormalTok{(alldiv, areas, }\AttributeTok{by =} \StringTok{"species"}\NormalTok{, }\AttributeTok{all.x =}\NormalTok{ T)}
+
+\FunctionTok{print}\NormalTok{(alldiv)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                       species            h   ntotal nvariant ninvariant
+## 1         Actinidia chinensis 3.760000e+01  5799545      104    5799441
+## 2  Amaranthus hypochondriacus 1.389610e+04  3443746    77705    3366041
+## 3              Ananas comosus 5.504433e+04  3699292   350017    3349275
+## 4         Arabidopsis halleri 3.143066e+04  4732743   228408    4504335
+## 5          Arabidopsis lyrata 5.874893e+04  4478756   865260    3613496
+## 6         Arabidopsis suecica 3.252213e+04 10380293   119480   10260813
+## 7        Arabidopsis thaliana 3.458560e+04  4234905   442279    3792626
+## 8           Arabis nemorensis 5.739823e+03  4644164    14489    4629675
+## 9            Arachis hypogaea 1.700489e+03   798409    31290     767119
+## 10           Arachis ipaensis 1.086000e+03  5012092     2634    5009458
+## 11            Camelina sativa 7.540230e-01 15171591        2   15171589
+## 12               Ficus carica 2.279689e+04  4351353    74967    4276386
+## 13          Nicotiana tabacum 1.107276e+05  4875696   246105    4629591
+## 14             Oryza punctata 1.331171e+04  6446475    32313    6414162
+##              pi       bcd        jac     umean rangeArea
+## 1  6.483267e-06 0.2919747 0.65086537 6383007.4   2717840
+## 2  4.035169e-03 0.3740617 0.45603779 5557159.3  24088588
+## 3  1.487969e-02 0.4742457 0.69334264 2149437.1  13467690
+## 4  6.641108e-03 0.3294606 0.37220596 3729809.0  13392031
+## 5  1.311724e-02 0.4449381 0.56572478 1183149.9  23578856
+## 6  3.133065e-03 0.2181825 0.19234188 8411715.0   1118592
+## 7  8.166794e-03 0.4815617 0.62179599  916723.6  52095715
+## 8  1.235922e-03 0.1913472 0.09399364 8923969.4   5208915
+## 9  2.129847e-03 0.2345392 0.52056378 6685420.7   8407799
+## 10 2.166760e-04 0.2663838 0.86093456 7072581.7   1269560
+## 11 4.969966e-08 0.4160051 0.52758537 5601456.5   5443921
+## 12 5.239034e-03 0.3167400 0.67549147 6097477.5  13899062
+## 13 2.271011e-02 0.1287084 0.03957829 9842440.7  19232866
+## 14 2.064959e-03 0.2405801 0.31996506 8560269.2   9294018
+\end{verbatim}
+
+\hypertarget{prepare-phylogenetic-tree}{%
+\subsection{Prepare phylogenetic tree}\label{prepare-phylogenetic-tree}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# load time tree}
+\NormalTok{phy }\OtherTok{=} \FunctionTok{read.tree}\NormalTok{(}\StringTok{"../results/2023{-}03{-}26/speciesList.nwk"}\NormalTok{)}
+\NormalTok{phy}\SpecialCharTok{$}\NormalTok{tip.label }\OtherTok{=} \FunctionTok{gsub}\NormalTok{(}\StringTok{"\_"}\NormalTok{, }\StringTok{" "}\NormalTok{, phy}\SpecialCharTok{$}\NormalTok{tip.label)}
+
+\FunctionTok{plot}\NormalTok{(phy)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{s04_correlateKmerAndSNPvariation_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\hypertarget{combine-tree-and-data-to-get-comparative-object}{%
+\subsection{Combine tree and data to get comparative
+object}\label{combine-tree-and-data-to-get-comparative-object}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{compdata }\OtherTok{=} \FunctionTok{comparative.data}\NormalTok{(phy, alldiv, }\AttributeTok{names.col =} \StringTok{"species"}\NormalTok{, }\AttributeTok{vcv =}\NormalTok{ T)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{initial-data-analysis}{%
+\section{Initial data analysis}\label{initial-data-analysis}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# histograms of diversity data}
+\FunctionTok{ggplot}\NormalTok{(alldiv, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{log10}\NormalTok{(pi))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"log10(Nucleotide diversity)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{s04_correlateKmerAndSNPvariation_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(alldiv, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ jac)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Jaccard Dissimilarity"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{s04_correlateKmerAndSNPvariation_files/figure-latex/unnamed-chunk-8-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(alldiv, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ bcd)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Bray{-}Curtis Dissimilarity"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{s04_correlateKmerAndSNPvariation_files/figure-latex/unnamed-chunk-8-3.pdf}
+
+\hypertarget{confirmatory-data-analysis}{%
+\section{Confirmatory data analysis}\label{confirmatory-data-analysis}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Does pi correlate with k{-}mer diversity?}
+\FunctionTok{cor}\NormalTok{(alldiv}\SpecialCharTok{$}\NormalTok{pi, alldiv}\SpecialCharTok{$}\NormalTok{bcd, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{, }\AttributeTok{use =} \StringTok{"pairwise.complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.2483516
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor}\NormalTok{(alldiv}\SpecialCharTok{$}\NormalTok{pi, alldiv}\SpecialCharTok{$}\NormalTok{jac, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{, }\AttributeTok{use =} \StringTok{"pairwise.complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -0.07692308
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Does k{-}mer diversity correlate with population size (i.e. range area) more than pi?}
+\FunctionTok{cor}\NormalTok{(alldiv}\SpecialCharTok{$}\NormalTok{pi, alldiv}\SpecialCharTok{$}\NormalTok{rangeArea, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{, }\AttributeTok{use =} \StringTok{"pairwise.complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.7318681
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor}\NormalTok{(alldiv}\SpecialCharTok{$}\NormalTok{bcd, alldiv}\SpecialCharTok{$}\NormalTok{rangeArea, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{, }\AttributeTok{use =} \StringTok{"pairwise.complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.5296703
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cor}\NormalTok{(alldiv}\SpecialCharTok{$}\NormalTok{jac, alldiv}\SpecialCharTok{$}\NormalTok{rangeArea, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{, }\AttributeTok{use =} \StringTok{"pairwise.complete.obs"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.03736264
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(alldiv, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{log10}\NormalTok{(rangeArea), }\AttributeTok{y =} \FunctionTok{log10}\NormalTok{(pi), }\AttributeTok{label =}\NormalTok{ species)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{hjust =} \DecValTok{0}\NormalTok{, }\AttributeTok{vjust =} \DecValTok{0}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"log10(Range area in square km)"}\NormalTok{, }\AttributeTok{y =} \StringTok{"log10(Nucleotide diversity)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{s04_correlateKmerAndSNPvariation_files/figure-latex/unnamed-chunk-9-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(alldiv, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{log10}\NormalTok{(rangeArea), }\AttributeTok{y =}\NormalTok{ bcd, }\AttributeTok{label =}\NormalTok{ species)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{hjust =} \DecValTok{0}\NormalTok{, }\AttributeTok{vjust =} \DecValTok{0}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"log10(Range area in square km)"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Bray{-}Curtis Dissimilarity"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{s04_correlateKmerAndSNPvariation_files/figure-latex/unnamed-chunk-9-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(alldiv, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =} \FunctionTok{log10}\NormalTok{(rangeArea), }\AttributeTok{y =}\NormalTok{ jac, }\AttributeTok{label =}\NormalTok{ species)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\AttributeTok{hjust =} \DecValTok{0}\NormalTok{, }\AttributeTok{vjust =} \DecValTok{0}\NormalTok{) }\SpecialCharTok{+} 
+  \FunctionTok{theme\_classic}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"log10(Range area in square km)"}\NormalTok{, }\AttributeTok{y =} \StringTok{"Jaccard Dissimilarity"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{s04_correlateKmerAndSNPvariation_files/figure-latex/unnamed-chunk-9-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# compare effects with phylogeny vs without phylogeny}
+\FunctionTok{lm}\NormalTok{(}\FunctionTok{log10}\NormalTok{(rangeArea) }\SpecialCharTok{\textasciitilde{}} \FunctionTok{log10}\NormalTok{(pi), alldiv)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = log10(rangeArea) ~ log10(pi), data = alldiv)
+## 
+## Coefficients:
+## (Intercept)    log10(pi)  
+##      7.3650       0.1461
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lm}\NormalTok{(}\FunctionTok{log10}\NormalTok{(rangeArea) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ bcd, alldiv)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = log10(rangeArea) ~ bcd, data = alldiv)
+## 
+## Coefficients:
+## (Intercept)          bcd  
+##       6.287        2.058
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{lm}\NormalTok{(}\FunctionTok{log10}\NormalTok{(rangeArea) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ jac, alldiv)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = log10(rangeArea) ~ jac, data = alldiv)
+## 
+## Coefficients:
+## (Intercept)          jac  
+##      6.9554      -0.0438
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{pgls}\NormalTok{(}\FunctionTok{log10}\NormalTok{(rangeArea) }\SpecialCharTok{\textasciitilde{}} \FunctionTok{log10}\NormalTok{(pi), compdata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## pgls(formula = log10(rangeArea) ~ log10(pi), data = compdata)
+## 
+## Coefficients:
+## (Intercept)    log10(pi)  
+##      9.0870       0.7604
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{pgls}\NormalTok{(}\FunctionTok{log10}\NormalTok{(rangeArea) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ bcd, compdata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## pgls(formula = log10(rangeArea) ~ bcd, data = compdata)
+## 
+## Coefficients:
+## (Intercept)          bcd  
+##       5.083        6.165
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{pgls}\NormalTok{(}\FunctionTok{log10}\NormalTok{(rangeArea) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ jac, compdata)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## pgls(formula = log10(rangeArea) ~ jac, data = compdata)
+## 
+## Coefficients:
+## (Intercept)          jac  
+##       5.320        3.443
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Test if k{-}mer diversity has stronger effect on range area than SNP diversity}
+\NormalTok{mod\_bcd }\OtherTok{=} \FunctionTok{pgls}\NormalTok{(}\FunctionTok{log10}\NormalTok{(rangeArea) }\SpecialCharTok{\textasciitilde{}} \FunctionTok{scale}\NormalTok{(pi) }\SpecialCharTok{+} \FunctionTok{scale}\NormalTok{(bcd), compdata)}
+\FunctionTok{summary}\NormalTok{(mod\_bcd)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## pgls(formula = log10(rangeArea) ~ scale(pi) + scale(bcd), data = compdata)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.31746 -0.11720 -0.02553  0.00801  0.14165 
+## 
+## Branch length transformations:
+## 
+## kappa  [Fix]  : 1.000
+## lambda [Fix]  : 1.000
+## delta  [Fix]  : 1.000
+## 
+## Coefficients:
+##             Estimate Std. Error t value  Pr(>|t|)    
+## (Intercept) 6.971253   0.966766  7.2109 1.728e-05 ***
+## scale(pi)   0.346067   0.277973  1.2450 0.2390140    
+## scale(bcd)  0.569887   0.099373  5.7348 0.0001313 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.1588 on 11 degrees of freedom
+## Multiple R-squared: 0.954,   Adjusted R-squared: 0.9456 
+## F-statistic: 113.9 on 2 and 11 DF,  p-value: 4.444e-08
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mod\_jac }\OtherTok{=} \FunctionTok{pgls}\NormalTok{(}\FunctionTok{log10}\NormalTok{(rangeArea) }\SpecialCharTok{\textasciitilde{}} \FunctionTok{scale}\NormalTok{(pi) }\SpecialCharTok{+} \FunctionTok{scale}\NormalTok{(jac), compdata)}
+\FunctionTok{summary}\NormalTok{(mod\_jac)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## pgls(formula = log10(rangeArea) ~ scale(pi) + scale(jac), data = compdata)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.53273 -0.16450 -0.01817  0.03162  0.16423 
+## 
+## Branch length transformations:
+## 
+## kappa  [Fix]  : 1.000
+## lambda [Fix]  : 1.000
+## delta  [Fix]  : 1.000
+## 
+## Coefficients:
+##             Estimate Std. Error t value  Pr(>|t|)    
+## (Intercept)  6.83781    1.43177  4.7758 0.0005753 ***
+## scale(pi)    0.90365    0.34324  2.6327 0.0232940 *  
+## scale(jac)   0.47694    0.15910  2.9977 0.0121305 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.2353 on 11 degrees of freedom
+## Multiple R-squared: 0.8989,  Adjusted R-squared: 0.8805 
+## F-statistic: 48.89 on 2 and 11 DF,  p-value: 3.363e-06
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# try removing outliers}
+\CommentTok{\# compdataNoOut = subset.comparative.data(compdata, subset =  !(species \%in\% c("Actinidia chinensis", "Camelina sativa")))}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

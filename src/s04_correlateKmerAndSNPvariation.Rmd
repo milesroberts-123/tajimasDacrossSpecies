@@ -1,6 +1,9 @@
 ---
-title: "2022-12-14 results"
-output: html_notebook
+title: "2023-04-12 results"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 
 # load packages
@@ -8,23 +11,8 @@ output: html_notebook
 rm(list = ls())
 
 library(ggplot2)
-library(rgbif)
-library(sp)
-library(rworldmap)
-library(raster)
-library(dismo)
-library(igraph)
 library(caper)
-library(rotl)
 library(stringr)
-# install.packages("rgdal", dependencies = T)
-# can't install rgdal
-# library(rgdal)
-#library(alphahull)
-# library(ppcor)
-# 
-# install.packages("CoordinateCleaner")
-# library(CoordinateCleaner)
 
 today = Sys.Date()
 ```
@@ -55,6 +43,8 @@ unionMean = lapply(jac, function(x){mean(x[,4])})
 
 # cbind all diversity data into one dataframe per species
 alldiv = Map(cbind, pi, bcdMean, jacMean, unionMean)
+
+# A. thaliana has extra data, remove for now
 alldiv[[7]] = alldiv[[7]][,c(1, 3:6, 9:11)]
 
 # rbind all species data into one dataframe
@@ -67,13 +57,13 @@ alldiv$species = species
 alldiv$species = str_to_sentence(gsub("_", " ", alldiv$species))
 
 # add coverage covariate
-coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
-alldiv = merge(alldiv, coverage, by = "species")
-
-gsize = read.table("../results/2023-03-26/genome_size.txt", header = T, sep = "\t")
-alldiv = merge(alldiv, gsize, by = "species")
-
-alldiv$totalcov = alldiv$totalbp/alldiv$assemblySize
+# coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
+# alldiv = merge(alldiv, coverage, by = "species")
+# 
+# gsize = read.table("../results/2023-03-26/genome_size.txt", header = T, sep = "\t")
+# alldiv = merge(alldiv, gsize, by = "species")
+# 
+# alldiv$totalcov = alldiv$totalbp/alldiv$assemblySize
 ```
 
 ## Load range data
@@ -85,15 +75,31 @@ areas_species = gsub("_areas.txt", "", gsub("../results/2023-03-26/ranges/areas/
 areas_species = str_to_sentence(gsub("_", " ", areas_species))
 
 areas = lapply(areas, read.table, header = T, sep = "\t")
+```
 
+## remove areas outside of native range 
+```{r}
+# Refer to plants of the world online for native range maps
+
+# Amaranthus hybridus native to only North and South America
+areas[[2]] = areas[[2]][c(4,6),]
+
+# Arabidopsis thaliana is only native to Europe, Asia, and Africa
+areas[[7]] = areas[[7]][2:4,]
+
+# Nicotiana glauca only native to South America
+areas[[14]] = areas[[14]][2,]
+
+# Arachis glabrata is native to Brazil, remove North America
+areas[[10]] = areas[[10]][1,]
+```
+
+## Merge range data with diversity data
+```{r}
 # function to get non-water area
 get_nonwater_area = function(x){
   sum(x[,"total_area"] - x[,"water_area"])
 }
-
-# remove areas outside of native range
-# Arachis glabrata is native to Brazil, remove North America
-areas[[8]] = areas[[8]][1,]
 
 # format area data as frame
 areas = data.frame(
@@ -103,28 +109,17 @@ areas = data.frame(
 
 # merge with diversity data
 alldiv = merge(alldiv, areas, by = "species", all.x = T)
+
+print(alldiv)
 ```
 
 ## Prepare phylogenetic tree
 ```{r}
-# search Open Tree of Life for my species, add ids to my data
-# taxon_search = tnrs_match_names(names = gsub("_", " ", alldiv$species))
-# alldiv$ott_id = taxon_search$ott_id
-
-# get synthetic tree with all species included
-# ott_in_tree <- ott_id(taxon_search)[is_in_tree(ott_id(taxon_search))]
-# tr <- tol_induced_subtree(ott_ids = ott_in_tree)
-
-# remove ott ids
-# tr$tip.label <- strip_ott_ids(tr$tip.label, remove_underscores = TRUE)
-# plot(tr)
-
-# modify weird labels
-# tr$tip.label[tr$tip.label == "Ficus carica (species in kingdom Archaeplastida)"] = "Ficus carica"
-
 # load time tree
 phy = read.tree("../results/2023-03-26/speciesList.nwk")
 phy$tip.label = gsub("_", " ", phy$tip.label)
+
+plot(phy)
 ```
 
 ## Combine tree and data to get comparative object
@@ -135,572 +130,67 @@ compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
 # Initial data analysis
 ```{r}
 # histograms of diversity data
+ggplot(alldiv, aes(x = log10(pi))) +
+  geom_histogram() +
+  theme_classic() +
+  labs(x = "log10(Nucleotide diversity)")
 
-# Does BCD correlate with JAC within species?
-# plot(bcd[[6]][,2], jac[[6]][,2])
+ggplot(alldiv, aes(x = jac)) +
+  geom_histogram() +
+  theme_classic() +
+  labs(x = "Jaccard Dissimilarity")
 
-# Does bray-curtis dissimilarity correlate with jaccard dissimilarity across species?
-plot(alldiv$bcd, alldiv$jac)
-abline(a = 0, b = 1)
-cor(alldiv$bcd, alldiv$jac, method = "spearman")
-
-plot(alldiv$pi, alldiv$bcd)
-cor(alldiv$pi, alldiv$bcd, method = "spearman")
-
-plot(alldiv$pi, alldiv$jac)
-cor(alldiv$pi, alldiv$jac, method = "spearman")
-
-plot(log(alldiv$pi), alldiv$bcd)
-plot(log(alldiv$pi), alldiv$jac)
-
-# Look at relationship of range area (i.e. population size) to diversity
-plot(log(alldiv$rangeArea), alldiv$pi)
-
-plot(log(alldiv$rangeArea), alldiv$bcd)
-
-plot(log(alldiv$rangeArea), alldiv$jac)
-
+ggplot(alldiv, aes(x = bcd)) +
+  geom_histogram() +
+  theme_classic() +
+  labs(x = "Bray-Curtis Dissimilarity")
 ```
 
 # Confirmatory data analysis
 ```{r}
-#minmaxnorm = function(x){
-#  (x - min(x))/(max(x) - min(x))
-#}
+# Does pi correlate with k-mer diversity?
+cor(alldiv$pi, alldiv$bcd, method = "spearman", use = "pairwise.complete.obs")
+cor(alldiv$pi, alldiv$jac, method = "spearman", use = "pairwise.complete.obs")
 
-# raw correlations
-#lm(jac ~ bcd, alldiv)
-#lm(pi ~ bcd, alldiv)
-#lm(pi ~ jac, alldiv)
+# Does k-mer diversity correlate with population size (i.e. range area) more than pi?
 cor(alldiv$pi, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$bcd, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$jac, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 
-# raw correlations, accounting for phylogeny
-pgls(jac ~ bcd, compdata)
-pgls(pi ~ bcd, compdata)
-pgls(pi ~ jac, compdata)
+ggplot(alldiv, aes(x = log10(rangeArea), y = log10(pi), label = species)) +
+  geom_point() +
+  geom_text(hjust = 0, vjust = 0) +
+  theme_classic() +
+  labs(x = "log10(Range area in square km)", y = "log10(Nucleotide diversity)")
 
-pgls(scale(pi) ~ rangeArea, compdata)
-pgls(scale(jac) ~ rangeArea, compdata)
-pgls(scale(bcd) ~ rangeArea, compdata)
+ggplot(alldiv, aes(x = log10(rangeArea), y = bcd, label = species)) +
+  geom_point() +
+  geom_text(hjust = 0, vjust = 0) + 
+  theme_classic() +
+  labs(x = "log10(Range area in square km)", y = "Bray-Curtis Dissimilarity")
 
-pgls(rangeArea ~ scale(pi) + scale(bcd), compdata)
-pgls(scale(rangeArea) ~ scale(pi) + scale(jac), compdata)
+ggplot(alldiv, aes(x = log10(rangeArea), y = jac, label = species)) +
+  geom_point() +
+  geom_text(hjust = 0, vjust = 0) + 
+  theme_classic() +
+  labs(x = "log10(Range area in square km)", y = "Jaccard Dissimilarity")
 
-# Try log transform
-pgls(log(pi) ~ bcd, compdata)
-pgls(log(pi) ~ jac, compdata)
+# compare effects with phylogeny vs without phylogeny
+lm(log10(rangeArea) ~ log10(pi), alldiv)
+lm(log10(rangeArea) ~ bcd, alldiv)
+lm(log10(rangeArea) ~ jac, alldiv)
 
-# Try log transform + accounting for coverage
-pgls(log(pi) ~ bcd + cvbp, compdata)
-pgls(log(pi) ~ jac + cvbp, compdata)
+pgls(log10(rangeArea) ~ log10(pi), compdata)
+pgls(log10(rangeArea) ~ bcd, compdata)
+pgls(log10(rangeArea) ~ jac, compdata)
 
-pgls(log(pi) ~ bcd + totalcov, compdata)
-pgls(log(pi) ~ jac + totalcov, compdata)
+# Test if k-mer diversity has stronger effect on range area than SNP diversity
+mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd), compdata)
+summary(mod_bcd)
 
-plot(alldiv$pi, alldiv$bcd)
-plot(alldiv$pi, alldiv$jac)
+mod_jac = pgls(log10(rangeArea) ~ scale(pi) + scale(jac), compdata)
+summary(mod_jac)
   
 # try removing outliers
-compdataNoOut = subset.comparative.data(compdata, subset =  !(species %in% c("Actinidia chinensis", "Camelina sativa")))
-
-pgls(pi ~ bcd, compdataNoOut)
-pgls(pi ~ jac, compdataNoOut)
-
-pgls(log(pi) ~ bcd, compdataNoOut)
-pgls(log(pi) ~ jac, compdataNoOut)
-
-pgls(pi ~ bcd + cvbp, compdataNoOut)
-pgls(pi ~ jac + cvbp, compdataNoOut)
-
-pgls(pi ~ scale(bcd) + scale(cvbp), compdataNoOut)
-pgls(pi ~ scale(jac) + scale(cvbp), compdataNoOut)
-```
-
-
-# UNUSED CODE
-
-# Explore GBIF data
-```{r eval=FALSE, include=FALSE}
-#obtain data from GBIF via rgbif
-dat <- occ_search(scientificName = "Arabidopsis thaliana", limit = 5000, hasCoordinate = T)
-
-# get just data from list
-dat <- dat$data
-
-# select just columns of interest
-keepColumns = c("species", "decimalLongitude", "decimalLatitude", "countryCode", "individualCount",
-         "gbifID", "family", "taxonRank", "coordinateUncertaintyInMeters", "year",
-         "basisOfRecord", "institutionCode", "datasetName")
-
-dat = dat[,keepColumns]
-
-#plot data to get an overview
-wm <- borders("world", colour="gray50", fill="gray50")
-ggplot() + 
-  coord_fixed() + 
-  wm +
-  geom_point(data = dat, aes(x = decimalLongitude, y = decimalLatitude),colour = "darkred", size = 0.5) +
-  theme_bw()
-
-# filter erroneous occurence records
-
-# separate points by continent, so that I can draw alpha hull for each continent separately
-
-countriesSP <- rworldmap:::getMap(resolution='low')
-
-plot(countriesSP)
-# get continent from coordinates  
-# function from: https://github.com/vsbuffalo/paradox_variation/blob/master/R/range_funcs.r
-coords2continent = function(lat, lon) {  
-  # https://stackoverflow.com/questions/21708488/get-country-and-continent-from-longitude-and-latitude-point-in-r
-  points <- data.frame(lon=lon, lat=lat)
-  # converting points to a SpatialPoints object
-  # setting CRS directly to that from rworldmap
-  pointsSP = sp:::SpatialPoints(points, proj4string=sp:::CRS(sp:::proj4string(countriesSP)))  
-
-  # use 'over' to get indices of the Polygons object containing each point 
-  indices = sp:::over(pointsSP, countriesSP)
-
-  #indices$REGION   # returns the continent (7 continent model)
-  indices$continent
-}
-
-# continent from coordinates
-dat$continent = coords2continent(dat$decimalLatitude, dat$decimalLongitude)
-
-# subset to just coordinates
-dat = dat[,c("decimalLatitude", "decimalLongitude", "continent")]
-
-# remove records lacking continent
-dat = dat[!is.na(dat$continent),]
-
-# subset to just one continent
-dat = dat[(dat$continent == "North America"),]
-
-# remove duplicate coordinates
-dat = unique(dat)
-
-# # try cirlces model
-# circles(dat[,c("decimalLatitude", "decimalLongitude")], d = 50000, lonlat = T)
-# 
-# # calculate area
-# h = convHull(dat[,c("decimalLatitude", "decimalLongitude")], lonlat = T)
-# pol = polygons(h)
-# area(pol)
-# 
-# plot(h)
-# points(dat[,c("decimalLatitude", "decimalLongitude")],)
-# 
-# # calculate laea by hand
-# phi1 = 0
-# gam0 = 0
-# 
-# dat$radLatitude = dat$decimalLatitude*(pi/180)
-# dat$radLongitude = dat$decimalLongitude*(pi/180)
-# 
-# dat$kprime = sqrt(2/(1 + sin(phi1)*sin(dat$radLatitude) + cos(phi1)*cos(dat$radLatitude)*cos(dat$radLongitude - gam0))) 
-# 
-# dat$x = dat$kprime*cos(dat$radLatitude)*sin(dat$radLongitude - gam0)
-# dat$y = dat$kprime*(cos(phi1)*sin(dat$radLatitude) - sin(phi1)*cos(dat$radLatitude)*cos(dat$radLongitude - gam0))
-# 
-# plot(dat$x, dat$y)
-# 
-# h = convHull(dat[,c("x", "y")])
-# plot(h)
-# points(dat$x, dat$y)
-# 
-# pol = polygons(h)
-# area(pol)
-# # from buffalo function above
-# # converting points to a SpatialPoints object
-# # setting CRS directly to that from rworldmap
-# datsp = SpatialPoints(dat[,c("decimalLatitude", "decimalLongitude")],proj4string=CRS(proj4string(countriesSP)))  
-# plot(datsp)
-# 
-# # convert polar coordinates to X-Y
-# # the CRS we want
-# #laea <- CRS("+proj=laea  +lat_0=0 +lon_0=-80")
-# #clb <- spTransform(countriesSP, laea)
-# #pts <- spTransform(dat[,c("decimalLatitude", "decimalLongitude")], laea)
-# 
-# # draw hull, convert to polygons
-# h <- convHull(datsp)
-# pol <- polygons(h)
-# plot(h)
-# plot(pol)
-# 
-# 
-# # calculate area in meters squared
-# area(pol)
-# # project points to a disk
-
-# draw alpha hull around each point
-alphashape = ashape(dat$decimalLongitude, dat$decimalLatitude, alpha = 200)
-plot(alphashape)
-plot(dat$decimalLongitude, dat$decimalLatitude)
-
-# function from: https://babichmorrowc.github.io/post/2019-03-18-alpha-hull/
-ashape2poly <- function(ashape){
-  # Convert node numbers into characters
-  ashape$edges[,1] <- as.character(ashape$edges[,1])
-  ashape_graph <- graph_from_edgelist(ashape$edges[,1:2], directed = FALSE)
-  if (!is.connected(ashape_graph)) {
-    stop("Graph not connected")
-  }
-  if (any(degree(ashape_graph) != 2)) {
-    stop("Graph not circular")
-  }
-  if (clusters(ashape_graph)$no > 1) {
-    stop("Graph composed of more than one circle")
-  }
-  # Delete one edge to create a chain
-  cut_graph <- ashape_graph - E(ashape_graph)[1]
-  # Find chain end points
-  ends = names(which(degree(cut_graph) == 1))
-  path = get.shortest.paths(cut_graph, ends[1], ends[2])$vpath[[1]]
-  # this is an index into the points
-  pathX = as.numeric(V(ashape_graph)[path]$name)
-  # join the ends
-  pathX = c(pathX, pathX[1])
-  return(pathX)
-}
-
-pol = ashape2poly(alphashape)
-
-plot(alphashape, lwd = 5)
-
-# swap latitude and longitude, convert to polygon
-mypol = Polygon(dat[pol,c(2,1)])
-
-spatpol = SpatialPolygons(list(Polygons(list(mypol), ID = 1)), proj4string = CRS("+proj=longlat +datum=WGS84"))
-
-# calculate area, convert to square kilometers
-area(spatpol)/1e6
-```
-
-# 2023-01-26: explore plant mass data
-```{r}
-plantMass = read.table("../workflow/data/populationSize/24562.txt", sep = "\t", fill = T, header = T)
-
-plantHeight = read.table("../workflow/data/populationSize/24563.txt", sep = "\t", fill = T, header = T, nrows = 1000)
-
-plantMass = plantMass[(plantMass$DataName == "Whole Plant Dry Mass"),]
-
-#
-which(plantMass == "Arabidopsis thaliana", arr.ind = T)
-
-# look at just one species
-zmaysMass = plantMass[(plantMass$AccSpeciesName == "Zea mays"),]
-
-sapply(colnames(plantMass), function(x) grep("thaliana", plantMass[,x]))
-```
-
-# 2023-01-24 results
-```{r}
-arabidopsis_halleri_pi = read.table("../results/2023-01-24/arabidopsis_halleri_pairwise-pi.txt", header = F)
-sum(arabidopsis_halleri_pi$V3)/sum(arabidopsis_halleri_pi$V4)
-
-arabidopsis_halleri_jac = read.table("../results/2023-01-24/arabidopsis_halleri_jac.txt", header = F)
-mean(arabidopsis_halleri_jac$V2)
-
-
-capsella_rubella_pi = read.table("../results/2023-01-24/capsella_rubella_pairwise-pi.txt", header = F)
-sum(capsella_rubella_pi$V3)/sum(capsella_rubella_pi$V4)
-
-capsella_rubella_jac = read.table("../results/2023-01-24/capsella_rubella_jac.txt", header = F)
-mean(capsella_rubella_jac$V2)
-
-
-
-brachypodium_distachyon_pi = read.table("../results/2023-01-24/brachypodium_distachyon_pairwise-pi.txt", header = F)
-sum(brachypodium_distachyon_pi$V3)/sum(brachypodium_distachyon_pi$V4)
-
-brachypodium_distachyon_jac = read.table("../results/2023-01-24/brachypodium_distachyon_jac.txt", header = F)
-mean(brachypodium_distachyon_jac$V2)
-
-
-arabidopsis_thaliana_pi = read.table("../results/2022-12-14/pairwise-pi.txt", header = F)
-sum(arabidopsis_thaliana_pi$V3)/sum(arabidopsis_thaliana_pi$V4)
-```
-
-# 2022-12-14 results
-```{r}
-# bray-curtis dissimilarity
-bcd = read.table("bcd.txt", header = F)
-names(bcd) = c("pairs","bcd")
-
-# jaccard dissimilarity
-jac = read.table("jac.txt", header = F)
-names(jac) = c("pairs", "jac", "intersection", "union")
-
-# pair-wise pi
-snp = read.table("pairwise-pi.txt", header = F)
-#snp = read.table("pairwise-pi_wholeGenome.txt", header = F)
-
-#names(snp) = c("pairs", "pi")
-names(snp) = c("pairs", "pi", "H", "S")
-
-any(snp$pairs %in% jac$pairs)
-
-# merge jaccard and bray-curtis values
-jacbcd = merge(jac, bcd, by = "pairs", all.y = T)
-
-# match up snp distance and jac for each pair
-snpjacbcd = merge(snp, jacbcd, by = "pairs")
-
-# snp[!(snp$pairs %in% snpjac$pairs),]
-
-# swap order of pair labels to catch any pairs that didn't merge first time around
-unmerged = jacbcd[!(jacbcd$pairs %in% snpjacbcd$pairs),]
-
-pairsList = strsplit(unmerged$pairs, split = "-")
-
-mySwap = function(y){
-  c(y[2],y[1])
-}
-
-pairsList = lapply(pairsList, mySwap)
-
-# collapse back into pair id
-pairsList = unlist(lapply(pairsList, paste, collapse = "-"))
-
-# try to merge again 
-unmerged$pairs = pairsList
-
-snpjacbcd2 = merge(snp, unmerged, by = "pairs")
-
-# concatenate 2 merge stages
-snpjacbcdAll = rbind(snpjacbcd, snpjacbcd2)
-
-# look at distibutions of both variables
-ggplot(data = snpjacbcdAll, aes(x = jac)) +
-  geom_density() +
-  theme_classic() +
-  labs(x = "jaccard dissimilarity")
-
-ggsave(paste("jacardDissimilarityDistribution_", today, ".pdf", sep = ""))
-
-ggplot(data = snpjacbcdAll, aes(x = bcd)) +
-  geom_density() +
-  theme_classic() +
-  labs(x = "bray-curtis dissimilarity")
-
-ggsave(paste("bray-curtisDissimilarityDistribution_", today, ".pdf", sep = ""))
-
-ggplot(data = snpjacbcdAll, aes(x = pi)) +
-  geom_density() +
-  theme_classic() +
-  labs(x = "pairwise pi")
-
-ggsave(paste("pairwisePiDistribution_", today, ".pdf", sep = ""))
-
-# Does jaccard dissimilarity correlate with bray-curtis dissimilarity?
-ggplot(data = snpjacbcdAll, aes(x = jac, y = bcd)) +
-  geom_point() +
-  geom_smooth() + 
-  geom_abline(slope = 1, intercept = 0, color = "green") +
-  theme_classic() +
-  labs(x = "jaccard dissimilarity", y = "bray-curtis dissimilarity")
-
-ggsave(paste("JaccardVsBray-Curtis_", today, ".png", sep = ""))
-
-# plot all pairwise comparisons
-ggplot(data = snpjacbcdAll, aes(x = jac, y = pi)) +
-  geom_point() +
-  geom_smooth() + 
-  theme_classic() +
-  labs(x = "jaccard dissimilarity", y = "pairwise pi")
-
-ggsave(paste("comparePiTojac_", today, ".png", sep = ""))
-
-
-ggplot(data = snpjacbcdAll, aes(x = bcd, y = pi)) +
-  geom_point() +
-  geom_smooth() + 
-  theme_classic() +
-  labs(x = "bray-curtis dissimilarity", y = "pairwise pi")
-
-ggsave(paste("comparePiTobcd_", today, ".png", sep = ""))
-
-# measure spearman correlation
-cor.test(snpjacbcdAll$pi, snpjacbcdAll$jac, method = "spearman")
-
-# compare coefficients of variation (are kmers more variable than snps?)
-sd(snpjacbcdAll$jac)/mean(snpjacbcdAll$jac)
-sd(snpjacbcdAll$bcd)/mean(snpjacbcdAll$bcd)
-sd(snpjacbcdAll$pi)/mean(snpjacbcdAll$pi)
-
-
-# look at trend dissimilarity between one individual and all other individuals
-ggplot(data = snpjacbcdAll[grepl("SRR1945435", snpjacbcdAll$pairs),], aes(x = jac, y = pi)) +
-  geom_point() +
-  theme_classic() +
-  labs(x = "jaccard dissimilarity", y = "pairwise pi")
-
-ggplot(data = snpjacbcdAll[grepl("SRR1945437", snpjacbcdAll$pairs),], aes(x = jac, y = pi)) +
-  geom_point() +
-  theme_classic() +
-  labs(x = "jaccard dissimilarity", y = "pairwise pi")
-
-ggplot(data = snpjacbcdAll[grepl("SRR1945474", snpjacbcdAll$pairs),], aes(x = jac, y = pi)) +
-  geom_point() +
-  theme_classic() +
-  labs(x = "jaccard dissimilarity", y = "pairwise pi")
-
-ggplot(data = snpjacbcdAll[grepl("SRR1946029", snpjacbcdAll$pairs),], aes(x = jac, y = pi)) +
-  geom_point() +
-  theme_classic() +
-  labs(x = "jaccard dissimilarity", y = "pairwise pi")
-
-ggplot(data = snpjacbcdAll[grepl("SRR1946178", snpjacbcdAll$pairs),], aes(x = jac, y = pi)) +
-  geom_point() +
-  theme_classic() +
-  labs(x = "jaccard dissimilarity", y = "pairwise pi")
-
-# look at correlation between pi and bray-curtis dissimilarity
-```
-
-# correlate average measures of dissimilarity per genotype
-```{r}
-
-# calculate average dissimilarity by genotype
-meanDissim = function(x, data){
-  datasub = data[(grepl(x, data$pairs)),]
-  
-  result = c(x, mean(datasub$pi), mean(datasub$jac), mean(datasub$bcd))
-  
-  return(result)
-}
-
-genotypes = unique(unlist(strsplit(snpjacbcdAll$pairs, "-")))
-
-avgDissmPerGenotype = lapply(genotypes, meanDissim, data = snpjacbcdAll)
-
-avgDissmPerGenotype = do.call("rbind", avgDissmPerGenotype)
-avgDissmPerGenotype = as.data.frame(avgDissmPerGenotype)
-names(avgDissmPerGenotype) = c("genotype", "pi", "jac", "bcd")
-
-# convert to numeric
-avgDissmPerGenotype$pi = as.numeric(avgDissmPerGenotype$pi)
-avgDissmPerGenotype$jac = as.numeric(avgDissmPerGenotype$jac)
-avgDissmPerGenotype$bcd = as.numeric(avgDissmPerGenotype$bcd)
-
-# plot results
-ggplot(data = avgDissmPerGenotype, aes(x = pi, y = jac)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() +
-  labs(x = "average pi", y = "average jaccard dissimilarity")
-
-ggplot(data = avgDissmPerGenotype, aes(x = pi, y = bcd)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() +
-  labs(x = "average pi", y = "average bray-curtis dissimilarity")
-
-ggplot(data = avgDissmPerGenotype, aes(x = jac, y = bcd)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() +
-  labs(x = "average jaccard dissimilarity", y = "average bray-curtis dissimilarity")
-```
-
-# Are comparisons with few segregating sites very different in terms of k-mers?
-```{r}
-
-ggplot(data = snpjacbcdAll, aes(x = S, y = jac)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "Number of confidently genotyped segregating sites", y = "Jaccard dissimilarity")
-
-ggsave(paste("confidentlyGenotypedSitesVsJaccardDissimilarity_", today, ".png", sep = ""))
-
-ggplot(data = snpjacbcdAll, aes(x = S, y = bcd)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "Number of confidently genotyped segregating sites", y = "Bray-Curtis dissimilarity")
-
-ggsave(paste("confidentlyGenotypedSitesVsBray-CurtisDissimilarity_", today, ".png", sep = ""))
-
-ggplot(data = snpjacbcdAll, aes(x = S, y = union)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "Number of confidently genotyped sites", y = "Number of k-mers in at least one genotype")
-
-# look at an individual accession
-ggplot(data = snpjacbcdAll[grepl("SRR1946029", snpjacbcdAll$pairs),], aes(x = S, y = union)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "Number of confidently genotyped sites", y = "Number of k-mers in at least one genotype")
-
-ggplot(data = snpjacbcdAll[grepl("SRR1946029", snpjacbcdAll$pairs),], aes(x = S, y = bcd)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "Number of confidently genotyped sites", y = "Bray-Curtis dissimilarity")
-
-pcor(snpjacbcdAll[,c("H", "bcd")], method = "spearman")
-
-# look only at comparisons with many genotyped sites/many k-mers
-ggplot(data = snpjacbcdAll[(snpjacbcdAll$S > 400000),], aes(x = S, y = bcd)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "Number of confidently genotyped sites", y = "Bray-Curtis dissimilarity")
-
-ggplot(data = snpjacbcdAll[(snpjacbcdAll$S > 400000),], aes(x = pi, y = bcd)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "nucleotide diversity", y = "Bray-Curtis dissimilarity")
-
-ggsave(paste("piVsBcd_OnlyHighS_", today, ".png",sep = ""))
-
-ggplot(data = snpjacbcdAll[(snpjacbcdAll$S > 400000),], aes(x = pi, y = jac)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "nucleotide diversity", y = "Jaccard dissimilarity")
-
-ggsave(paste("piVsJac_OnlyHighS_", today, ".png",sep = ""))
-
-# compare to previous results looking at all pairwise comparisons
-ggplot(data = snpjacbcdAll, aes(x = pi, y = bcd)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "nucleotide diversity", y = "Bray-Curtis dissimilarity")
-
-ggplot(data = snpjacbcdAll, aes(x = pi, y = jac)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(x = "nucleotide diversity", y = "Jaccard dissimilarity")
-
-# flip axes to see if apparent positive association dissapears
-ggplot(data = snpjacbcdAll, aes(x = bcd, y = pi)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(y = "nucleotide diversity", x = "Bray-Curtis dissimilarity")
-
-ggplot(data = snpjacbcdAll, aes(x = jac, y = pi)) +
-  geom_point() +
-  geom_smooth() +
-  theme_classic() + 
-  labs(y = "nucleotide diversity", x = "Jaccard dissimilarity")
-
-# calculate correlations for only comparisons with many genotyped sites
-cor(x = snpjacbcdAll[(snpjacbcdAll$S > 400000), "bcd"], y = snpjacbcdAll[(snpjacbcdAll$S > 400000), "pi"], method = "pearson")
-
-cor(x = snpjacbcdAll[(snpjacbcdAll$S > 400000), "jac"], y = snpjacbcdAll[(snpjacbcdAll$S > 400000), "pi"], method = "pearson") # spearman gives negative correlation... not sure why
-
-# How many comparisons pass this cutoff?
-sum(snpjacbcdAll$S > 400000)
+# compdataNoOut = subset.comparative.data(compdata, subset =  !(species %in% c("Actinidia chinensis", "Camelina sativa")))
 ```
