@@ -33,6 +33,8 @@ cbind.sh
 workflow/data/testDatasets/**
 **.png
 **.zip
+**.tex
+**.log
 
 
 !speciesList.txt
