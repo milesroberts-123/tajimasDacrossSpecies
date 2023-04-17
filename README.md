@@ -256,6 +256,8 @@ For each domesticated species in our dataset, we looked at a wild relative to es
 
 - [x] calculate Tajima's D for each site and genome wide
 
+- [x] Use `GenomicsDBImport` instead of `CombineGVCFs`
+
 - [ ] break large chromosomes into sequences no longer than 500 Mb, otherwise `samtools index` will fail
 
 - [ ] Move genome assembly and annotations to `config/`

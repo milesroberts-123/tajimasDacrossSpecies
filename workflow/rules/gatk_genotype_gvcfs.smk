@@ -1,7 +1,8 @@
 # need to split over multiple chromsomes
 rule gatk_genotype_gvcfs:
 	input:
-		allCalls="combinedCalls_{assembly}_{chromosome}.g.vcf.gz",
+		#allCalls="combinedCalls_{assembly}_{chromosome}.g.vcf.gz",
+		done="{assembly}_{chromosome}.done",
 		genome="data/assemblies/{assembly}.fa"
 	output:
 		temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz")
@@ -16,12 +17,19 @@ rule gatk_genotype_gvcfs:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:
 		"""
-		gatk GenotypeGVCFs \
-   			-R {input.genome} \
-   			-V {input.allCalls} \
-   			-O {output} \
-   			--include-non-variant-sites &> {log}
+		# Using vcf file as input
+		#gatk GenotypeGVCFs \
+   		#	-R {input.genome} \
+   		#	-V {input.allCalls} \
+   		#	-O {output} \
+   		#	--include-non-variant-sites &> {log}
 		
-		# remove temp index
-		rm {input.allCalls}.tbi
+		# using genomics database as input
+		gatk --java-options "-Xmx32g" GenotypeGVCFs \
+			-R {input.genome} \
+			-V gendb://{wildcards.assembly}_{wildcards.chromosome}_database \
+			-O {output} &> {log}
+		
+		# remove genomics database afterwards
+		#rm -r {wildcards.assembly}_{wildcards.chromosome}_database
 		"""
