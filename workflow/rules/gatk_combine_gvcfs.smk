@@ -9,7 +9,7 @@ rule gatk_combine_gvcfs:
 		genome="data/assemblies/{assembly}.fa"
 	output:
 		#temp("combinedCalls_{assembly}_{chromosome}.g.vcf.gz")
-		temp("{wildcards.assembly}_{wildcards.chromosome}.done")
+		temp("{assembly}_{chromosome}.done")
 	params:
 		chromosome="{chromosome}"
 	log:
