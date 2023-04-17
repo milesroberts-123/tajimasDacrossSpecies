@@ -41,5 +41,5 @@ rule gatk_combine_gvcfs:
 
 		# I don't know which file to define as the output for this function for snakemake because a whole directory of outputs is created
 		# I'm just gonna create an empty temporary file that is made when GenomicsDBImport completes
-		touch {wildcards.assembly}_{wildcards.chromosome}.done
+		touch {output}
 		"""
