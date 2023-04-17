@@ -5,7 +5,7 @@ rule fastp_se:
 		read=temp("trimmed_reads/{runSe}_trim.fastq.gz"),
 		htmlReport=temp("fastp_output/{runSe}_fastp.html"),
 		jsonReport=temp("fastp_output/{runSe}_se_fastp.json")
-	threads: 4
+	threads: 8
 	priority: 50
 	resources:
 		mem_mb_per_cpu=5000

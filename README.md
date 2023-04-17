@@ -40,9 +40,9 @@ In addition, this workflow is designed to:
 
 * perform steps that are often omitted from online tutorials (such as building indices of reference genomes for BWA, GATK, and Picard)
 
-* output metrics for called variants before filtering (useful for determining if filters were appropriate)
+* ~output metrics for called variants before filtering (useful for determining if filters were appropriate)~
 
-* output simple statistics on the number of reads and bp applied to workflow
+* ~output simple statistics on the number of reads and bp applied to workflow~
 
 This workflow will **not** work if:
 
