@@ -17,13 +17,6 @@ rule gatk_genotype_gvcfs:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:
 		"""
-		# Using vcf file as input
-		#gatk GenotypeGVCFs \
-   		#	-R {input.genome} \
-   		#	-V {input.allCalls} \
-   		#	-O {output} \
-   		#	--include-non-variant-sites &> {log}
-		
 		# using genomics database as input
 		gatk --java-options "-Xmx32g" GenotypeGVCFs \
 			-R {input.genome} \
