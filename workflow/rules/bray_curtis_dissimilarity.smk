@@ -8,7 +8,7 @@ rule bray_curtis_dissimilarity:
 		"logs/bray_curtis_dissimilarity/{assembly}.log"
 	threads: 4
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=64000
 	conda:
 		"../envs/R.yml"
 	envmodules:
