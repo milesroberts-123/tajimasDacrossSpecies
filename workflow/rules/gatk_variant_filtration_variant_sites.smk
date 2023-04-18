@@ -4,7 +4,8 @@ rule gatk_variant_filtration_variant_sites:
 		variantSites="variant_{assembly}_{chromosome}.vcf.gz"
 	output:
 		final = temp("annotated_variant_{assembly}_{chromosome}.vcf.gz"),
-		nanfixed = temp("variant_{assembly}_{chromosome}_NaN.vcf.gz")
+		nanfixed = temp("variant_{assembly}_{chromosome}_NaN.vcf.gz"),
+		nanfixedindex = temp("variant_{assembly}_{chromosome}_NaN.vcf.gz.tbi")
 	log:
 		"logs/gatk_variant_filtration_variant_sites/{assembly}_{chromosome}.log"
 	threads: 1
@@ -19,6 +20,7 @@ rule gatk_variant_filtration_variant_sites:
 		# convert nan values to NaN if they are present
 		# issue this fixes: https://github.com/broadinstitute/gatk/issues/5582
 		bcftools view {input.variantSites} | sed 's/=nan/=NaN/g'  | bgzip > {output.nanfixed}
+		tabix {output.nanfixed}
 
 		# filter variants
 		gatk VariantFiltration \
