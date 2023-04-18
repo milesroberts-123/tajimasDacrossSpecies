@@ -20,7 +20,7 @@ rule gatk_variant_filtration_variant_sites:
 		# convert nan values to NaN if they are present
 		# issue this fixes: https://github.com/broadinstitute/gatk/issues/5582
 		bcftools view {input.variantSites} | sed 's/=nan/=NaN/g'  | bgzip > {output.nanfixed}
-		tabix {output.nanfixed}
+		tabix -f {output.nanfixed}
 
 		# filter variants
 		gatk VariantFiltration \
