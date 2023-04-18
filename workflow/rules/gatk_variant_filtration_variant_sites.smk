@@ -3,7 +3,8 @@ rule gatk_variant_filtration_variant_sites:
 		genome="data/assemblies/{assembly}.fa",
 		variantSites="variant_{assembly}_{chromosome}.vcf.gz"
 	output:
-		temp("annotated_variant_{assembly}_{chromosome}.vcf.gz"),
+		final = temp("annotated_variant_{assembly}_{chromosome}.vcf.gz"),
+		nanfixed = temp("variant_{assembly}_{chromosome}_NaN.vcf.gz")
 	log:
 		"logs/gatk_variant_filtration_variant_sites/{assembly}_{chromosome}.log"
 	threads: 1
@@ -15,10 +16,15 @@ rule gatk_variant_filtration_variant_sites:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:
 		"""
+		# convert nan values to NaN if they are present
+		# issue this fixes: https://github.com/broadinstitute/gatk/issues/5582
+		bcftools view {input.variantSites} | sed 's/=nan/=NaN/g'  | bgzip > {output.nanfixed}
+
+		# filter variants
 		gatk VariantFiltration \
 			-R {input.genome} \
-			-O {output} \
-			-V {input.variantSites} \
+			-O {output.final} \
+			-V {output.nanfixed} \
 			--filter-name "QD2" \
 			--filter-expression "QD < 2.0" \
 			--filter-name "QUAL30" \
@@ -35,5 +41,5 @@ rule gatk_variant_filtration_variant_sites:
 			--filter-expression "ReadPosRankSum < -8.0" &> {log}
 		
 		# remove temp index
-		rm {input.variantSites}.tbi
+		# rm {input.variantSites}.tbi
 		"""
