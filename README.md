@@ -248,6 +248,10 @@ For each domesticated species in our dataset, we looked at a wild relative to es
 
 # To do
 
+## Misc
+
+- [ ] Phase out support for not using conda environments
+
 ## Genetic diversity estimation
 
 - [x] Move input data to `config/`

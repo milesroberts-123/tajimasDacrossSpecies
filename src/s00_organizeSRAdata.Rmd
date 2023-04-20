@@ -315,8 +315,7 @@ brachypodium_distachyon$layout[(brachypodium_distachyon$spots_with_mates > 0)] =
 brachypodium_distachyon$layout[(brachypodium_distachyon$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = brachypodium_distachyon[,"Run"], replicate = brachypodium_distachyon[,"BioSample"], layout = brachypodium_distachyon[,"layout"], genome = "brachypodium_distachyon", ploidy = 2))
-
+allReads = rbind(allReads, data.frame(run = brachypodium_distachyon[,"Run"], replicate = brachypodium_distachyon[,"BioSample"], layout = brachypodium_distachyon[,"layout"], genome = "brachypodium_distachyon", ploidy = 2, taxonKeys = "5290143"))
 ```
 
 ## Brachypodium sylvaticum
@@ -419,7 +418,7 @@ buddleja_alternifolia = fread("../workflow/data/SRArunInfo/SraRunInfo_buddleja_a
 buddleja_alternifolia = buddleja_alternifolia[!(buddleja_alternifolia$LibraryName %in% c("wgs-pb", "hic")),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = buddleja_alternifolia[,"Run"], replicate = buddleja_alternifolia[,"BioSample"], layout = "PE", genome = "buddleja_alternifolia", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = buddleja_alternifolia[,"Run"], replicate = buddleja_alternifolia[,"BioSample"], layout = "PE", genome = "buddleja_alternifolia", ploidy = 2, taxonKeys = "3173337"))
 ```
 
 ## Cajanus cajan
@@ -487,7 +486,7 @@ capsella_grandiflora$layout[(capsella_grandiflora$spots_with_mates > 0)] = "PE"
 capsella_grandiflora$layout[(capsella_grandiflora$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = capsella_grandiflora[,"Run"], replicate = capsella_grandiflora[,"BioSample"], layout = capsella_grandiflora[,"layout"], genome = "capsella_grandiflora", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = capsella_grandiflora[,"Run"], replicate = capsella_grandiflora[,"BioSample"], layout = capsella_grandiflora[,"layout"], genome = "capsella_grandiflora", ploidy = 2, taxonKeys = "5375387"))
 ```
 
 ## Capsella rubella
@@ -512,8 +511,11 @@ capsella_rubella$layout = NA
 capsella_rubella$layout = "PE"
 #capsella_rubella$layout[(capsella_rubella$spots_with_mates == 0)] = "SE"
 
+# this one sample is single end
+capsella_rubella$layout[(capsella_rubella$Run == "ERR636156")] = "SE"
+
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = capsella_rubella[,"Run"], replicate = capsella_rubella[,"BioSample"], layout = capsella_rubella[,"layout"], genome = "capsella_rubella", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = capsella_rubella[,"Run"], replicate = capsella_rubella[,"BioSample"], layout = capsella_rubella[,"layout"], genome = "capsella_rubella", ploidy = 2, taxonKeys = "5375425"))
 ```
 
 ## Capsicum annuum
@@ -635,7 +637,7 @@ coffea_arabica = fread("../workflow/data/SRArunInfo/SraRunInfo_coffea_arabica_PR
 
 # add reads to growing list
 # Use experiment label because biosample labels are not unique
-allReads = rbind(allReads, data.frame(run = coffea_arabica[,"Run"], replicate = coffea_arabica[,"Experiment"], layout = "PE", genome = "coffea_arabica", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = coffea_arabica[,"Run"], replicate = coffea_arabica[,"Experiment"], layout = "PE", genome = "coffea_arabica", ploidy = 4, taxonKeys = "2895430"))
 ```
 
 ## Coffea canephora
@@ -728,7 +730,7 @@ allReads = rbind(allReads, data.frame(run = cucurbita_argyrosperma[,"Run"], repl
 cucurbita_pepo = fread("../workflow/data/SRArunInfo/SraRunInfo_cucurbita_pepo_PRJNA523120.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = cucurbita_pepo[,"Run"], replicate = cucurbita_pepo[,"BioSample"], layout = "SE", genome = "cucurbita_pepo", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = cucurbita_pepo[,"Run"], replicate = cucurbita_pepo[,"BioSample"], layout = "SE", genome = "cucurbita_pepo", ploidy = 2, taxonKeys = "2874513"))
 ```
 
 ## Digitaria exilis
@@ -775,7 +777,7 @@ dioscorea_rotundata = fread("../workflow/data/SRArunInfo/SraRunInfo_dioscorea_ro
 dioscorea_rotundata = dioscorea_rotundata[(dioscorea_rotundata$ScientificName == "Dioscorea rotundata"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = dioscorea_rotundata[,"Run"], replicate = dioscorea_rotundata[,"BioSample"], layout = "PE", genome = "dioscorea_rotundata", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = dioscorea_rotundata[,"Run"], replicate = dioscorea_rotundata[,"BioSample"], layout = "PE", genome = "dioscorea_rotundata", ploidy = 4, taxonKeys = "2755063"))
 ```
 
 ## Durio zibethinus
@@ -784,7 +786,7 @@ allReads = rbind(allReads, data.frame(run = dioscorea_rotundata[,"Run"], replica
 durio_zibethinus = fread("../workflow/data/SRArunInfo/SraRunInfo_durio_zibethinus_PRJNA867527.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = durio_zibethinus[,"Run"], replicate = durio_zibethinus[,"BioSample"], layout = "PE", genome = "durio_zibethinus", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = durio_zibethinus[,"Run"], replicate = durio_zibethinus[,"BioSample"], layout = "PE", genome = "durio_zibethinus", ploidy = 2, taxonKeys = "4073136"))
 ```
 
 ## Elaeis guineensis
@@ -796,7 +798,7 @@ elaeis_guineensis = fread("../workflow/data/SRArunInfo/SraRunInfo_elaeis_guineen
 elaeis_guineensis = elaeis_guineensis[(elaeis_guineensis$Platform == "ILLUMINA"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = elaeis_guineensis[,"Run"], replicate = elaeis_guineensis[,"BioSample"], layout = "PE", genome = "elaeis_guineensis", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = elaeis_guineensis[,"Run"], replicate = elaeis_guineensis[,"BioSample"], layout = "PE", genome = "elaeis_guineensis", ploidy = 2, taxonKeys = "8791596"))
 ```
 
 ## Eleusine coracana
@@ -805,7 +807,7 @@ allReads = rbind(allReads, data.frame(run = elaeis_guineensis[,"Run"], replicate
 eleusine_coracana = fread("../workflow/data/SRArunInfo/SraRunInfo_eleusine_coracana_PRJNA610152.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = eleusine_coracana[,"Run"], replicate = eleusine_coracana[,"BioSample"], layout = "PE", genome = "eleusine_coracana", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = eleusine_coracana[,"Run"], replicate = eleusine_coracana[,"BioSample"], layout = "PE", genome = "eleusine_coracana", ploidy = 4, taxonKeys = "2705953"))
 
 ```
 
@@ -2228,7 +2230,7 @@ sum(sort(table(allReads$genome))[41:55])
 # testSet = allReads[(allReads$genome %in% c("arabidopsis_halleri", "arabidopsis_lyrata", "arabidopsis_thaliana", "arabidopsis_suecica", "boechera_stricta", "brachypodium_distachyon", "brassica_oleracea", "brassica_rapa", "capsella_grandiflora", "capsella_rubella")),]
 # write.table(testSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
-write.table(allReads, file = "../workflow/data/samples.tsv", sep = "\t", quote = F, row.names = F)
+write.table(allReads, file = "../config/samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # write run numbers and metadata to workflow input
 # need to replace write path with "../workflow/data/samples_pe.tsv" when I'm ready

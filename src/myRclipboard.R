@@ -5,6 +5,38 @@
 # cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
+ERR636156
+
+#
+2705953
+
+#
+8791596
+
+#
+4073136
+
+#
+2755063
+
+#
+2874513
+
+#
+2895430
+
+#
+5375425
+
+#
+5375387
+
+#
+3173337
+
+# brachypodium distachyon
+5290143
+
 # Arabidopsis lyrata bioprojects
 PRJNA357693
 PRJEB30473

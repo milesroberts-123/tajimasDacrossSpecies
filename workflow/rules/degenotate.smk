@@ -20,19 +20,22 @@ rule degenotate:
  
 		# before running degenotate, check that correct python version is installed
 		# ml -*
-		echo $CONDA_PREFIX
-		which python
-		python --version
+		# echo $CONDA_PREFIX
+		# which python
+		# python --version
 
 		# run degenotate, remove any extra information in fasta header after initial key
 		# if previous run failed, overwrite that failed run
 		# if conda is enabled, use fastp conda env
                 # if conda is disabled, check scripts for fastp binary
-                if [ "{params.condaStatus}" == "True" ]; then
-			$CONDA_PREFIX/bin/python $CONDA_PREFIX/bin/degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o {params.outputFolder}
-		else
-			scripts/degenotate/degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o {params.outputFolder}
-		fi
+                #if [ "{params.condaStatus}" == "True" ]; then
+		#	$CONDA_PREFIX/bin/python $CONDA_PREFIX/bin/degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o {params.outputFolder}
+		#else
+		#	scripts/degenotate/degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o {params.outputFolder}
+		#fi
+
+		# run degenotate
+		python degenotate.py --overwrite -d " " -a {input.annot} -g {input.genome} -o {params.outputFolder}
 
 		# subset out four-fold degenerate sites
 		awk '(($5 == 4))' {params.outputFolder}/degeneracy-all-sites.bed > {output}
