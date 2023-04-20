@@ -1,12 +1,12 @@
 rule bwa_index:
 	input:
-		"data/assemblies/{assembly}.fa"
+		"../config/assemblies/{assembly}.fa"
 	output:
-		"data/assemblies/{assembly}.fa.amb",
-		"data/assemblies/{assembly}.fa.ann",
-		"data/assemblies/{assembly}.fa.bwt",
-		"data/assemblies/{assembly}.fa.pac",
-		"data/assemblies/{assembly}.fa.sa"
+		"../config/assemblies/{assembly}.fa.amb",
+		"../config/assemblies/{assembly}.fa.ann",
+		"../config/assemblies/{assembly}.fa.bwt",
+		"../config/assemblies/{assembly}.fa.pac",
+		"../config/assemblies/{assembly}.fa.sa"
 	log:
 		"logs/bwa_index/{assembly}.log"
 	threads: 1

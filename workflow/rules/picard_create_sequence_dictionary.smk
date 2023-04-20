@@ -1,8 +1,8 @@
 rule picard_create_sequence_dictionary:
 	input:
-		"data/assemblies/{assembly}.fa"
+		"../config/assemblies/{assembly}.fa"
 	output:
-		"data/assemblies/{assembly}.dict"
+		"../config/assemblies/{assembly}.dict"
 	envmodules:
 		"picard/2.22.1-Java-11"
 	threads: 1

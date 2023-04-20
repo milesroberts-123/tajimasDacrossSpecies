@@ -229,11 +229,11 @@ For some species, specific transcripts needed to be ommitteed because exons were
 
 - [x] Use `GenomicsDBImport` instead of `CombineGVCFs`
 
+- [x] Move genome assembly and annotations to `config/`
+
+- [x] Define workflow parameters in a yaml file
+
 - [ ] break large chromosomes into sequences no longer than 500 Mb, otherwise `samtools index` will fail
-
-- [ ] Move genome assembly and annotations to `config/`
-
-- [ ] Define workflow parameters in a yaml file
 
 - [ ] calculate variance in heterozygosity and k-mer patterns across sites or comparisons, so that you can compare SNP variation to k-mer variation
 

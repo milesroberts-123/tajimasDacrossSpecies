@@ -21,7 +21,8 @@ rule kmc_se:
 	threads: 8
 	params:
 		cdsDbPrefix=get_kmer_database_prefix,
-		kmerLength=30,
+		#kmerLength=30,
+		kmerLength=config["kmerLength"],
 		minKmerCount=1,
 		maxKmerCount=2000000 # should be double the max for counting in paired-end samples so that single-end and paired-end samples can achieve the same max k-mer count
 	resources:

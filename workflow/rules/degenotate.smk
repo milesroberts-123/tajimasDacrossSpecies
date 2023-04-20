@@ -1,7 +1,7 @@
 rule degenotate:
 	input:
-		genome="data/assemblies/{assembly}.fa",
-		annot="data/annotations/{assembly}.gff3"
+		genome="../config/assemblies/{assembly}.fa",
+		annot="../config/annotations/{assembly}.gff3"
 	output:
 		"data/{assembly}_fourfoldDegenerateSites.bed"
 	params:

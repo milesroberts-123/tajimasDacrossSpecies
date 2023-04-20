@@ -21,7 +21,8 @@ rule kmc_pe:
 		"logs/kmc_pe/{samplePe}.log"
 	threads: 8
 	params:
-		kmerLength=30,
+		#kmerLength=30,
+		kmerLength=config["kmerLength"],
 		minKmerCount=1,
 		maxKmerCount=1000000,
 		cdsDbPrefix=get_kmer_database_prefix

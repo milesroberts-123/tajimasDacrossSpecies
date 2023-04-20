@@ -2,6 +2,10 @@
 import pandas as pd
 import re
 
+# define workflow parameters
+configfile: "../config/config.yaml"
+print (config)
+
 # load samples
 samples = pd.read_table("../config/samples.tsv", sep="\t", dtype={"run": str, "replicate": str, "genome": str}).set_index(["run","replicate","genome"], drop=False)
 

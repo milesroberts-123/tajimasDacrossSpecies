@@ -1,7 +1,7 @@
 rule get_cds_seq:
 	input:
-		fasta="data/assemblies/{assembly}.fa",
-		gff="data/annotations/{assembly}.gff3"
+		fasta="../config/assemblies/{assembly}.fa",
+		gff="../config/annotations/{assembly}.gff3"
 	output:
 		faOut = temp("{assembly}_cds.fa"),
 		gffOut = temp("{assembly}_cds.gff")

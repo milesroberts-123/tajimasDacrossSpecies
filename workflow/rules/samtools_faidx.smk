@@ -1,9 +1,9 @@
 rule samtools_faidx:
 	input:
-		"data/assemblies/{assembly}.fa"
+		"../config/assemblies/{assembly}.fa"
 	output:
-		index="data/assemblies/{assembly}.fa.fai",
-		genomeFile="data/assemblies/{assembly}.txt"
+		index="../config/assemblies/{assembly}.fa.fai",
+		genomeFile="../config/assemblies/{assembly}.txt"
 	log:
 		"logs/samtools_faidx/{assembly}.log"
 	threads: 1

@@ -6,7 +6,7 @@ def get_calls(wildcards):
 rule gatk_combine_gvcfs:
 	input:
 		calls = get_calls,
-		genome="data/assemblies/{assembly}.fa"
+		genome="../config/assemblies/{assembly}.fa"
 	output:
 		#temp("combinedCalls_{assembly}_{chromosome}.g.vcf.gz")
 		temp("{assembly}_{chromosome}.done")

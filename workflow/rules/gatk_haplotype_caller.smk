@@ -8,19 +8,19 @@ def get_genome(wildcards):
 	repName = re.sub("_pe|_se", "", wildcards.sample)
         genome = samples.loc[samples["replicate"] == repName, "genome"]
 	genome = genome[0]
-        return "data/assemblies/" + str(genome) + ".fa"
+        return "../config/assemblies/" + str(genome) + ".fa"
 
 def get_dict(wildcards):
 	repName = re.sub("_pe|_se", "", wildcards.sample)
         genome = samples.loc[samples["replicate"] == repName, "genome"]
 	genome = genome[0]
-        return "data/assemblies/" + str(genome) + ".dict"
+        return "../config/assemblies/" + str(genome) + ".dict"
 
 def get_fai(wildcards):
 	repName = re.sub("_pe|_se", "", wildcards.sample)
         genome = samples.loc[samples["replicate"] == repName, "genome"]
 	genome = genome[0]
-        return "data/assemblies/" + str(genome) + ".fa.fai"
+        return "../config/assemblies/" + str(genome) + ".fa.fai"
 
 def get_regions(wildcards):
 	repName = re.sub("_pe|_se", "", wildcards.sample)
@@ -39,7 +39,9 @@ rule gatk_haplotype_caller:
 	output:
 		temp("calls/{sample}.g.vcf.gz")
 	params:
-		ploidy=get_ploidy
+		ploidy=get_ploidy,
+		het = config["het"],
+		qualityScore = config["qualityScore"]
 	envmodules:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	threads: 4
@@ -60,7 +62,7 @@ rule gatk_haplotype_caller:
 			-ERC GVCF \
 			--native-pair-hmm-threads {threads} \
 			--sample-ploidy {params.ploidy} \
-			--heterozygosity 0.001 \
-			--indel-heterozygosity 0.001 \
-			--min-base-quality-score 20 &> {log}
+			--heterozygosity {params.het} \
+			--indel-heterozygosity {params.het} \
+			--min-base-quality-score {params.qualityScore} &> {log}
 		"""

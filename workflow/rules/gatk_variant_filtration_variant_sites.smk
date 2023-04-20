@@ -1,6 +1,6 @@
 rule gatk_variant_filtration_variant_sites:
 	input:
-		genome="data/assemblies/{assembly}.fa",
+		genome="../config/assemblies/{assembly}.fa",
 		variantSites="variant_{assembly}_{chromosome}.vcf.gz"
 	output:
 		final = temp("annotated_variant_{assembly}_{chromosome}.vcf.gz"),

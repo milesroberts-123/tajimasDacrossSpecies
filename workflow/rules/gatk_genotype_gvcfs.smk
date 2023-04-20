@@ -3,7 +3,7 @@ rule gatk_genotype_gvcfs:
 	input:
 		#allCalls="combinedCalls_{assembly}_{chromosome}.g.vcf.gz",
 		done="{assembly}_{chromosome}.done",
-		genome="data/assemblies/{assembly}.fa"
+		genome="../config/assemblies/{assembly}.fa"
 	output:
 		temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz")
 	log:

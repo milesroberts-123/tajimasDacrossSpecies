@@ -1,6 +1,6 @@
 rule gatk_variant_filtration_invariant_sites:
 	input:
-		genome="data/assemblies/{assembly}.fa",
+		genome="../config/assemblies/{assembly}.fa",
 		invariantSites="invariant_{assembly}_{chromosome}.vcf.gz"
 	output:
 		temp("annotated_invariant_{assembly}_{chromosome}.vcf.gz")

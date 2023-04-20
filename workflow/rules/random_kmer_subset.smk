@@ -6,7 +6,8 @@ rule random_kmer_subset:
 	log:
 		"logs/random_kmer_subset/{assembly}.log"
 	params:
-		kmersKept=10000000
+		#kmersKept=10000000
+		kmersKept=config["kmersKept"]
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000

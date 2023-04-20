@@ -7,7 +7,8 @@ rule jaccard_dissimilarity:
 	log:
 		"logs/jaccard_dissimilarity/{assembly}.log"
 	params:
-		countThresh=5 # mark a k-mer as present if it has a count equal to or greater than this threshold
+		#countThresh=5 # mark a k-mer as present if it has a count equal to or greater than this threshold
+		countThresh = config["countThresh"]
 	threads: 4
 	resources:
 		mem_mb_per_cpu=64000
