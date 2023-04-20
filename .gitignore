@@ -4,7 +4,6 @@
 **/results
 **/calls
 **/markedDups
-**/config
 **/multiqc_report_data
 workflow/data/testDatasets/**
 
@@ -41,4 +40,3 @@ cbind.sh
 
 !speciesList.txt
 !panicum_halli_search.txt
-!config.yaml

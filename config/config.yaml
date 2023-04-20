@@ -1,0 +1,21 @@
+# Workflow parameters
+# The same parameters are used for all species to ensure cross-species comparisons
+---
+
+# Length of k-mers to count
+kmerLength: 30
+
+# The minimum number of occurences any particular k-mer needs to avoid being filtered out
+countThresh: 5
+
+# The number of k-mers exceeding the count threshold that are randomly sampled for diversity estimation
+kmersKept: 10000000
+
+# The minimum quality score of a base pair within a read to not get filtered out
+qualityScore: 20
+
+# The minimum length of a read in basepairs to avoid getting filtered out
+minReadLength: 30
+
+# The expected level of heterozygosity passed to GATK
+het: 0.001
