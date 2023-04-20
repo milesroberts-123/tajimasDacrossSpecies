@@ -28,13 +28,11 @@ In addition, this workflow is designed to:
 
 * analyze read data from multiple species simultaneously, including species of varying ploidy
 
-* split data by chromosome to parallelize computations
+* split data by chromosome/scaffold to parallelize SNP calling
 
 * merge technical replicates (usually technical replicates are defined as two SRA runs that share the same Biosample/Experiment ID)
 
 * work with both paired-end and single-end data
-
-* work either as a set of environment modules (specific to the MSU ICER HPCC), a set of conda environments, or as a Docker container
 
 * retain invariant sites during SNP calling
 
