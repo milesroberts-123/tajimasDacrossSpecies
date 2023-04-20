@@ -30,7 +30,7 @@ In addition, this workflow is designed to:
 
 * split data by chromosome to parallelize computations
 
-* merge technical replicates
+* merge technical replicates (usually technical replicates are defined as two SRA runs that share the same Biosample/Experiment ID)
 
 * work with both paired-end and single-end data
 
@@ -39,10 +39,6 @@ In addition, this workflow is designed to:
 * retain invariant sites during SNP calling
 
 * perform steps that are often omitted from online tutorials (such as building indices of reference genomes for BWA, GATK, and Picard)
-
-* ~output metrics for called variants before filtering (useful for determining if filters were appropriate)~
-
-* ~output simple statistics on the number of reads and bp applied to workflow~
 
 This workflow will **not** work if:
 
@@ -71,50 +67,20 @@ Replicating the entire snakemake workflow will be impossible if you do not have 
 ```
 git clone https://github.com/milesroberts-123/tajimasDacrossSpecies.git
 cd tajimasDacrossSpecies/src
-sbatch s03_test_snakemake.sh
+sbatch s03_test_snakemake.bash
 ``` 
 
 ## replicate preparation of metadata for workflow
 
 0. `src/s00_organizeSRAdata.Rmd` takes data in workflow/data/SRArunInfo and structures it into `data/samples.tsv` so that it can be churned through snakemake workflow. This table can be found in `workflow/data/samples.tsv` already.
 
-1. `src/s01_downloadGenomes.bash` contains `wget` commands to download genomes from NCBI and Ensembl
+1. `s01_removeUnderscores.bash` removes underscores from chromosome names in the fasta files and gff files, which mess with snakemake wildcards
 
-2. `src/s02_removeUnderscores.bash` takes renamed downloads from Phytozome, Ensembl, and NCBI and removes underscores from chromosome/scaffold names so that they can be accessed with snakemake wildcards
+2. `s02_buildChromosomesFile.bash` builds `chromosomes.tsv` which snakemake uses to parallelize genotype calling across scaffolds/chromosomes
 
-3. `src/s03_buildChromosomesFiles.bash` takes the annotations (with underscores removed from chromosome/scaffold names) and creates `chromosomes.tsv`, which is used later by snakemake to split genotyping by chromosome 
+3. `s03_snakemake.bash` runs snakemake
 
-4. `src/s04_snakemake.bash` takes all of the input files and runs them through the snakemake workflow
-
-## run workflow with the MSU ICER HPCC modules instead of conda environments
-
-Find an example script in `src/s05_snakemake_modules.bash`
-
-**I highly recommend that you use conda environments instead!** This method for running the workflow is specific only to the ICER HPCC and will probably break if the modules on the HPCC are updated. I mainly keep this note in the readme for my own reference.
-
-Nonetheless, if you want to do this you will need to add the following to `/workflow/scripts/`
-
-* [degenotate](https://github.com/harvardinformatics/degenotate)
-
-* [fastp](https://github.com/OpenGene/fastp)
-
-* [seqkit](https://github.com/shenwei356/seqkit)
-
-To get degenotate, clone degenotate github repo into `workflow/scripts`:
-
-```
-cd workflow/scripts
-git clone https://github.com/harvardinformatics/degenotate.git
-```
-
-You can then update degenotate by doing into the degenotate folder and using:
-
-```
-git fetch
-git pull
-```
-
-Go to the fastp github repo and download the latest linux binary, add this to the scripts folder and make it executable with `chmod +x fastp`. Do the same for seqkit too!
+4. `s04_correlateKmerAndSNPvariation.Rmd` Analyze the workflow outputs
 
 # Input files for workflow
 
@@ -126,7 +92,6 @@ workflow/data/
 	assemblies/ # fasta files of genome sequences, naming convention: genus_species.fa
 	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples.tsv using code in src/ before workflow begins
 	samples.tsv # tab-separated text file listing read metadata with these columns: run, replicate, layout, genome
-	species.tsv # list of species to download GBIF occurence records for. Columns are: genus_spcies, and gbif taxon keys
 	chromosomes.tsv # tab-separated text file listing chromosome names for each genome: genus_species, chromsome_name
 ```
 
@@ -146,11 +111,7 @@ This file contains the following columns:
 
 * ploidy: the number of genome copies in each cell of the organism sampled (e.g. 2 for diploid)
 
-## species.tsv
-
-A file with a single column:
-
-* species: the genus and species of the organism you're interested in written as `genus_species`. First letter of genus should be capitalized. See `workflow/data` for an example.
+* taxonKeys: GBIF keys to use for downloading occurence data
 
 If you're looking at GBIF occurrence data, then you'll also want to have your GBIF email, username, and password stored as environment variables:
 
@@ -246,11 +207,19 @@ In other words, I think it would be okay to include different types of sequencin
 
 For each domesticated species in our dataset, we looked at a wild relative to estimate range size. The relative species has to be in the same genus as the domesticated species. When there are multiple wild relatives to choose from, we looked at the one with the most recorded occurences on GBIF
 
+## Omitted transcripts
+
+For some species, specific transcripts needed to be ommitteed because exons were on differing strands. This would make `degenotate` throw an error:
+
+*Cucurbita pepo*: rna-CupepMp02 and rna-CupepMp06
+
 # To do
 
 ## Misc
 
-- [ ] Phase out support for not using conda environments
+- [x] Phase out support for not using conda environments
+
+- [ ] Create a test dataset to store on github so people can verify my analyses without performing the whole workflow
 
 ## Genetic diversity estimation
 

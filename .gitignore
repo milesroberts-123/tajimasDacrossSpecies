@@ -4,6 +4,10 @@
 **/results
 **/calls
 **/markedDups
+**/config
+**/multiqc_report_data
+workflow/data/testDatasets/**
+
 **.vcf.gz
 **.vcf.gz.tbi
 **.fastq.gz
@@ -14,7 +18,6 @@
 **.json
 **.html
 core.**
-**/multiqc_report_data
 **.fa
 **.gff3
 **.errlog
@@ -30,7 +33,6 @@ core.**
 **.012.pos
 **.frq.count
 cbind.sh
-workflow/data/testDatasets/**
 **.png
 **.zip
 **.tex
