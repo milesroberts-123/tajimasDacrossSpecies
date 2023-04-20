@@ -33,14 +33,14 @@ def get_conda_status(wildcards):
 
 # function to define thread count per rule
 # 1 thread per gigabyte of input data + 1, up to a max of 128
-def get_thread_count(wildcards, input):
-	a = (input.size//1000000000 + 1)
-	return min(a, 128)
+#def get_thread_count(wildcards, input):
+#	a = (input.size//1000000000 + 1)
+#	return min(a, 128)
 
 # function to define memory limit
 # 2 GB per thread, but increase limit linearly if job fails
-def get_mem_mb(wildcards, attempt):
-    return 2000 * attempt
+#def get_mem_mb(wildcards, attempt):
+#    return 2000 * attempt
 
 rule all:
 	input:
