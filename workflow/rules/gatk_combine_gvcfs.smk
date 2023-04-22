@@ -42,6 +42,9 @@ rule gatk_combine_gvcfs:
 		--tmp-dir=tmp_{wildcards.assembly}_{wildcards.chromosome}/ \
 		-L {params.chromosome} &> {log}
 
+		# remove temporary directory
+		rm -r tmp_{wildcards.assembly}_{wildcards.chromosome}
+
 		# I don't know which file to define as the output for this function for snakemake because a whole directory of outputs is created
 		# I'm just gonna create an empty temporary file that is made when GenomicsDBImport completes
 		touch {output}

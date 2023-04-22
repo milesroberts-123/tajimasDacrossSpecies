@@ -24,5 +24,5 @@ rule gatk_genotype_gvcfs:
 			-O {output} &> {log}
 		
 		# remove genomics database afterwards
-		#rm -r {wildcards.assembly}_{wildcards.chromosome}_database
+		rm -r {wildcards.assembly}_{wildcards.chromosome}_database/
 		"""
