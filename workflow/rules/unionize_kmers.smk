@@ -15,6 +15,7 @@ rule unionize_kmers:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
+	priority: 50
 	conda: 
 		"../envs/kmc.yml"
 	params:

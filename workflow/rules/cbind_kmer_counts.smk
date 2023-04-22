@@ -13,6 +13,7 @@ rule cbind_kmer_counts:
 	threads: 1
 	resources:
 		mem_mb_per_cpu = 16000
+	priority: 50
 	shell:
 		"""
 		# Extract file names and create header for merged matrix

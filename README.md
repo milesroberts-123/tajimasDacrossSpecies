@@ -1,12 +1,12 @@
+# Author
+
+Miles Roberts
+
 # Contents
 
 [Summary](#summary)
 
 [How to replicate my results](#How-to-replicate-my-results)
-
-[Input files for workflow](#input-files-for-workflow)
-
-[Updating the repo](#updating-the-repo)
 
 [Notes](#notes)
 
@@ -18,7 +18,7 @@ This workflow takes a list of SRA run numbers, separated before-hand as either p
 
 1. Align reads to reference genome, then call SNPs and indels at four-fold degenerate sites
 
-2. Count k-mers within reads, omiting k-mers that appear in the coding sequences of *Arabidopsis thaliana*. Then, choose a random subset of k-mers to keep for further analysis. K-mer counts for each genotype are merged into a large matrix and then used to calculate two measures of dissimilarity:
+2. Count k-mers within reads, omiting k-mers that appear in the coding sequences of their respective species. Then, choose a random subset of k-mers to keep for further analysis. K-mer counts for each genotype are merged into a large matrix and then used to calculate two measures of dissimilarity:
 
 * Jaccard dissimilarity: k-mers are marked as either present (1) or absent (0) based on their count within the whole genome sequencing reads for each genotype. Then you look at the intersection-union ratio for each pair of k-mer sets
 
@@ -48,29 +48,7 @@ This workflow will **not** work if:
 
 Running the scripts in `src/` in their numbered order to will replicate my analysis
 
-## replicate full snakemake workflow
-
-Clone this repository and submit a SLURM job script to run the entire workflow. **Caution: this will submit about 400,000 jobs**
-
-```
-git clone https://github.com/milesroberts-123/tajimasDacrossSpecies.git
-cd tajimasDacrossSpecies/src
-sbatch s02_full_snakemake.sh
-```
-
-## replicate test snakemake workflow
-
-Replicating the entire snakemake workflow will be impossible if you do not have access to a high performance computing cluster. Instead, you can verify the workflow using a much smaller test dataset. To do this, run:
-
-```
-git clone https://github.com/milesroberts-123/tajimasDacrossSpecies.git
-cd tajimasDacrossSpecies/src
-sbatch s03_test_snakemake.bash
-``` 
-
-## replicate preparation of metadata for workflow
-
-0. `src/s00_organizeSRAdata.Rmd` takes data in workflow/data/SRArunInfo and structures it into `data/samples.tsv` so that it can be churned through snakemake workflow. This table can be found in `workflow/data/samples.tsv` already.
+0. `src/s00_organizeSRAdata.Rmd` takes data in `workflow/data/SRArunInfo` and structures it into `config/samples.tsv` so that it can be churned through snakemake workflow
 
 1. `s01_removeUnderscores.bash` removes underscores from chromosome names in the fasta files and gff files, which mess with snakemake wildcards
 
@@ -78,24 +56,27 @@ sbatch s03_test_snakemake.bash
 
 3. `s03_snakemake.bash` runs snakemake
 
-4. `s04_correlateKmerAndSNPvariation.Rmd` Analyze the workflow outputs
+4. `s04_correlateKmerAndSNPvariation.Rmd` Analyze the workflow outputs to generate final graphs for publication
 
-# Input files for workflow
+## Input files for workflow
 
 This how I eventually want the input data for the workflow to be organized
 
 ```
-workflow/data/
+config/
 	annotations/ # gffs of genome sequences, naming convention: genus_species.gff3
 	assemblies/ # fasta files of genome sequences, naming convention: genus_species.fa
-	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples.tsv using code in src/ before workflow begins
 	samples.tsv # tab-separated text file listing read metadata with these columns: run, replicate, layout, genome
 	chromosomes.tsv # tab-separated text file listing chromosome names for each genome: genus_species, chromsome_name
+	config.yaml # defines key workflow parameters
+	
+workflow/data/
+	SRArunInfo/ # comma-separated files of meta-data for SRA runs, organized into samples.tsv using code in src/ before workflow begins
 ```
 
 See `workflow/dag.svg` for an example of my snakemake workflow executed on a handful of samples.
 
-## samples.tsv
+### samples.tsv
 
 This file contains the following columns:
 
@@ -121,7 +102,7 @@ export GBIF_PWD=<password>
 
 The script `workflow/scripts/download_gbif.R` needs this information in order to download GBIF data.
 
-## chromosomes.tsv
+### chromosomes.tsv
 
 This file is used to parallelize the GATK genotype GVCFs step in the workflow (splitting the data by chromosome/scaffold) contains the following columns
 
@@ -130,8 +111,10 @@ This file is used to parallelize the GATK genotype GVCFs step in the workflow (s
 * chromosome: the name of the chromosome/scaffold in the associated fasta file
 
 **You must remove any underscores from chromosome/scaffold names for snakemake wildcards to work (e.g. scaffold_25 -> scaffold25)!** This name change should be reflected in `chromosomes.tsv`, the gff files, and the fasta files.
+ 
+# Notes
 
-# Updating the repo
+## Updating the repo
 
 ```
 # From workflow/
@@ -155,8 +138,6 @@ git commit -m "my update message"
 
 git push -u origin main
 ```
- 
-# Notes
 
 ## search methods for genotype data
 
@@ -217,6 +198,8 @@ For some species, specific transcripts need to be ommitted because exons are on 
 
 - [x] Remove commented out code
 
+- [x] Give rules that decrease the total number of files and/or memory higher priority
+
 - [ ] Create a test dataset to store on github so people can verify my analyses without performing the whole workflow
 
 - [ ] add validation schema for sample metadata and config file to Snakefile
@@ -234,6 +217,8 @@ For some species, specific transcripts need to be ommitted because exons are on 
 - [x] Move genome assembly and annotations to `config/`
 
 - [x] Define workflow parameters in a yaml file
+
+- [ ] Define tabix-indexed VCF files as inputs and outputs of rules
 
 ## Population size estimation
 

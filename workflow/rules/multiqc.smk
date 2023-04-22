@@ -11,6 +11,7 @@ rule multiqc:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=32000
+	priority: 50
 	conda:
 		"../envs/multiqc.yml"
 	envmodules:
