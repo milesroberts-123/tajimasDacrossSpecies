@@ -37,6 +37,7 @@ rule gatk_combine_gvcfs:
 		gatk --java-options "-Xmx8g -Xms8g" GenomicsDBImport $(echo {input.calls} | sed 's/calls/-V calls/g') \
 		--batch-size 50 \
 		--reader-threads {threads} \
+		--overwrite-existing-genomicsdb-workspace \
 		--genomicsdb-workspace-path {wildcards.assembly}_{wildcards.chromosome}_database \
 		--tmp-dir=tmp_{wildcards.assembly}_{wildcards.chromosome}/ \
 		-L {params.chromosome} &> {log}
