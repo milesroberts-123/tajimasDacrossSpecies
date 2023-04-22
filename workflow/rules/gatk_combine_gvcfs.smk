@@ -23,14 +23,16 @@ rule gatk_combine_gvcfs:
 		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:
 		"""
-		#gatk CombineGVCFs \
-		#-R {input.genome} $(echo {input.calls} | sed 's/calls/-V calls/g') \
-		#-L {params.chromosome} \
-		#-O {output} &> {log}
+		# Check if output directory exists already. If so, delete it
+		if [ -d "tmp_{wildcards.assembly}_{wildcards.chromosome}/" ]
+		then
+			echo Deleting directory that already exists from previous run...  &> {log}
+			rm -r tmp_{wildcards.assembly}_{wildcards.chromosome}
+		fi
 
 		# make temporary directory
-		mkdir tmp_{wildcards.assembly}_{wildcards.chromosome}
-	
+		mkdir -p tmp_{wildcards.assembly}_{wildcards.chromosome}
+
 		# run import step
 		gatk --java-options "-Xmx8g -Xms8g" GenomicsDBImport $(echo {input.calls} | sed 's/calls/-V calls/g') \
 		--batch-size 50 \
