@@ -22,10 +22,6 @@ samplesSe = samples[samples["layout"] == "SE"]
 # load list of chromosome names
 chroms = pd.read_table("../config/chromosomes.tsv", sep="\t", dtype={"assembly": str, "chromosome": str}).set_index(["assembly", "chromosome"], drop=False)
 
-# load list of species names
-# species = pd.read_table("data/species.tsv", sep = "\t", dtype={"species": str}).set_index(["species"], drop=False)
-# print(species.index.get_level_values("species"))
-
 # constrain wildcards so that paired end and single-end samples can be considered simultaneously
 wildcard_constraints:
 	sampleSe="[A-Za-z0-9]+",

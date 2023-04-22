@@ -217,7 +217,11 @@ For some species, specific transcripts needed to be ommitteed because exons were
 
 - [x] Phase out support for not using conda environments
 
+- [x] Remove commented out code
+
 - [ ] Create a test dataset to store on github so people can verify my analyses without performing the whole workflow
+
+- [ ] add validation schema for sample metadata and config file to Snakefile
 
 ## Genetic diversity estimation
 
@@ -233,20 +237,8 @@ For some species, specific transcripts needed to be ommitteed because exons were
 
 - [x] Define workflow parameters in a yaml file
 
-- [ ] break large chromosomes into sequences no longer than 500 Mb, otherwise `samtools index` will fail
-
-- [ ] calculate variance in heterozygosity and k-mer patterns across sites or comparisons, so that you can compare SNP variation to k-mer variation
-
-- [ ] dynamically allocate memory to `fastp` based on the size of the input data
-
-- [ ] try submitting jobs to scavenger queue on first attempt, but switch to josephsnodes if job gets canceled
-
-- [ ] add error checking to main snakefile
-
 ## Population size estimation
 
 - [x] filter GBIF occurences by country, only include occurences within native ranges as described by [plants of the world online](https://powo.science.kew.org/)
 
 - [x] add alpha and threshold number of occurences as paramters to `download_gbif.R`
-
-- [ ] I occassionaly get a `graph not circular` error from my `download_gbif` script inside the `ashape2poly` function. I'm not sure what causes this... My guess is that the start and end points of the graph need to be the same and sometimes this function doesn't generate that for some reasons, even though it usually does.

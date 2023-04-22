@@ -7,7 +7,7 @@ rule cbind_kmer_counts:
 		kmerCounts=get_cbind_kmer_counts_input
 	output:
 		matrix="{assembly}_AllMergedKmerCounts.txt",
-		cbindScript="{assembly}_cbind.sh"
+		cbindScript=temp("{assembly}_cbind.sh")
 	log:
 		"logs/cbind_kmer_counts/{assembly}.log"
 	threads: 1

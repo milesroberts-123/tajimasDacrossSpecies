@@ -21,7 +21,6 @@ rule kmc_pe:
 		"logs/kmc_pe/{samplePe}.log"
 	threads: 8
 	params:
-		#kmerLength=30,
 		kmerLength=config["kmerLength"],
 		minKmerCount=1,
 		maxKmerCount=1000000,
@@ -67,21 +66,4 @@ rule kmc_pe:
 		# Delete temporary union
 		rm union_1_2_{wildcards.samplePe}.kmc_pre
 		rm union_1_2_{wildcards.samplePe}.kmc_suf
-		
-		# create temp list of k-mers in sample
-		# cut -f1 raw_{output} > tmp_{output}
-
-		# find k-mers in sample that do not match coding sequences
-		# echo Finding k-mers in sample that do not match coding sequences...
-		# comm -13 {input.cdsDatabase} tmp_{output} > uniq_{output}
-
-		# delete temporary k-mer list
-		# rm tmp_{output}
-
-		# subset just k-mers that aren't in coding sequence database
-		# join -t $'\t' uniq_{output} raw_{output} > {output}
-
-		# delete temporary files that give final output
-		# rm raw_{output}
-		# rm uniq_{output}
 		"""

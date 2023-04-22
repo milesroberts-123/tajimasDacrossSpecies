@@ -3,8 +3,6 @@ def get_multiqc_input(wildcards):
 
 rule multiqc:
 	input:
-		#expand("fastp_output/{runSe}_se_fastp.json", runSe=samplesSe.index.get_level_values("run")),
-		#expand("fastp_output/{runPe}_pe_fastp.json", runPe=samplesPe.index.get_level_values("run")),
 		get_multiqc_input
 	output:
 		"{assembly}_multiqc_report.html"

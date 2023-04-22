@@ -8,7 +8,6 @@ rule gatk_combine_gvcfs:
 		calls = get_calls,
 		genome="../config/assemblies/{assembly}.fa"
 	output:
-		#temp("combinedCalls_{assembly}_{chromosome}.g.vcf.gz")
 		temp("{assembly}_{chromosome}.done")
 	params:
 		chromosome="{chromosome}"

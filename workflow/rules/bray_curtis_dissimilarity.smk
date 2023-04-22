@@ -16,10 +16,4 @@ rule bray_curtis_dissimilarity:
 	shell:
 		"""
 		Rscript scripts/pairwise-bray-curtis-dissimilarity.R {input} {output.dissim} {output.kmerMatrix} {threads} &> {log}
-		
-		# merge output of R script into one file
-		#cat *_{output.dissim} > {output.dissim}
-
-		# remove intermediate files
-		#rm *_{output.dissim}
 		"""

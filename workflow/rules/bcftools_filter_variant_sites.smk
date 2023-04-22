@@ -1,8 +1,3 @@
-#def get_avg_dp(wildcards):
-#        avgDP = samples.loc[samples["genome"] == wildcards.assembly, "avgDP"]
-#        avgDP = avgDP[0]
-#        return int(avgDP)
-
 rule bcftools_filter_variant_sites:
 	input:
 		"annotated_variant_{assembly}_{chromosome}.vcf.gz"
@@ -21,20 +16,11 @@ rule bcftools_filter_variant_sites:
 	shell:
 		"""
 		# filter variants
-		#vcftools --gzvcf {input} \
-		#	--remove-filtered-all \
-		#	--min-meanDP 10 \
-		#	--max-meanDP 75 \
-		#	--max-missing 0.8 \
-		#	--recode \
-		#	--recode-INFO-all \
-		#	--stdout | bgzip -c > {output}
-
 		bcftools view --max-alleles 2 --exclude-types indels -i 'FILTER="PASS" && F_MISSING<0.2 && MAX(FORMAT/DP)>=5' -o {output} -O z {input}
 
 		# index filtered variants
 		tabix {output}
 
 		# remove temporary index
-		# rm {input}.tbi
+		rm {input}.tbi
 		"""

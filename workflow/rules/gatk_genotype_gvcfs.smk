@@ -1,7 +1,6 @@
 # need to split over multiple chromsomes
 rule gatk_genotype_gvcfs:
 	input:
-		#allCalls="combinedCalls_{assembly}_{chromosome}.g.vcf.gz",
 		done="{assembly}_{chromosome}.done",
 		genome="../config/assemblies/{assembly}.fa"
 	output:

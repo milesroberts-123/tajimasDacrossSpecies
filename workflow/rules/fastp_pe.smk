@@ -12,8 +12,6 @@ rule fastp_pe:
 	resources:
 		mem_mb_per_cpu=5000
 	params:
-		#qualityScore=20,
-		#minReadLength=30
 		qualityScore=config["qualityScore"],
 		minReadLength=config["minReadLength"]
 	log:

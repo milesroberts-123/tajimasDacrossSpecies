@@ -8,7 +8,6 @@ rule build_coding_kmer_database:
 		"logs/build_coding_kmer_database/{assembly}.log"
 	threads: 4
 	params:
-		#kmerLength=30,
 		kmerLength=config["kmerLength"],
 		outputPrefix="{assembly}_codingKmerDatabase"
 	resources:
@@ -26,15 +25,6 @@ rule build_coding_kmer_database:
 		# -cs needs to be 2, because a value of 1 is not supported in the conda environment for some reason
 		kmc -k{params.kmerLength} -m16 -t{threads} -ci1 -cs2 -fm {input} {params.outputPrefix} tmp_{params.outputPrefix}
 
-		# dump kmers to text file
-		# kmc_tools transform {params.outputPrefix} dump tmp_{output}
-
-		# remove first column from text file
-		# cut -f1 tmp_{output} | sort > {output}
-
 		# remove intermediate files
-		# rm tmp_{output}
 		rm -r tmp_{params.outputPrefix}
-		#rm {params.outputPrefix}.kmc_pre
-		#rm {params.outputPrefix}.kmc_suf
 		"""

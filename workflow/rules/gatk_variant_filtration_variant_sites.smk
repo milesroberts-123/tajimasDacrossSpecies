@@ -43,5 +43,5 @@ rule gatk_variant_filtration_variant_sites:
 			--filter-expression "ReadPosRankSum < -8.0" &> {log}
 		
 		# remove temp index
-		# rm {input.variantSites}.tbi
+		rm {input.variantSites}.tbi
 		"""

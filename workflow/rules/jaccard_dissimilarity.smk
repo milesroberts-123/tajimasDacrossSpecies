@@ -7,7 +7,6 @@ rule jaccard_dissimilarity:
 	log:
 		"logs/jaccard_dissimilarity/{assembly}.log"
 	params:
-		#countThresh=5 # mark a k-mer as present if it has a count equal to or greater than this threshold
 		countThresh = config["countThresh"]
 	threads: 4
 	resources:
@@ -19,10 +18,4 @@ rule jaccard_dissimilarity:
 	shell:
 		"""
 		Rscript scripts/pairwise-jaccard-dissimilarity.R {input} {output.dissim} {output.kmerMatrix} {threads} {params.countThresh} &> {log}
-		
-		# merge output of R script into one file
-		#cat *_{output.dissim} > {output.dissim}
-
-		# remove intermediate files
-		#rm *_{output.dissim}
 		"""

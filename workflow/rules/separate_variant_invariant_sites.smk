@@ -16,18 +16,10 @@ rule separate_variant_invariant_sites:
 	shell:
 		"""
 		# invariant sites
-		#vcftools --gzvcf {input} \
-		#	--max-maf 0 \
-		#	--recode --stdout | bgzip -c > {output.invariantSites}
-
 		bcftools filter -e 'AC > 0' -o {output.invariantSites} -O z {input}
 		tabix {output.invariantSites} # index sites
 		
 		# variant sites
-		#vcftools --gzvcf {input} \
-		#	--mac 1 \
-		#	--recode --stdout | bgzip -c > {output.variantSites}
-
 		bcftools filter -i 'AC > 0' -o {output.variantSites} -O z {input}
 		tabix {output.variantSites} # index sites
 		
