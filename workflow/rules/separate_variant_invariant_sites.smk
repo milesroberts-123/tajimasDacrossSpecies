@@ -17,11 +17,11 @@ rule separate_variant_invariant_sites:
 		"""
 		# invariant sites
 		bcftools filter -e 'AC > 0' -o {output.invariantSites} -O z {input}
-		tabix {output.invariantSites} # index sites
+		tabix -f {output.invariantSites} # index sites
 		
 		# variant sites
 		bcftools filter -i 'AC > 0' -o {output.variantSites} -O z {input}
-		tabix {output.variantSites} # index sites
+		tabix -f {output.variantSites} # index sites
 		
 		# remove temporary indices
 		rm {input}.tbi

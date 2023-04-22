@@ -19,7 +19,7 @@ rule bcftools_filter_variant_sites:
 		bcftools view --max-alleles 2 --exclude-types indels -i 'FILTER="PASS" && F_MISSING<0.2 && MAX(FORMAT/DP)>=5' -o {output} -O z {input}
 
 		# index filtered variants
-		tabix {output}
+		tabix -f {output}
 
 		# remove temporary index
 		rm {input}.tbi

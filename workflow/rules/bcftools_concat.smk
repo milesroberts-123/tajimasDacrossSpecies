@@ -9,19 +9,21 @@ rule bcftools_concat:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000
+	priority: 50
 	conda:
 		"../envs/bcftools.yml"
 	envmodules:
 		"GCC/10.2.0 BCFtools/1.11"	
 	shell:
 		"""
+		# concatenate variant and invariant sites
 		bcftools concat \
 			--allow-overlaps \
 			{input} \
 			-O z -o {output} &> {log}
 
 		# index concat file
-		tabix {output}
+		tabix -f {output}
 
 		# remove temporary index
 		rm filtered_variant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi

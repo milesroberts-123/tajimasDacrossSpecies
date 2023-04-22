@@ -19,7 +19,7 @@ rule bcftools_filter_invariant_sites:
 		bcftools filter -i 'FILTER="PASS"' -o {output} -O z {input}
 		
 		# index filtered variants
-		tabix {output}
+		tabix -f {output}
 
 		# remove temporary index
 		rm {input}.tbi

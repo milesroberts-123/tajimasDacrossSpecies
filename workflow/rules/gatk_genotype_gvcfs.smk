@@ -10,6 +10,7 @@ rule gatk_genotype_gvcfs:
 	threads: 1
 	resources:
 		mem_mb_per_cpu=50000
+	priority: 50
 	conda:
 		"../envs/gatk.yml"
 	envmodules:

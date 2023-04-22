@@ -207,9 +207,7 @@ For each domesticated species in our dataset, we looked at a wild relative to es
 
 ## Omitted transcripts
 
-For some species, specific transcripts needed to be ommitteed because exons were on differing strands. This would make `degenotate` throw an error:
-
-*Cucurbita pepo*: rna-CupepMp02 and rna-CupepMp06
+For some species, specific transcripts need to be ommitted because exons are on differing strands. I think this arises as an error during annotation. This used to make `degenotate` throw an error. However, I reached out to the authors of degenotate [here](https://github.com/harvardinformatics/degenotate/issues/30) and got them to turn this error into a warning where problematic transcripts are automatically dropped.
 
 # To do
 
