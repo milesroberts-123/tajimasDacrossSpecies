@@ -200,6 +200,8 @@ For some species, specific transcripts need to be ommitted because exons are on 
 
 - [x] Give rules that decrease the total number of files and/or memory higher priority
 
+- [x] Write rule to dynamically allocate memory based on input size, thread count, and attempt 
+
 - [ ] Create a test dataset to store on github so people can verify my analyses without performing the whole workflow
 
 - [ ] add validation schema for sample metadata and config file to Snakefile
