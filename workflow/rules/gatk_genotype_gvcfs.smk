@@ -6,6 +6,8 @@ rule gatk_genotype_gvcfs:
 	output:
 		vcf=temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz"),
 		tbi=temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz.tbi")
+	params:
+		chromosome="{chromosome}"
 	log:
 		"logs/gatk_genotype_gvcfs/{assembly}_{chromosome}.log"
 	threads: 1
@@ -21,6 +23,7 @@ rule gatk_genotype_gvcfs:
 			-R {input.genome} \
 			-V gendb://{wildcards.assembly}_{wildcards.chromosome}_database \
 			--include-non-variant-sites \
+			-L {params.chromosome} \
 			-O {output.vcf} &> {log}
 		
 		# remove genomics database afterwards
