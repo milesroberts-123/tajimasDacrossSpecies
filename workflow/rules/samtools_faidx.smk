@@ -3,7 +3,6 @@ rule samtools_faidx:
 		"../config/assemblies/{assembly}.fa"
 	output:
 		index="../config/assemblies/{assembly}.fa.fai",
-		#genomeFile="../config/assemblies/{assembly}.txt"
 	log:
 		"logs/samtools_faidx/{assembly}.log"
 	threads: 1
@@ -15,6 +14,4 @@ rule samtools_faidx:
 		"""
 		# index genome
 		samtools faidx {input} &> {log}
-		# create genome file for bedtools
-		#awk -v OFS='\t' {{'print $1,$2'}} {output.index} > {output.genomeFile}
 		"""
