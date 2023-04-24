@@ -9,7 +9,7 @@ rule gatk_genotype_gvcfs:
 		"logs/gatk_genotype_gvcfs/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=50000
+		mem_mb_per_cpu=40000
 	priority: 50
 	conda:
 		"../envs/gatk.yml"
@@ -21,6 +21,7 @@ rule gatk_genotype_gvcfs:
 		gatk --java-options "-Xmx32g" GenotypeGVCFs \
 			-R {input.genome} \
 			-V gendb://{wildcards.assembly}_{wildcards.chromosome}_database \
+			--include-non-variant-sites \
 			-O {output} &> {log}
 		
 		# remove genomics database afterwards
