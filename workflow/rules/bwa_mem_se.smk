@@ -26,8 +26,6 @@ rule bwa_mem_se:
 		mem_mb_per_cpu=2000
 	conda:
 		"../envs/bwa_mem.yml"
-	envmodules:
-		"GCC/5.4.0-2.26 OpenMPI/1.10.3 BWA/0.7.17 GCCcore/9.3.0 SAMtools/1.11"
 	shell:
 		"(bwa mem -R '{params.rg}' -t {threads} {input.genome} {input.read} | "
 		"samtools view -Sb - > {output}) 2> {log}"

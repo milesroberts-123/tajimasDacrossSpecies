@@ -42,8 +42,6 @@ rule gatk_haplotype_caller:
 		ploidy=get_ploidy,
 		het = config["het"],
 		qualityScore = config["qualityScore"]
-	envmodules:
-		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	threads: 4
 	priority: 25
 	resources:

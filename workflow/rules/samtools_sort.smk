@@ -8,8 +8,6 @@ rule samtools_sort:
 		mem_mb_per_cpu=8000
 	conda:
 		"../envs/samtools.yml"
-	envmodules:
-		"GCC/9.3.0 SAMtools/1.11"
 	shell:
 		"samtools sort -T sorted_reads/{wildcards.sample} "
 		"-O bam {input} > {output}"

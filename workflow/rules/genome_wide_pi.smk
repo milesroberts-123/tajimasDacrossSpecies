@@ -14,8 +14,6 @@ rule genome_wide_pi:
 		mem_mb_per_cpu=128000
 	conda:
 		"../envs/R.yml"
-	envmodules:
-		"iccifort/2019.5.281 impi/2018.5.288 R/4.0.0"
 	shell:
 		"""
 		Rscript scripts/genome-wide-pi.R {output} {threads} {input.genos} &> {log}

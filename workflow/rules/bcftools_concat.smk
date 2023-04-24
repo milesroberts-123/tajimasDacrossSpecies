@@ -1,9 +1,12 @@
 rule bcftools_concat:
 	input:
-		"filtered_variant_{assembly}_{chromosome}.vcf.gz",
-		"filtered_invariant_{assembly}_{chromosome}.vcf.gz"
+		varvcf="filtered_variant_{assembly}_{chromosome}.vcf.gz",
+		vartbi="filtered_variant_{assembly}_{chromosome}.vcf.gz.tbi",
+		invarvcf="filtered_invariant_{assembly}_{chromosome}.vcf.gz",
+		invartbi="filtered_invariant_{assembly}_{chromosome}.vcf.gz.tbi"
 	output:
-		"filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz"
+		vcf="filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz",
+		tbi="filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz.tbi"
 	log:
 		"logs/bcftools_concat/{assembly}_{chromosome}.log"
 	threads: 1
@@ -11,21 +14,15 @@ rule bcftools_concat:
 		mem_mb_per_cpu=16000
 	priority: 50
 	conda:
-		"../envs/bcftools.yml"
-	envmodules:
-		"GCC/10.2.0 BCFtools/1.11"	
+		"../envs/gatk.yml"
 	shell:
 		"""
 		# concatenate variant and invariant sites
 		bcftools concat \
 			--allow-overlaps \
-			{input} \
-			-O z -o {output} &> {log}
+			{input.varvcf} {input.invarvcf} \
+			-O z -o {output.vcf} &> {log}
 
 		# index concat file
-		tabix -f {output}
-
-		# remove temporary index
-		rm filtered_variant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
-		rm filtered_invariant_{wildcards.assembly}_{wildcards.chromosome}.vcf.gz.tbi
+		tabix -f {output.vcf}
 		"""

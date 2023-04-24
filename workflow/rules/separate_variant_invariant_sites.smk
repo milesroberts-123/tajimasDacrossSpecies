@@ -1,28 +1,26 @@
 rule separate_variant_invariant_sites:
 	input:
-		"jointGenotypes_{assembly}_{chromosome}.vcf.gz"
+		vcf="jointGenotypes_{assembly}_{chromosome}.vcf.gz",
+		tbi="jointGenotypes_{assembly}_{chromosome}.vcf.gz.tbi"
 	output:
-		invariantSites=temp("invariant_{assembly}_{chromosome}.vcf.gz"),
-		variantSites=temp("variant_{assembly}_{chromosome}.vcf.gz")
+		invariantSitesVCF=temp("invariant_{assembly}_{chromosome}.vcf.gz"),
+		invariantSitesTBI=temp("invariant_{assembly}_{chromosome}.vcf.gz.tbi"),
+		variantSitesVCF=temp("variant_{assembly}_{chromosome}.vcf.gz"),
+		variantSitesTBI=temp("variant_{assembly}_{chromosome}.vcf.gz.tbi")
 	log:
 		"logs/separate_variant_invariant_sites/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=32000
 	conda:
-		"../envs/bcftools.yml"
-	envmodules:
-		"GCC/7.3.0-2.30 OpenMPI/3.1.1 VCFtools/0.1.15-Perl-5.28.0"
+		"../envs/gatk.yml"
 	shell:
 		"""
 		# invariant sites
-		bcftools filter -e 'AC > 0' -o {output.invariantSites} -O z {input}
-		tabix -f {output.invariantSites} # index sites
+		bcftools filter -e 'AC > 0' -o {output.invariantSites} -O z {input.vcf}
+		tabix -f {output.invariantSitesVCF} # index sites
 		
 		# variant sites
-		bcftools filter -i 'AC > 0' -o {output.variantSites} -O z {input}
-		tabix -f {output.variantSites} # index sites
-		
-		# remove temporary indices
-		rm {input}.tbi
+		bcftools filter -i 'AC > 0' -o {output.variantSites} -O z {input.vcf}
+		tabix -f {output.variantSitesVCF} # index sites
 		"""

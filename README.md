@@ -202,6 +202,8 @@ For some species, specific transcripts need to be ommitted because exons are on 
 
 - [x] Write rule to dynamically allocate memory based on input size, thread count, and attempt 
 
+- [x] Remove environment modules
+
 - [ ] Create a test dataset to store on github so people can verify my analyses without performing the whole workflow
 
 - [ ] add validation schema for sample metadata and config file to Snakefile
@@ -220,7 +222,7 @@ For some species, specific transcripts need to be ommitted because exons are on 
 
 - [x] Define workflow parameters in a yaml file
 
-- [ ] Define tabix-indexed VCF files as inputs and outputs of rules
+- [x] Define tabix-indexed VCF files as inputs and outputs of rules
 
 ## Population size estimation
 

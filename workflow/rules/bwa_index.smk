@@ -14,7 +14,5 @@ rule bwa_index:
 		mem_mb_per_cpu=8000
 	conda:
 		"../envs/bwa_mem.yml"
-	envmodules:
-		"GCC/5.4.0-2.26 OpenMPI/1.10.3 BWA/0.7.17"
 	shell:
 		"bwa index {input} &> {log}"

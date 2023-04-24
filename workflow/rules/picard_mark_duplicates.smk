@@ -4,8 +4,6 @@ rule picard_mark_duplicates:
 	output:
 		markedDups=temp("sorted_marked_reads/{sample}.bam"),
 		dupMetrics="markedDups/{sample}.txt"
-	envmodules:
-		"picard/2.22.1-Java-11"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=32000

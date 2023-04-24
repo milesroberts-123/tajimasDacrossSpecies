@@ -14,8 +14,6 @@ rule multiqc:
 	priority: 50
 	conda:
 		"../envs/multiqc.yml"
-	envmodules:
-		"GCC/7.3.0-2.30 OpenMPI/3.1.1 MultiQC/1.7-Python-3.6.6"
 	shell:
 		"""
 		multiqc -f --filename {output} {input} &> {log}

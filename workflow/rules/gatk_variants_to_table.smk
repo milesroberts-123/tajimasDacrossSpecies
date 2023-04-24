@@ -1,6 +1,7 @@
 rule gatk_variants_to_table:
 	input:
-		"filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz"
+		vcf="filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz",
+		tbi="filtered_variantAndInvariant_{assembly}_{chromosome}.vcf.gz.tbi"
 	output:
 		"filtered_variantAndInvariant_{assembly}_{chromosome}.table",
 	log:
@@ -12,5 +13,5 @@ rule gatk_variants_to_table:
 		"../envs/gatk.yml"
 	shell:
 		"""
-		gatk VariantsToTable -V {input} -F CHROM -F POS -F DP -F AN -F AC -O {output}
+		gatk VariantsToTable -V {input.vcf} -F CHROM -F POS -F DP -F AN -F AC -O {output}
 		"""

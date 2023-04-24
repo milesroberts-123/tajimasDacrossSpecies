@@ -3,8 +3,6 @@ rule picard_create_sequence_dictionary:
 		"../config/assemblies/{assembly}.fa"
 	output:
 		"../config/assemblies/{assembly}.dict"
-	envmodules:
-		"picard/2.22.1-Java-11"
 	threads: 1
 	resources:
 		mem_mb_per_cpu=16000

@@ -4,7 +4,8 @@ rule gatk_genotype_gvcfs:
 		done="{assembly}_{chromosome}.done",
 		genome="../config/assemblies/{assembly}.fa"
 	output:
-		temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz")
+		vcf=temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz"),
+		tbi=temp("jointGenotypes_{assembly}_{chromosome}.vcf.gz.tbi")
 	log:
 		"logs/gatk_genotype_gvcfs/{assembly}_{chromosome}.log"
 	threads: 1
@@ -13,8 +14,6 @@ rule gatk_genotype_gvcfs:
 	priority: 50
 	conda:
 		"../envs/gatk.yml"
-	envmodules:
-		"GCC/7.3.0-2.30 OpenMPI/3.1.1 GATK/4.1.4.1-Python-3.6.6"
 	shell:
 		"""
 		# using genomics database as input
@@ -22,7 +21,7 @@ rule gatk_genotype_gvcfs:
 			-R {input.genome} \
 			-V gendb://{wildcards.assembly}_{wildcards.chromosome}_database \
 			--include-non-variant-sites \
-			-O {output} &> {log}
+			-O {output.vcf} &> {log}
 		
 		# remove genomics database afterwards
 		rm -r {wildcards.assembly}_{wildcards.chromosome}_database/
