@@ -2,7 +2,7 @@ rule samtools_index:
 	input:
 		"sorted_marked_reads/{sample}.bam"
 	output:
-		"sorted_marked_reads/{sample}.bam.bai"
+		temp("sorted_marked_reads/{sample}.bam.bai")
 	log:
 		"logs/samtools_index/{sample}.log"
 	threads: 1

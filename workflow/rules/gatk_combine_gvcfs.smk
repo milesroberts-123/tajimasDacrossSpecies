@@ -1,11 +1,15 @@
 def get_calls(wildcards):
 	return ["calls/" + x + "_se.g.vcf.gz" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])] + ["calls/" + x + "_pe.g.vcf.gz" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])]
 
+def get_tbis(wildcards):
+	return ["calls/" + x + "_se.g.vcf.gz.tbi" for x in set(samplesSe.loc[samplesSe["genome"] == wildcards.assembly, "replicate"])] + ["calls/" + x + "_pe.g.vcf.gz.tbi" for x in set(samplesPe.loc[samplesPe["genome"] == wildcards.assembly, "replicate"])]
+
 # need to somehow split rule over multiple chromsomes
 # in shell command, use bash brace expansion to add a -V flag to each input file
 rule gatk_combine_gvcfs:
 	input:
 		calls = get_calls,
+		tbis = get_tbis,
 		genome="../config/assemblies/{assembly}.fa"
 	output:
 		temp("{assembly}_{chromosome}.done")

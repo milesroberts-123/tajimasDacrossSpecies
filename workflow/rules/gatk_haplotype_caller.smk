@@ -37,7 +37,8 @@ rule gatk_haplotype_caller:
 		reads="sorted_marked_reads/{sample}.bam",
 		readsIndex="sorted_marked_reads/{sample}.bam.bai",
 	output:
-		temp("calls/{sample}.g.vcf.gz")
+		vcf=temp("calls/{sample}.g.vcf.gz"),
+		tbi=temp("calls/{sample}.g.vcf.gz.tbi")
 	params:
 		ploidy=get_ploidy,
 		het = config["het"],
@@ -55,7 +56,7 @@ rule gatk_haplotype_caller:
 		gatk HaplotypeCaller \
 			-R {input.genome} \
 			-I {input.reads} \
-			-O {output} \
+			-O {output.vcf} \
 			-L {input.regions} \
 			-ERC GVCF \
 			--native-pair-hmm-threads {threads} \
