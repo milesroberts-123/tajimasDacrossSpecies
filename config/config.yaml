@@ -11,11 +11,18 @@ countThresh: 5
 # The number of k-mers exceeding the count threshold that are randomly sampled for diversity estimation
 kmersKept: 10000000
 
-# The minimum quality score of a base pair within a read to not get filtered out
+# The minimum quality score of a base pair within a read to not get filtered out during read trimming or genotype calling
 qualityScore: 20
 
 # The minimum length of a read in basepairs to avoid getting filtered out
+# This should ideally have the same value as kmerLength because reads shorter than the k-mer length won't contribute to k-mer counts
 minReadLength: 30
 
 # The expected level of heterozygosity passed to GATK
 het: 0.001
+
+# The number of species occurences on a continent required to attempt drawing an alpha hull
+occCountThreshold: 20
+
+# Alpha value for drawing alpha hull around species occurences
+alpha: 200

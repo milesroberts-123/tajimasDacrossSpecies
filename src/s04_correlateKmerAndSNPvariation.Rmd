@@ -13,6 +13,7 @@ rm(list = ls())
 library(ggplot2)
 library(caper)
 library(stringr)
+library(data.table)
 
 today = Sys.Date()
 ```
@@ -26,13 +27,18 @@ pi = list.files("../results/2023-03-26/genome-wide-pi", full.names = T)
 bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names = T)
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
+# for now, remove species where invariant sites are not properly called
+#pi = pi[c(-14:-15, -17:-19, -21)]
+#jac = jac[c(-14:-15, -17:-19, -21, -23)]
+#bcd = bcd[c(-14:-15, -17:-19, -21, -23)]
+
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
 
 # Load input files
-pi = lapply(pi, read.table, header = T)
-bcd = lapply(bcd, read.table, header = F)
-jac = lapply(jac, read.table, header = F)
+pi = lapply(pi, fread, header = T, data.table = F)
+bcd = lapply(bcd, fread, header = F, data.table = F)
+jac = lapply(jac, fread, header = F, data.table = F)
 
 # calculate mean pairwise dissimilarity
 bcdMean = lapply(bcd, function(x){mean(x[,2])})
@@ -41,20 +47,34 @@ jacMean = lapply(jac, function(x){mean(x[,2])})
 # calculate average number of k-mers included in union
 unionMean = lapply(jac, function(x){mean(x[,4])})
 
-# cbind all diversity data into one dataframe per species
-alldiv = Map(cbind, pi, bcdMean, jacMean, unionMean)
+# calculate number of individuals sampled for each dataset
+# You get this equation by rewriting the formula for the number of pairwise comparisons (n^2 - n)/2 = N as a polynomial and applying the quadratic formula
+backCalcN = function(x){
+  sqrt(1/4 + 2*nrow(x)) + 1/2
+}
 
-# A. thaliana has extra data, remove for now
-alldiv[[7]] = alldiv[[7]][,c(1, 3:6, 9:11)]
+nidv = lapply(bcd, backCalcN)
+
+# cbind all diversity data into one dataframe per species
+alldiv = Map(cbind, pi, bcdMean, jacMean, unionMean, nidv)
+
+# Some species have extra data, remove for now
+speciesWithExtraData = which(unlist(lapply(alldiv, ncol)) == 12)
+for(i in speciesWithExtraData){
+  alldiv[[i]] = alldiv[[i]][,c(1, 3:6, 9:12)]
+}
 
 # rbind all species data into one dataframe
-alldiv = lapply(alldiv, setNames, c("h", "ntotal", "nvariant", "ninvariant", "pi", "bcd", "jac", "umean"))
+alldiv = lapply(alldiv, setNames, c("h", "ntotal", "nvariant", "ninvariant", "pi", "bcd", "jac", "umean", "nidv"))
 
 alldiv = do.call(rbind, alldiv)
 
 # add species names
 alldiv$species = species
 alldiv$species = str_to_sentence(gsub("_", " ", alldiv$species))
+
+# For now, remove species where invariant sites were not properly called
+alldiv = alldiv[(alldiv$ninvariant > 0),]
 
 # add coverage covariate
 # coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
@@ -71,27 +91,45 @@ alldiv$species = str_to_sentence(gsub("_", " ", alldiv$species))
 # load range data
 areas = list.files("../results/2023-03-26/ranges/areas", full.names = T)
 
+# extract species names
 areas_species = gsub("_areas.txt", "", gsub("../results/2023-03-26/ranges/areas/", "", areas))
 areas_species = str_to_sentence(gsub("_", " ", areas_species))
 
+# load data
 areas = lapply(areas, read.table, header = T, sep = "\t")
+
+# add names to list
+names(areas) = areas_species
 ```
 
 ## remove areas outside of native range 
 ```{r}
 # Refer to plants of the world online for native range maps
+# powo.science.kew.org
 
 # Amaranthus hybridus native to only North and South America
-areas[[2]] = areas[[2]][c(4,6),]
+areas$`Amaranthus hypochondriacus` = areas$`Amaranthus hypochondriacus`[c(4,6),]
 
 # Arabidopsis thaliana is only native to Europe, Asia, and Africa
-areas[[7]] = areas[[7]][2:4,]
-
-# Nicotiana glauca only native to South America
-areas[[14]] = areas[[14]][2,]
+areas$`Arabidopsis thaliana` = areas$`Arabidopsis thaliana`[2:4,]
 
 # Arachis glabrata is native to Brazil, remove North America
-areas[[10]] = areas[[10]][1,]
+areas$`Arachis hypogaea` = areas$`Arachis hypogaea`[1,]
+
+# Beta vulgaris subsp. vulgaris is native to only Europe and Africa
+areas$`Beta vulgaris` = areas$`Beta vulgaris`[1:2,]
+
+# Brachypodium distachyon is native to Europe, Asia, Africa
+areas$`Brachypodium distachyon` = areas$`Brachypodium distachyon`[3:5,]
+
+# Buddleja alternifolia is native to Asia
+areas$`Buddleja alternifolia` = areas$`Buddleja alternifolia`[2,]
+
+# Cucurbita palmata is only native to North America
+areas$`Cucurbita pepo` = areas$`Cucurbita pepo`[1,]
+
+# Nicotiana glauca only native to South America
+areas$`Nicotiana tabacum` = areas$`Nicotiana tabacum`[2,]
 ```
 
 ## Merge range data with diversity data
@@ -157,24 +195,6 @@ cor(alldiv$pi, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.o
 cor(alldiv$bcd, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$jac, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 
-ggplot(alldiv, aes(x = log10(rangeArea), y = log10(pi), label = species)) +
-  geom_point() +
-  geom_text(hjust = 0, vjust = 0) +
-  theme_classic() +
-  labs(x = "log10(Range area in square km)", y = "log10(Nucleotide diversity)")
-
-ggplot(alldiv, aes(x = log10(rangeArea), y = bcd, label = species)) +
-  geom_point() +
-  geom_text(hjust = 0, vjust = 0) + 
-  theme_classic() +
-  labs(x = "log10(Range area in square km)", y = "Bray-Curtis Dissimilarity")
-
-ggplot(alldiv, aes(x = log10(rangeArea), y = jac, label = species)) +
-  geom_point() +
-  geom_text(hjust = 0, vjust = 0) + 
-  theme_classic() +
-  labs(x = "log10(Range area in square km)", y = "Jaccard Dissimilarity")
-
 # compare effects with phylogeny vs without phylogeny
 lm(log10(rangeArea) ~ log10(pi), alldiv)
 lm(log10(rangeArea) ~ bcd, alldiv)
@@ -190,7 +210,41 @@ summary(mod_bcd)
 
 mod_jac = pgls(log10(rangeArea) ~ scale(pi) + scale(jac), compdata)
 summary(mod_jac)
+
+# control for the number of individuals sequenced
+mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv), compdata)
+summary(mod_bcd)
+
+mod_jac = pgls(log10(rangeArea) ~ scale(pi) + scale(jac) + scale(nidv), compdata)
+summary(mod_jac)
   
 # try removing outliers
 # compdataNoOut = subset.comparative.data(compdata, subset =  !(species %in% c("Actinidia chinensis", "Camelina sativa")))
+```
+
+# Final plots
+```{r}
+ggplot(alldiv, aes(x = log10(rangeArea), y = pi, label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Range area in square km)", y = "Nucleotide diversity")
+
+ggsave("rangeVsPi_2023-04-25.png", width = 7, height = 7, unit = "in", scale = 0.5)
+
+ggplot(alldiv, aes(x = log10(rangeArea), y = scale(bcd), label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) + 
+  theme_classic() +
+  xlim(5.5, 8.5) +
+  labs(x = "log10(Range area in square km)", y = "Scaled Bray-Curtis dissimilarity")
+ggsave("rangeVsBray-Curtis_2023-04-25.png", width = 7, height = 7, unit = "in", scale = 0.5)
+
+ggplot(alldiv, aes(x = log10(rangeArea), y = scale(jac), label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) + 
+  theme_classic() +
+  xlim(5.5, 8.5) +
+  labs(x = "log10(Range area in square km)", y = "Scaled Bray-Curtis dissimilarity")
+ggsave("rangeVsJaccard_2023-04-25.png", width = 7, height = 7, unit = "in", scale = 0.5)
 ```

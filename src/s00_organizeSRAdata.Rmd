@@ -637,7 +637,7 @@ coffea_arabica = fread("../workflow/data/SRArunInfo/SraRunInfo_coffea_arabica_PR
 
 # add reads to growing list
 # Use experiment label because biosample labels are not unique
-allReads = rbind(allReads, data.frame(run = coffea_arabica[,"Run"], replicate = coffea_arabica[,"Experiment"], layout = "PE", genome = "coffea_arabica", ploidy = 4, taxonKeys = "2895430"))
+allReads = rbind(allReads, data.frame(run = coffea_arabica[,"Run"], replicate = coffea_arabica[,"Experiment"], layout = "PE", genome = "coffea_arabica", ploidy = 4, taxonKeys = "7994689"))
 ```
 
 ## Coffea canephora

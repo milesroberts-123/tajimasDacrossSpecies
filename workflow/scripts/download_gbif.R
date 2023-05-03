@@ -119,7 +119,7 @@ search_gbif = function(species_string, taxon_keys, gbif_user, gbif_email, gbif_p
 	
 	# Getting list of issues to check for
 	print("Filtering records with these issue codes:")
-	issues_to_check = sort(gbif_issues()[c(-3,-10, -15:-23, -48, -52:-60),2])
+	issues_to_check = sort(gbif_issues()[c(-3,-10, -12, -14:-23, -48, -52:-60),2])
 	print(issues_to_check)
 
 	# check for specific issue codes and remove any records with at least one of said codes
@@ -405,8 +405,8 @@ main = function(package_list, species_string, taxon_keys, output_plot_name, outp
 
 	# add jitter to datapoints to avoid collapsed triangles, which are caused by points being collinear
 	print("Adding jitter to coordinates to avoid collapsed triangles...")
-	all_data$decimalLongitude = all_data$decimalLongitude + rnorm(sampleSize, mean = 0, sd = 1e-4)
-	all_data$decimalLatitude = all_data$decimalLatitude + rnorm(sampleSize, mean = 0, sd = 1e-4)
+	all_data$decimalLongitude = all_data$decimalLongitude + rnorm(sampleSize, mean = 0, sd = 1e-3)
+	all_data$decimalLatitude = all_data$decimalLatitude + rnorm(sampleSize, mean = 0, sd = 1e-3)
 
 	# sort data points
 	print("Sorting coordinates...")
