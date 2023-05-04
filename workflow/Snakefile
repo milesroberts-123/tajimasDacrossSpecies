@@ -32,9 +32,22 @@ wildcard_constraints:
 #	return workflow.use_conda
 
 # function to define memory limit
-# 2 GB per thread, but increase limit linearly if job fails
-#def get_mem_mb_per_cpu(wildcards, input, threads, attempt):
-#    return min(max(2*input.size_mb*attempt//threads, 1000), 256000)
+# start with 2xinput size, divided by number of threads
+# minimum 1G, max 128 G
+# increase limit linearly if job fails
+def get_mem_mb_per_cpu(wildcards, input, threads, attempt):
+	return min(max(2*input.size_mb*attempt//threads, 1000), 128000)
+
+# function to define wall time
+# if only a small amount of memory is needed, job will run quickly, so set a short wall time to decrease queue time
+def get_time(wildcards, input, threads, attempt):
+	memlimit = get_mem_mb_per_cpu(wildcards, input, threads, attempt)
+	if memlimit == 1000:
+		# 3 hours in minutes
+		return 180
+	else:
+		# one week in minutes
+		return 10080
 
 rule all:
 	input:

@@ -959,7 +959,7 @@ helianthus_annuus$layout[(helianthus_annuus$spots_with_mates > 0)] = "PE"
 helianthus_annuus$layout[(helianthus_annuus$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = helianthus_annuus[,"Run"], replicate = helianthus_annuus[,"BioSample"], layout = helianthus_annuus[,"layout"], genome = "helianthus_annuus", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = helianthus_annuus[,"Run"], replicate = helianthus_annuus[,"BioSample"], layout = helianthus_annuus[,"layout"], genome = "helianthus_annuus", ploidy = 2, taxonKeys = "3119206"))
 ```
 
 ## Heliosperma pusillum
@@ -972,7 +972,7 @@ unique(heliosperma_pusillum$ScientificName)
 heliosperma_pusillum = heliosperma_pusillum[(heliosperma_pusillum$ScientificName == "Heliosperma pusillum"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = heliosperma_pusillum[,"Run"], replicate = heliosperma_pusillum[,"BioSample"], layout = "SE", genome = "heliosperma_pusillum", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = heliosperma_pusillum[,"Run"], replicate = heliosperma_pusillum[,"BioSample"], layout = "SE", genome = "heliosperma_pusillum", ploidy = 2, taxonKeys = "7267415"))
 ```
 
 ## Hordeum vulgare
@@ -1055,7 +1055,7 @@ unique(lens_ervoides$ScientificName)
 lens_ervoides = lens_ervoides[(lens_ervoides$ScientificName == "Lens ervoides"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = lens_ervoides[,"Run"], replicate = lens_ervoides[,"BioSample"], layout = "SE", genome = "lens_ervoides", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = lens_ervoides[,"Run"], replicate = lens_ervoides[,"BioSample"], layout = "SE", genome = "lens_ervoides", ploidy = 2, taxonKeys = "5350011"))
 
 ```
 
@@ -1112,7 +1112,7 @@ length(unique(lupinus_angustifolius$Experiment))
 
 # add reads to growing list
 # Use experiment labels, because 51 biosamples doesn't match the 55 mentioned in the publication
-allReads = rbind(allReads, data.frame(run = lupinus_angustifolius[,"Run"], replicate = lupinus_angustifolius[,"Experiment"], layout = "PE", genome = "lupinus_angustifolius", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = lupinus_angustifolius[,"Run"], replicate = lupinus_angustifolius[,"Experiment"], layout = "PE", genome = "lupinus_angustifolius", ploidy = 2, taxonKeys = "2964374"))
 
 ```
 
@@ -1137,9 +1137,9 @@ malus_sylvestris = malus[(malus$ScientificName == "Malus sylvestris"),]
 malus_domestica = malus[(malus$ScientificName == "Malus domestica"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = malus_sylvestris[,"Run"], replicate = malus_sylvestris[,"BioSample"], layout = "PE", genome = "malus_sylvestris", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = malus_sylvestris[,"Run"], replicate = malus_sylvestris[,"BioSample"], layout = "PE", genome = "malus_sylvestris", ploidy = 2, taxonKeys = "3001509"))
 
-allReads = rbind(allReads, data.frame(run = malus_domestica[,"Run"], replicate = malus_domestica[,"BioSample"], layout = "PE", genome = "malus_domestica", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = malus_domestica[,"Run"], replicate = malus_domestica[,"BioSample"], layout = "PE", genome = "malus_domestica", ploidy = 2, taxonKeys = "3001162"))
 ```
 
 ## Mangifera indica
@@ -1148,7 +1148,7 @@ mangifera_indica = fread("../workflow/data/SRArunInfo/SraRunInfo_mangifera_indic
 
 mangifera_indica = mangifera_indica[(mangifera_indica$Platform == "ILLUMINA" & mangifera_indica$ScientificName == "Mangifera indica" & mangifera_indica$LibraryStrategy == "WGS"),]
 
-allReads = rbind(allReads, data.frame(run = mangifera_indica[,"Run"], replicate = mangifera_indica[,"BioSample"], layout = "PE", genome = "mangifera_indica", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = mangifera_indica[,"Run"], replicate = mangifera_indica[,"BioSample"], layout = "PE", genome = "mangifera_indica", ploidy = 2, taxonKeys = "3190640"))
 ```
 
 ## Manihot esculenta
@@ -1180,7 +1180,7 @@ manihot_esculenta$layout[(manihot_esculenta$spots_with_mates > 0)] = "PE"
 manihot_esculenta$layout[(manihot_esculenta$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = manihot_esculenta[,"Run"], replicate = manihot_esculenta[,"BioSample"], layout = manihot_esculenta[,"layout"], genome = "manihot_esculenta", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = manihot_esculenta[,"Run"], replicate = manihot_esculenta[,"BioSample"], layout = manihot_esculenta[,"layout"], genome = "manihot_esculenta", ploidy = 2, taxonKeys = "3060733"))
 ```
 
 
@@ -1209,7 +1209,7 @@ medicago_truncatula$layout[(medicago_truncatula$spots_with_mates > 0)] = "PE"
 medicago_truncatula$layout[(medicago_truncatula$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = medicago_truncatula[,"Run"], replicate = medicago_truncatula[,"BioSample"], layout = medicago_truncatula[,"layout"], genome = "medicago_truncatula", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = medicago_truncatula[,"Run"], replicate = medicago_truncatula[,"BioSample"], layout = medicago_truncatula[,"layout"], genome = "medicago_truncatula", ploidy = 2, taxonKeys = "2965201"))
 ```
 
 ## Mimulus guttatus
@@ -1242,7 +1242,7 @@ mimulus_guttatus$layout[(mimulus_guttatus$spots_with_mates > 0)] = "PE"
 mimulus_guttatus$layout[(mimulus_guttatus$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = mimulus_guttatus[,"Run"], replicate = mimulus_guttatus[,"BioSample"], layout = mimulus_guttatus[,"layout"], genome = "mimulus_guttatus", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = mimulus_guttatus[,"Run"], replicate = mimulus_guttatus[,"BioSample"], layout = mimulus_guttatus[,"layout"], genome = "mimulus_guttatus", ploidy = 2, taxonKeys = "7346090"))
 ```
 
 ## Miscanthus sinensis
@@ -2210,7 +2210,7 @@ length(unique(allReadsFinal$genome))
 ```
 
 # split data into batches
-```{r}
+```{r eval=FALSE, include=FALSE}
 sort(table(allReads$genome))
 
 # batch 1: 40 species with the fewest samples
@@ -2230,13 +2230,12 @@ sum(sort(table(allReads$genome))[41:55])
 # testSet = allReads[(allReads$genome %in% c("arabidopsis_halleri", "arabidopsis_lyrata", "arabidopsis_thaliana", "arabidopsis_suecica", "boechera_stricta", "brachypodium_distachyon", "brassica_oleracea", "brassica_rapa", "capsella_grandiflora", "capsella_rubella")),]
 # write.table(testSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
-write.table(allReads, file = "../config/samples.tsv", sep = "\t", quote = F, row.names = F)
+write.table(allReadsFinal, file = "../config/samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # write run numbers and metadata to workflow input
 # need to replace write path with "../workflow/data/samples_pe.tsv" when I'm ready
 #write.table(seReads, file = "samples_se.tsv", sep = "\t", quote = F, row.names = F)
 #write.table(allReads, file = "samples_pe.tsv", sep = "\t", quote = F, row.names = F)
-
 ```
 
 

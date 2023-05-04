@@ -11,7 +11,8 @@ rule separate_variant_invariant_sites:
 		"logs/separate_variant_invariant_sites/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=32000
+		mem_mb_per_cpu=get_mem_mb_per_cpu,
+		time=get_time
 	conda:
 		"../envs/gatk.yml"
 	shell:

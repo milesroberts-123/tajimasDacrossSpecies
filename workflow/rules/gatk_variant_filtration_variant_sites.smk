@@ -12,7 +12,8 @@ rule gatk_variant_filtration_variant_sites:
 		"logs/gatk_variant_filtration_variant_sites/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=get_mem_mb_per_cpu,
+		time=get_time
 	conda:
 		"../envs/gatk.yml"
 	shell:

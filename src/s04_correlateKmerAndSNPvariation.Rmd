@@ -184,6 +184,13 @@ ggplot(alldiv, aes(x = bcd)) +
   labs(x = "Bray-Curtis Dissimilarity")
 ```
 
+# drop outliers?
+```{r eval=FALSE, include=FALSE}
+compdata = subset(compdata, subset = pi > 1e-7)
+
+alldiv = alldiv[(alldiv$pi > 1e-7),]
+```
+
 # Confirmatory data analysis
 ```{r}
 # Does pi correlate with k-mer diversity?
@@ -224,27 +231,27 @@ summary(mod_jac)
 
 # Final plots
 ```{r}
-ggplot(alldiv, aes(x = log10(rangeArea), y = pi, label = species)) +
+ggplot(alldiv, aes(x = log10(rangeArea), y = log10(pi), label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
-  labs(x = "log10(Range area in square km)", y = "Nucleotide diversity")
+  labs(x = "log10(Range area in square km)", y = "log10(Nucleotide diversity)")
 
-ggsave("rangeVsPi_2023-04-25.png", width = 7, height = 7, unit = "in", scale = 0.5)
+ggsave(paste("rangeVsPi_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 
-ggplot(alldiv, aes(x = log10(rangeArea), y = scale(bcd), label = species)) +
+ggplot(alldiv, aes(x = log10(rangeArea), y = bcd, label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) + 
   theme_classic() +
   xlim(5.5, 8.5) +
-  labs(x = "log10(Range area in square km)", y = "Scaled Bray-Curtis dissimilarity")
-ggsave("rangeVsBray-Curtis_2023-04-25.png", width = 7, height = 7, unit = "in", scale = 0.5)
+  labs(x = "log10(Range area in square km)", y = "Bray-Curtis dissimilarity")
+ggsave(paste("rangeVsBray-Curtis_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 
-ggplot(alldiv, aes(x = log10(rangeArea), y = scale(jac), label = species)) +
+ggplot(alldiv, aes(x = log10(rangeArea), y = jac, label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) + 
   theme_classic() +
   xlim(5.5, 8.5) +
-  labs(x = "log10(Range area in square km)", y = "Scaled Bray-Curtis dissimilarity")
-ggsave("rangeVsJaccard_2023-04-25.png", width = 7, height = 7, unit = "in", scale = 0.5)
+  labs(x = "log10(Range area in square km)", y = "Jaccard dissimilarity")
+ggsave(paste("rangeVsJaccard_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 ```

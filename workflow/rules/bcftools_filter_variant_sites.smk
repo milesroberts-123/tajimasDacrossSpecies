@@ -10,7 +10,8 @@ rule bcftools_filter_variant_sites:
 	threads: 1
 	priority: 50
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=get_mem_mb_per_cpu,
+		time=get_time
 	conda:
 		"../envs/gatk.yml"
 	shell:

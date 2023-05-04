@@ -8,7 +8,8 @@ rule gatk_variants_to_table:
 		"logs/gatk_variants_to_table/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=get_mem_mb_per_cpu,
+		time=get_time
 	conda:
 		"../envs/gatk.yml"
 	shell:

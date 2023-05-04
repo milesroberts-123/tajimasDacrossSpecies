@@ -186,9 +186,21 @@ In other words, I think it would be okay to include different types of sequencin
 
 For each domesticated species in our dataset, we looked at a wild relative to estimate range size. The relative species has to be in the same genus as the domesticated species. When there are multiple wild relatives to choose from, we looked at the one with the most recorded occurences on GBIF
 
+Cases where I have both a domesticated species and it's wild relative in my dataset are interesting. I'll pair the wild relative's GBIF data with its nucleotide diversity data, and just choose a different wild relative to estimate range size in the domesticated species.
+
 ## Omitted transcripts
 
 For some species, specific transcripts need to be ommitted because exons are on differing strands. I think this arises as an error during annotation. This used to make `degenotate` throw an error. However, I reached out to the authors of degenotate [here](https://github.com/harvardinformatics/degenotate/issues/30) and got them to turn this error into a warning where problematic transcripts are automatically dropped.
+
+## plastid genomes
+
+I don't want to incorporate chloroplast and mitochondria variants in my anlayses because they have interesting modes of inheritance that probably have a big effect on nucleotide diversity. However, chloroplast and mitochondria variants are so hard to call, I probably won't find many of them and thus they probably won't affect my results too much.
+
+These are the species that have mitochondria and chloroplast calls thus far:
+
+* Arabidopsis thaliana 
+
+* Helianthus annuus
 
 # To do
 

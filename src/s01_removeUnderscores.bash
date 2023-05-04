@@ -2,7 +2,7 @@
 # conda init bash
 # conda activate seqkit
 
-for FILE in ../workflow/data/assemblies/*
+for FILE in ../config/assemblies/*
 do
 	echo Removing underscores in $FILE...
 	seqkit replace -p "_" -r "" $FILE > tmp.fa
@@ -10,7 +10,7 @@ do
 done
 
 # remove underscores in annotations
-for FILE in ../workflow/data/annotations/*
+for FILE in ../config/annotations/*
 do
 	echo Removing underscores in $FILE...
 	sed 's/_//g' $FILE > tmp.gff3
