@@ -111,7 +111,22 @@ This file is used to parallelize the GATK genotype GVCFs step in the workflow (s
 * chromosome: the name of the chromosome/scaffold in the associated fasta file
 
 **You must remove any underscores from chromosome/scaffold names for snakemake wildcards to work (e.g. scaffold_25 -> scaffold25)!** This name change should be reflected in `chromosomes.tsv`, the gff files, and the fasta files.
- 
+
+## workflow parameters
+
+To change the workflow parameters, alter the values in `config/config.yaml`
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| kmerLength | Length of k-mers to count | 30 |
+| countThresh | The minimum number of occurences any particular k-mer needs to avoid being filtered out | 5 |
+| kmersKept | The number of k-mers exceeding the count threshold that are randomly sampled for diversity estimation | 10000000 |
+| qualityScore | The minimum quality score of a base pair within a read to not get filtered out during read trimming or genotype calling | 20 |
+| minReadLength | The minimum length of a read in basepairs to avoid getting filtered out. This should ideally have the same value as kmerLength because reads shorter than the k-mer length won't contribute to k-mer counts | 30 |
+| het | The expected level of heterozygosity passed to GATK | 0.001 |
+| occCountThreshold | The number of species occurences on a continent required to attempt drawing an alpha hull | 20 |
+| alpha | Alpha value for drawing alpha hull around species occurences | 200 |
+
 # Notes
 
 ## Updating the repo

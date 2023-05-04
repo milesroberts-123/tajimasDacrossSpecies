@@ -6,7 +6,6 @@
 **/markedDups
 **/multiqc_report_data
 workflow/data/testDatasets/**
-
 **.vcf.gz
 **.vcf.gz.tbi
 **.fastq.gz
@@ -36,7 +35,7 @@ cbind.sh
 **.zip
 **.tex
 **.log
-
+**.tsv
 
 !speciesList.txt
 !panicum_halli_search.txt
