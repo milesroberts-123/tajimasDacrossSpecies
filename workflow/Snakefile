@@ -40,8 +40,8 @@ def get_mem_mb_per_cpu(wildcards, input, threads, attempt):
 
 # function to define wall time
 # if only a small amount of memory is needed, job will run quickly, so set a short wall time to decrease queue time
-def get_time(wildcards, input, threads, attempt):
-	memlimit = get_mem_mb_per_cpu(wildcards, input, threads, attempt)
+def get_time(wildcards, input, attempt):
+	memlimit = max(2*input.size_mb*attempt, 1000)
 	if memlimit == 1000:
 		# 3 hours in minutes
 		return 180
