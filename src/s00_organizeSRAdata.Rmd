@@ -324,7 +324,7 @@ allReads = rbind(allReads, data.frame(run = brachypodium_distachyon[,"Run"], rep
 brachypodium_sylvaticum = fread("../workflow/data/SRArunInfo/SraRunInfo_brachypodium_sylvaticum_PRJNA476867.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = brachypodium_sylvaticum[,"Run"], replicate = brachypodium_sylvaticum[,"BioSample"], layout = "SE", genome = "brachypodium_sylvaticum", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = brachypodium_sylvaticum[,"Run"], replicate = brachypodium_sylvaticum[,"BioSample"], layout = "SE", genome = "brachypodium_sylvaticum", ploidy = 2, taxonKeys = "5290146"))
 ```
 
 ## Brassica juncea
@@ -346,7 +346,7 @@ all(brassica_juncea$spots_with_mates > 0)
 brassica_juncea$layout = "PE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = brassica_juncea[,"Run"], replicate = brassica_juncea[,"BioSample"], layout = brassica_juncea[,"layout"], genome = "brassica_juncea", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = brassica_juncea[,"Run"], replicate = brassica_juncea[,"BioSample"], layout = brassica_juncea[,"layout"], genome = "brassica_juncea", ploidy = 4, taxonKeys = "3042624"))
 
 ```
 
@@ -366,7 +366,7 @@ all(brassica_napus$spots_with_mates > 0)
 
 # add reads to growing list
 # use experiment ID instead of BioSample ID because BioSample ID is not unique for each sample
-allReads = rbind(allReads, data.frame(run = brassica_napus[,"Run"], replicate = brassica_napus[,"Experiment"], layout = "PE", genome = "brassica_napus", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = brassica_napus[,"Run"], replicate = brassica_napus[,"Experiment"], layout = "PE", genome = "brassica_napus", ploidy = 4, taxonKeys = "3042551"))
 
 ```
 
@@ -1178,6 +1178,9 @@ any(duplicated(manihot_esculenta$BioSample))
 manihot_esculenta$layout = NA
 manihot_esculenta$layout[(manihot_esculenta$spots_with_mates > 0)] = "PE"
 manihot_esculenta$layout[(manihot_esculenta$spots_with_mates == 0)] = "SE"
+
+# some reads without mates are actually PE
+manihot_esculenta$layout[(manihot_esculenta$Run %in% c("SRR1261957", "SRR1250413", "SRR1261704", "SRR1261701", "SRR1261610"))] = "PE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = manihot_esculenta[,"Run"], replicate = manihot_esculenta[,"BioSample"], layout = manihot_esculenta[,"layout"], genome = "manihot_esculenta", ploidy = 2, taxonKeys = "3060733"))

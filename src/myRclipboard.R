@@ -5,6 +5,14 @@
 # cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
+3042551
+
+#
+3042624
+
+#
+5290146
+
 # SE that should actually be PE
 SRR1261957
 SRR1250413

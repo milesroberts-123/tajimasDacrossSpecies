@@ -203,6 +203,8 @@ For each domesticated species in our dataset, we looked at a wild relative to es
 
 Cases where I have both a domesticated species and it's wild relative in my dataset are interesting. I'll pair the wild relative's GBIF data with its nucleotide diversity data, and just choose a different wild relative to estimate range size in the domesticated species.
 
+The range of the wild relative should also overlap with the native range of the domesticated species, according to plants of the world online.
+
 ## Omitted transcripts
 
 For some species, specific transcripts need to be ommitted because exons are on differing strands. I think this arises as an error during annotation. This used to make `degenotate` throw an error. However, I reached out to the authors of degenotate [here](https://github.com/harvardinformatics/degenotate/issues/30) and got them to turn this error into a warning where problematic transcripts are automatically dropped.
@@ -222,6 +224,8 @@ These are the species that have mitochondria and chloroplast calls thus far:
 **Lupinus angustifolius** has scaffolds with the same name, but different sequences for some reason... I renamed the sequences with seqkit before processing.
 
 `seqkit rename lupinus_angustifolius.fa > tmp.fa; mv tmp.fa lupinus_angustifolius.fa`
+
+This means that for the duplicated scaffolds, I can't be sure which scaffold duplicate the four-fold degenerate sites are located on. Perhaps a better approach would be to remove the duplicate scaffolds entirely due to this ambiguity? For now, the workflow will just call genotypes on the first duplicate of each scaffold, but align reads across all the scaffolds because the duplicate scaffolds are ommitted from `chromosomes.tsv`
 
 # To do
 
