@@ -26,7 +26,7 @@ rule kmc_pe:
 		maxKmerCount=1000000,
 		cdsDbPrefix=get_kmer_database_prefix
 	resources:
-		mem_mb_per_cpu=2000
+		mem_mb_per_cpu=2500
 	conda:
 		"../envs/kmc.yml"
 	shell:

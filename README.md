@@ -106,9 +106,9 @@ The script `workflow/scripts/download_gbif.R` needs this information in order to
 
 This file is used to parallelize the GATK genotype GVCFs step in the workflow (splitting the data by chromosome/scaffold) contains the following columns
 
-* genome: the prefix of a fasta file
-
-* chromosome: the name of the chromosome/scaffold in the associated fasta file
+| genome | chromosome |
+|--------|------------|
+| the prefix of a fasta file | the name of the chromosome/scaffold in the associated fasta file |
 
 **You must remove any underscores from chromosome/scaffold names for snakemake wildcards to work (e.g. scaffold_25 -> scaffold25)!** This name change should be reflected in `chromosomes.tsv`, the gff files, and the fasta files.
 
@@ -216,6 +216,12 @@ These are the species that have mitochondria and chloroplast calls thus far:
 * Arabidopsis thaliana 
 
 * Helianthus annuus
+
+## duplicated sequences
+
+**Lupinus angustifolius** has scaffolds with the same name, but different sequences for some reason... I renamed the sequences with seqkit before processing.
+
+`seqkit rename lupinus_angustifolius.fa > tmp.fa; mv tmp.fa lupinus_angustifolius.fa`
 
 # To do
 
