@@ -25,7 +25,7 @@ rule kmc_se:
 		minKmerCount=1,
 		maxKmerCount=2000000 # should be double the max for counting in paired-end samples so that single-end and paired-end samples can achieve the same max k-mer count
 	resources:
-		mem_mb_per_cpu=2500
+		mem_mb_per_cpu=3000
 	conda:
 		"../envs/kmc.yml"
 	shell:
@@ -35,7 +35,7 @@ rule kmc_se:
 
 		# Count kmers
 		echo Counting kmers...
-		kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe} &> {log}
+		kmc -k{params.kmerLength} -m20 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe} &> {log}
 		
 		# delete working directory
 		rm -r tmp_{wildcards.sampleSe}

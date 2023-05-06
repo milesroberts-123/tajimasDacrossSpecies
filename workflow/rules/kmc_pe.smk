@@ -26,7 +26,7 @@ rule kmc_pe:
 		maxKmerCount=1000000,
 		cdsDbPrefix=get_kmer_database_prefix
 	resources:
-		mem_mb_per_cpu=2500
+		mem_mb_per_cpu=3000
 	conda:
 		"../envs/kmc.yml"
 	shell:
@@ -36,8 +36,8 @@ rule kmc_pe:
 
 		# Count kmers for read1 and read2
 		echo Counting kmers...
-        	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read1} temporary1_{wildcards.samplePe} tmp_{wildcards.samplePe} &> {log}
-        	kmc -k{params.kmerLength} -m16 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read2} temporary2_{wildcards.samplePe} tmp_{wildcards.samplePe} &>> {log}
+        	kmc -k{params.kmerLength} -m20 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read1} temporary1_{wildcards.samplePe} tmp_{wildcards.samplePe} &> {log}
+        	kmc -k{params.kmerLength} -m20 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read2} temporary2_{wildcards.samplePe} tmp_{wildcards.samplePe} &>> {log}
         	
 		# delete working directory
 		rm -r tmp_{wildcards.samplePe}
