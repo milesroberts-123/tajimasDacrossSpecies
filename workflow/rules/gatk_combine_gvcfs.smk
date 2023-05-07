@@ -27,8 +27,16 @@ rule gatk_combine_gvcfs:
 		# Check if output directory exists already. If so, delete it
 		if [ -d "tmp_{wildcards.assembly}_{wildcards.chromosome}/" ]
 		then
-			echo Deleting directory that already exists from previous run...  &> {log}
-			rm -r tmp_{wildcards.assembly}_{wildcards.chromosome}
+			echo Deleting temporary directory from previous run...  &> {log}
+			rm -r tmp_{wildcards.assembly}_{wildcards.chromosome}/
+		fi
+
+		# Check if genomics db already exists. If so, delete it
+		# enabling overwriting doesn't resolve error for some reason
+		if [ -d "{wildcards.assembly}_{wildcards.chromosome}_database/" ]
+		then
+			echo Deleting genomics db from previous run... &> {log}
+			rm -r {wildcards.assembly}_{wildcards.chromosome}_database/
 		fi
 
 		# make temporary directory

@@ -24,6 +24,8 @@ This workflow takes a list of SRA run numbers, separated before-hand as either p
 
 * Bray-Curtis dissimilarity: counts are first normalized to sum to one (within each sample) to help control for coverage variation between samples, then you apply [the formula in this paper](https://doi.org/10.1186/s12859-015-0875-7)
 
+At the same time, the workflow will download GBIF occurence data and estimate range size.
+
 In addition, this workflow is designed to:
 
 * analyze read data from multiple species simultaneously, including species of varying ploidy
@@ -80,17 +82,9 @@ See `workflow/dag.svg` for an example of my snakemake workflow executed on a han
 
 This file contains the following columns:
 
-* run: the SRA run number for the fastq dataset
-
-* replicate: the SRA biosample number, used to identify technical replicates
-
-* layout: SE or PE for single-end or paired-end respectively
-
-* genome: the prefix for the fasta file used as the reference for the sample (e.g. arabidopsis_thaliana)
-
-* ploidy: the number of genome copies in each cell of the organism sampled (e.g. 2 for diploid)
-
-* taxonKeys: GBIF keys to use for downloading occurence data
+| run | replicate | layout | genome | ploidy | taxonKeys |
+|-----|-----------|--------|--------|--------|-----------|
+| the SRA run number for the fastq dataset| the SRA biosample number, used to identify technical replicates | SE or PE for single-end or paired-end respectively | the prefix for the fasta file used as the reference for the sample (e.g. arabidopsis_thaliana) | the number of genome copies in each cell of the organism sampled (e.g. 2 for diploid) | GBIF keys to use for downloading occurence data |
 
 If you're looking at GBIF occurrence data, then you'll also want to have your GBIF email, username, and password stored as environment variables:
 
