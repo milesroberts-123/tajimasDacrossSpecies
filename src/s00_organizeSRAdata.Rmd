@@ -1287,13 +1287,12 @@ allReads = rbind(allReads, data.frame(run = momordica_charantia[,"Run"], replica
 
 ## Musa
 ```{r}
-
 musa = fread("../workflow/data/SRArunInfo/SraRunInfo_musa_PRJEB58004.csv.gz", data.table = F)
 
 musa_acuminata = musa[grepl("Musa acuminata", musa$ScientificName),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = musa_acuminata[,"Run"], replicate = musa_acuminata[,"BioSample"], layout = "PE", genome = "musa_acuminata", ploidy = 3))
+allReads = rbind(allReads, data.frame(run = musa_acuminata[,"Run"], replicate = musa_acuminata[,"BioSample"], layout = "PE", genome = "musa_acuminata", ploidy = 3, taxonKeys = "2762950"))
 ```
 
 ## Nelumbo nucifera
@@ -1305,7 +1304,7 @@ nelumbo_nucifera = fread("../workflow/data/SRArunInfo/SraRunInfo_nelumbo_nucifer
 nelumbo_nucifera = nelumbo_nucifera[(nelumbo_nucifera$ScientificName == "Nelumbo nucifera"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = nelumbo_nucifera[,"Run"], replicate = nelumbo_nucifera[,"BioSample"], layout = "PE", genome = "nelumbo_nucifera", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = nelumbo_nucifera[,"Run"], replicate = nelumbo_nucifera[,"BioSample"], layout = "PE", genome = "nelumbo_nucifera", ploidy = 2, taxonKeys = "7503234"))
 ```
 
 ## Nicotiana tabacum
@@ -1329,10 +1328,10 @@ olea_europaea$layout[(olea_europaea$spots_with_mates > 0)] = "PE"
 olea_europaea$layout[(olea_europaea$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = olea_europaea[,"Run"], replicate = olea_europaea[,"BioSample"], layout = olea_europaea[,"layout"], genome = "olea_europaea", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = olea_europaea[,"Run"], replicate = olea_europaea[,"BioSample"], layout = olea_europaea[,"layout"], genome = "olea_europaea", ploidy = 2, taxonKeys = "7506783"))
 ```
 
-## Oryza barthii
+## DEPRECATED Oryza barthii
 ```{r eval=FALSE, include=FALSE}
 oryza_barthii = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_barthii_PRJDB4702.csv.gz", data.table = F)
 
@@ -1345,7 +1344,7 @@ allReads = rbind(allReads, data.frame(run = oryza_barthii[,"Run"], replicate = o
 ```{r}
 oryza_brachyantha = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_brachyantha_PRJDB4059.csv.gz", data.table = F)
 
-allReads = rbind(allReads, data.frame(run = oryza_brachyantha[,"Run"], replicate = oryza_brachyantha[,"BioSample"], layout = "PE", genome = "oryza_brachyantha", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = oryza_brachyantha[,"Run"], replicate = oryza_brachyantha[,"BioSample"], layout = "PE", genome = "oryza_brachyantha", ploidy = 2, taxonKeys = "4110272"))
 ```
 
 ## Oryza glaberrima and Oryza barthii
@@ -1359,23 +1358,23 @@ table(oryza$ScientificName)
 oryza_barthii = oryza[(oryza$ScientificName == "Oryza barthii"),]
 oryza_glaberrima = oryza[(oryza$ScientificName == "Oryza glaberrima"),]
 
-allReads = rbind(allReads, data.frame(run = oryza_barthii[,"Run"], replicate = oryza_barthii[,"BioSample"], layout = "PE", genome = "oryza_barthii", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = oryza_barthii[,"Run"], replicate = oryza_barthii[,"BioSample"], layout = "PE", genome = "oryza_barthii", ploidy = 2, taxonKeys = "2703457"))
 
 allReads = rbind(allReads, data.frame(run = oryza_glaberrima[,"Run"], replicate = oryza_glaberrima[,"BioSample"], layout = "PE", genome = "oryza_glaberrima", ploidy = 2))
 ```
 
-## Oryza glumipatula
-```{r}
+## DEPRECATED Oryza glumipatula - same as O. rufipogon
+```{r eval=FALSE, include=FALSE}
 oryza_glumipatula = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_glumipatula_PRJDB4703.csv.gz", data.table = F)
 
-allReads = rbind(allReads, data.frame(run = oryza_glumipatula[,"Run"], replicate = oryza_glumipatula[,"BioSample"], layout = "PE", genome = "oryza_glumipatula", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = oryza_glumipatula[,"Run"], replicate = oryza_glumipatula[,"BioSample"], layout = "PE", genome = "oryza_glumipatula", ploidy = 2, taxonKeys = "4940610 11365001 5942013"))
 ```
 
 ## Oryza longistaminata
 ```{r}
 oryza_longistaminata = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_longistaminata_PRJDB4705.csv.gz", data.table = F)
 
-allReads = rbind(allReads, data.frame(run = oryza_longistaminata[,"Run"], replicate = oryza_longistaminata[,"BioSample"], layout = "PE", genome = "oryza_longistaminata", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = oryza_longistaminata[,"Run"], replicate = oryza_longistaminata[,"BioSample"], layout = "PE", genome = "oryza_longistaminata", ploidy = 2, taxonKeys = "2703462"))
 ```
 
 ## Oryza meridionalis
@@ -1383,8 +1382,7 @@ allReads = rbind(allReads, data.frame(run = oryza_longistaminata[,"Run"], replic
 oryza_meridionalis = fread("../workflow/data/SRArunInfo/SraRunInfo_oryza_meridionalis_PRJDB4704.csv.gz", data.table = F)
 
 # add reads to growing list
-# ***not sure about ploidy here***
-allReads = rbind(allReads, data.frame(run = oryza_meridionalis[,"Run"], replicate = oryza_meridionalis[,"BioSample"], layout = "PE", genome = "oryza_meridionalis", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = oryza_meridionalis[,"Run"], replicate = oryza_meridionalis[,"BioSample"], layout = "PE", genome = "oryza_meridionalis", ploidy = 2, taxonKeys = "9167736"))
 
 ```
 
@@ -1475,7 +1473,7 @@ panicum_halli$layout = "PE"
 #panicum_halli$layout[(panicum_halli$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = panicum_halli[,"Run"], replicate = panicum_halli[,"BioSample"], layout = panicum_halli[,"layout"], genome = "panicum_halli", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = panicum_halli[,"Run"], replicate = panicum_halli[,"BioSample"], layout = panicum_halli[,"layout"], genome = "panicum_halli", ploidy = 2, taxonKeys = "2705116"))
 ```
 
 ## Panicum virgatum
@@ -1496,7 +1494,7 @@ allReads = rbind(allReads, data.frame(run = panicum_virgatum[,"Run"], replicate 
 papaver_somniferum = fread("../workflow/data/SRArunInfo/SraRunInfo_papaver_somniferum_PRJNA759347.csv.gz", data.table = F)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = papaver_somniferum[,"Run"], replicate = papaver_somniferum[,"BioSample"], layout = "SE", genome = "papaver_somniferum", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = papaver_somniferum[,"Run"], replicate = papaver_somniferum[,"BioSample"], layout = "SE", genome = "papaver_somniferum", ploidy = 2, taxonKeys = "2888443"))
 ```
 
 ## Phaseolus vulgaris
@@ -1545,7 +1543,7 @@ pisum_sativum$layout[(pisum_sativum$spots_with_mates > 0)] = "PE"
 pisum_sativum$layout[(pisum_sativum$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = pisum_sativum[,"Run"], replicate = pisum_sativum[,"BioSample"], layout = pisum_sativum[,"layout"], genome = "pisum_sativum", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = pisum_sativum[,"Run"], replicate = pisum_sativum[,"BioSample"], layout = pisum_sativum[,"layout"], genome = "pisum_sativum", ploidy = 2, taxonKeys = "5356701"))
 ```
 
 ## Populus deltoides
@@ -1554,7 +1552,7 @@ populus_deltoides = fread("../workflow/data/SRArunInfo/SraRunInfo_populus_deltoi
 
 # add reads to growing list
 # not sure about the ploidy here
-allReads = rbind(allReads, data.frame(run = populus_deltoides[,"Run"], replicate = populus_deltoides[,"BioSample"], layout = "PE", genome = "populus_deltoides", ploidy = 4))
+allReads = rbind(allReads, data.frame(run = populus_deltoides[,"Run"], replicate = populus_deltoides[,"BioSample"], layout = "PE", genome = "populus_deltoides", ploidy = 4, taxonKeys = "3040232"))
 ```
 
 ## Populus trichocarpa
@@ -2212,7 +2210,7 @@ nrow(allReadsFinal)
 length(unique(allReadsFinal$genome))
 ```
 
-# split data into batches
+# DEPRECATED split data into batches
 ```{r eval=FALSE, include=FALSE}
 sort(table(allReads$genome))
 

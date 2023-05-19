@@ -76,6 +76,9 @@ alldiv$species = str_to_sentence(gsub("_", " ", alldiv$species))
 # For now, remove species where invariant sites were not properly called
 alldiv = alldiv[(alldiv$ninvariant > 0),]
 
+# For now, remove species where variants sites were not properly called
+alldiv = alldiv[(alldiv$nvariant > 0),]
+
 # add coverage covariate
 # coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
 # alldiv = merge(alldiv, coverage, by = "species")
@@ -128,6 +131,15 @@ areas$`Buddleja alternifolia` = areas$`Buddleja alternifolia`[2,]
 # Cucurbita palmata is only native to North America
 areas$`Cucurbita pepo` = areas$`Cucurbita pepo`[1,]
 
+# Malus sylvestris is only native to Europe
+areas$`Malus sylvestris` = areas$`Malus sylvestris`[2,]
+
+# Medicago truncatula only native to europe and africa
+areas$`Medicago truncatula` = areas$`Medicago truncatula`[c(4,5),]
+
+# Mimulus guttatus only native to North America
+areas$`Mimulus guttatus` = areas$`Mimulus guttatus`[1,]
+
 # Nicotiana glauca only native to South America
 areas$`Nicotiana tabacum` = areas$`Nicotiana tabacum`[2,]
 ```
@@ -149,6 +161,9 @@ areas = data.frame(
 alldiv = merge(alldiv, areas, by = "species", all.x = T)
 
 print(alldiv)
+
+# save final table
+write.csv(alldiv, paste("../results/2023-03-26/diversityAndRangeData_", today, ".csv", sep = ""), row.names = F, quote = F)
 ```
 
 ## Prepare phylogenetic tree
@@ -211,6 +226,7 @@ pgls(log10(rangeArea) ~ log10(pi), compdata)
 pgls(log10(rangeArea) ~ bcd, compdata)
 pgls(log10(rangeArea) ~ jac, compdata)
 
+
 # Test if k-mer diversity has stronger effect on range area than SNP diversity
 mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd), compdata)
 summary(mod_bcd)
@@ -231,27 +247,41 @@ summary(mod_jac)
 
 # Final plots
 ```{r}
+# pi vs bcd
+ggplot(alldiv, aes(x = bcd, y = log10(pi), label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  xlim(0,0.8) +
+  labs(x = "Bray-Curtis dissimilarity", y = "log10(Nucleotide diversity)")
+ggsave(paste("../results/2023-03-26/figures/Bray-CurtisDissimilarityVsPi_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
+
+# range vs pi
 ggplot(alldiv, aes(x = log10(rangeArea), y = log10(pi), label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
+  xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "log10(Nucleotide diversity)")
 
-ggsave(paste("rangeVsPi_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
+ggsave(paste("../results/2023-03-26/figures/rangeVsPi_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 
+# range vs bcd
 ggplot(alldiv, aes(x = log10(rangeArea), y = bcd, label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) + 
   theme_classic() +
   xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "Bray-Curtis dissimilarity")
-ggsave(paste("rangeVsBray-Curtis_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 
+ggsave(paste("../results/2023-03-26/figures/rangeVsBray-Curtis_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
+
+# range vs jaccard dissimilarity
 ggplot(alldiv, aes(x = log10(rangeArea), y = jac, label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) + 
   theme_classic() +
   xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "Jaccard dissimilarity")
-ggsave(paste("rangeVsJaccard_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
+ggsave(paste("../results/2023-03-26/figures/rangeVsJaccard_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 ```

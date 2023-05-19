@@ -11,7 +11,8 @@ rule bcftools_concat:
 		"logs/bcftools_concat/{assembly}_{chromosome}.log"
 	threads: 1
 	resources:
-		mem_mb_per_cpu=16000
+		mem_mb_per_cpu=get_mem_mb_per_cpu,
+		time=get_time
 	priority: 50
 	conda:
 		"../envs/gatk.yml"
