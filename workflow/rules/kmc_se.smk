@@ -35,7 +35,7 @@ rule kmc_se:
 
 		# Count kmers
 		echo Counting kmers...
-		kmc -k{params.kmerLength} -m36 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe} &> {log}
+		kmc -sm -k{params.kmerLength} -m36 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read} temporary_{wildcards.sampleSe} tmp_{wildcards.sampleSe} &> {log}
 		
 		# delete working directory
 		rm -r tmp_{wildcards.sampleSe}

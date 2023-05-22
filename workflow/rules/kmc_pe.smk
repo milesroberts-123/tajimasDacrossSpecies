@@ -36,8 +36,8 @@ rule kmc_pe:
 
 		# Count kmers for read1 and read2
 		echo Counting kmers...
-        	kmc -k{params.kmerLength} -m36 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read1} temporary1_{wildcards.samplePe} tmp_{wildcards.samplePe} &> {log}
-        	kmc -k{params.kmerLength} -m36 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read2} temporary2_{wildcards.samplePe} tmp_{wildcards.samplePe} &>> {log}
+        	kmc -sm -k{params.kmerLength} -m36 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read1} temporary1_{wildcards.samplePe} tmp_{wildcards.samplePe} &> {log}
+        	kmc -sm -k{params.kmerLength} -m36 -t{threads} -ci{params.minKmerCount} -cs{params.maxKmerCount} {input.read2} temporary2_{wildcards.samplePe} tmp_{wildcards.samplePe} &>> {log}
         	
 		# delete working directory
 		rm -r tmp_{wildcards.samplePe}
