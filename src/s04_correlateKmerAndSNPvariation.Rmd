@@ -27,10 +27,9 @@ pi = list.files("../results/2023-03-26/genome-wide-pi", full.names = T)
 bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names = T)
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
-# for now, remove species where invariant sites are not properly called
-#pi = pi[c(-14:-15, -17:-19, -21)]
-#jac = jac[c(-14:-15, -17:-19, -21, -23)]
-#bcd = bcd[c(-14:-15, -17:-19, -21, -23)]
+# for now, remove species that can't be processed further for whatever reason
+jac = jac[-44]
+bcd = bcd[-44]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -140,6 +139,12 @@ areas$`Medicago truncatula` = areas$`Medicago truncatula`[c(4,5),]
 # Mimulus guttatus only native to North America
 areas$`Mimulus guttatus` = areas$`Mimulus guttatus`[1,]
 
+# Musa relative only native to asia and india
+areas$`Musa acuminata` = areas$`Musa acuminata`[2,]
+
+# Populus deltoides only native to north america
+areas$`Populus deltoides` = areas$`Populus deltoides`[1,]
+
 # Nicotiana glauca only native to South America
 areas$`Nicotiana tabacum` = areas$`Nicotiana tabacum`[2,]
 ```
@@ -168,6 +173,9 @@ write.csv(alldiv, paste("../results/2023-03-26/diversityAndRangeData_", today, "
 
 ## Prepare phylogenetic tree
 ```{r}
+# write species list to upload to timetree.org
+write.table(alldiv$species, "../results/2023-03-26/speciesList.txt", row.names = F, col.names = F, quote = F)
+
 # load time tree
 phy = read.tree("../results/2023-03-26/speciesList.nwk")
 phy$tip.label = gsub("_", " ", phy$tip.label)

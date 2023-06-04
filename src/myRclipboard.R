@@ -5,6 +5,42 @@
 # cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
+2982409
+#
+5529117
+
+#
+3171159
+
+#
+4097481
+4097481
+
+#
+3799678
+
+#
+2930642 8402242
+
+#
+7901873 2931761
+
+#
+5289684
+
+#
+7266664
+
+#
+4174687
+
+#
+4174017
+
+#
+6362904
+
+#
 3040232
 
 #

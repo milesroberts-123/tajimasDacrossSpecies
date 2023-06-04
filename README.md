@@ -4,13 +4,13 @@ Miles Roberts
 
 # Contents
 
-[Summary](#summary)
+(Summary)[#summary]
 
-[How to replicate my results](#How-to-replicate-my-results)
+(How to replicate my results)[#How-to-replicate-my-results]
 
-[Notes](#notes)
+(Notes)[#notes]
 
-[To do](#to-do)
+(To do)[#to-do]
 
 # Summary
 
@@ -234,6 +234,8 @@ This means that for the duplicated scaffolds, I can't be sure which scaffold dup
 - [x] Write rule to dynamically allocate memory based on input size, thread count, and attempt 
 
 - [x] Remove environment modules
+
+- [x] Make `samtools sort` multithreaded
 
 - [ ] Create a test dataset to store on github so people can verify my analyses without performing the whole workflow
 
