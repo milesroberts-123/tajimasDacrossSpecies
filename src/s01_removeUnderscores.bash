@@ -1,5 +1,4 @@
 # replace underscores in assemblies
-# conda init bash
 # conda activate seqkit
 
 for FILE in ../config/assemblies/*

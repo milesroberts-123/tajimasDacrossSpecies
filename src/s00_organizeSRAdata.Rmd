@@ -742,7 +742,9 @@ digitaria_exilis = fread("../workflow/data/SRArunInfo/SraRunInfo_digitaria_exili
 digitaria_exilis = digitaria_exilis[(digitaria_exilis$ScientificName == "Digitaria exilis" & digitaria_exilis$LibraryStrategy == "WGS"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = digitaria_exilis[,"Run"], replicate = digitaria_exilis[,"BioSample"], layout = "PE", genome = "digitaria_exilis", ploidy = 4))
+# this species is tetraploid, but because two subgenomes are given in the genome assembly, we'll treat it as diploid
+# each of the subgenomes has two copies, making for 4 copies in total (2x2=4)
+allReads = rbind(allReads, data.frame(run = digitaria_exilis[,"Run"], replicate = digitaria_exilis[,"BioSample"], layout = "PE", genome = "digitaria_exilis", ploidy = 2))
 ```
 
 ## Dioscorea alata
