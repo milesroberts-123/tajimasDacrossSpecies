@@ -404,9 +404,9 @@ brassica_oleracea$layout[(brassica_oleracea$spots_with_mates > 0)] = "PE"
 brassica_oleracea$layout[(brassica_oleracea$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = brassica_rapa[,"Run"], replicate = brassica_rapa[,"BioSample"], layout = brassica_rapa[,"layout"], genome = "brassica_rapa", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = brassica_rapa[,"Run"], replicate = brassica_rapa[,"BioSample"], layout = brassica_rapa[,"layout"], genome = "brassica_rapa", ploidy = 2, taxonKeys = "3042809"))
 
-allReads = rbind(allReads, data.frame(run = brassica_oleracea[,"Run"], replicate = brassica_oleracea[,"BioSample"], layout = brassica_oleracea[,"layout"], genome = "brassica_oleracea", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = brassica_oleracea[,"Run"], replicate = brassica_oleracea[,"BioSample"], layout = brassica_oleracea[,"layout"], genome = "brassica_oleracea", ploidy = 2, taxonKeys = "3042837"))
 ```
 
 ## Buddleja alternifolia
@@ -459,7 +459,7 @@ camellia_sinensis$layout[(camellia_sinensis$spots_with_mates > 0)] = "PE"
 camellia_sinensis$layout[(camellia_sinensis$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = camellia_sinensis[,"Run"], replicate = camellia_sinensis[,"BioSample"], layout = camellia_sinensis[,"layout"], genome = "camellia_sinensis", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = camellia_sinensis[,"Run"], replicate = camellia_sinensis[,"BioSample"], layout = camellia_sinensis[,"layout"], genome = "camellia_sinensis", ploidy = 2, taxonKeys = "8105068"))
 ```
 
 ## Cannabis sativa
@@ -721,7 +721,7 @@ cucurbita_argyrosperma = cucurbita_argyrosperma[(cucurbita_argyrosperma$LibraryS
 # add reads to growing list
 # not super sure about this ploidy
 # seems like most cucurbits are diploids
-allReads = rbind(allReads, data.frame(run = cucurbita_argyrosperma[,"Run"], replicate = cucurbita_argyrosperma[,"BioSample"], layout = "SE", genome = "cucurbita_argyrosperma", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = cucurbita_argyrosperma[,"Run"], replicate = cucurbita_argyrosperma[,"BioSample"], layout = "SE", genome = "cucurbita_argyrosperma", ploidy = 2, taxonKeys = "3623807"))
 ```
 
 ## Cucurbita pepo
@@ -744,7 +744,7 @@ digitaria_exilis = digitaria_exilis[(digitaria_exilis$ScientificName == "Digitar
 # add reads to growing list
 # this species is tetraploid, but because two subgenomes are given in the genome assembly, we'll treat it as diploid
 # each of the subgenomes has two copies, making for 4 copies in total (2x2=4)
-allReads = rbind(allReads, data.frame(run = digitaria_exilis[,"Run"], replicate = digitaria_exilis[,"BioSample"], layout = "PE", genome = "digitaria_exilis", ploidy = 2))
+allReads = rbind(allReads, data.frame(run = digitaria_exilis[,"Run"], replicate = digitaria_exilis[,"BioSample"], layout = "PE", genome = "digitaria_exilis", ploidy = 2, taxonKeys = "5289974"))
 ```
 
 ## Dioscorea alata
@@ -1574,7 +1574,7 @@ populus_trichocarpa$layout = "PE"
 #populus_trichocarpa$layout[(populus_trichocarpa$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = populus_trichocarpa[,"Run"], replicate = populus_trichocarpa[,"BioSample"], layout = populus_trichocarpa[,"layout"], genome = "populus_trichocarpa", ploidy = 2, taxonKeys = "6362904"))
+allReads = rbind(allReads, data.frame(run = populus_trichocarpa[,"Run"], replicate = populus_trichocarpa[,"BioSample"], layout = populus_trichocarpa[,"layout"], genome = "populus_trichocarpa", ploidy = 2, taxonKeys = "8089775"))
 ```
 
 ## Prunus armeniaca
@@ -1683,7 +1683,7 @@ salix_dunnii = fread("../workflow/data/SRArunInfo/SraRunInfo_salix_dunnii_PRJNA6
 salix_dunnii = salix_dunnii[(salix_dunnii$Platform == "ILLUMINA" & salix_dunnii$LibrarySelection != "Restriction Digest"),]
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = salix_dunnii[,"Run"], replicate = salix_dunnii[,"BioSample"], layout = "PE", genome = "salix_dunnii", ploidy = 2, taxonKeys = "4174687"))
+allReads = rbind(allReads, data.frame(run = salix_dunnii[,"Run"], replicate = salix_dunnii[,"BioSample"], layout = "PE", genome = "salix_dunnii", ploidy = 2, taxonKeys = "5582578"))
 ```
 
 
@@ -1901,7 +1901,6 @@ tetracentron_sinense = tetracentron_sinense[(tetracentron_sinense$Platform == "I
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = tetracentron_sinense[,"Run"], replicate = tetracentron_sinense[,"BioSample"], layout = "PE", genome = "tetracentron_sinense", ploidy = 2, taxonKeys = "5529117"))
-
 ```
 
 ## Thinopyrum intermedium

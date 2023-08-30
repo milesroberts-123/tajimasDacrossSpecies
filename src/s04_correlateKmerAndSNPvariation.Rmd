@@ -78,6 +78,9 @@ alldiv = alldiv[(alldiv$ninvariant > 0),]
 # For now, remove species where variants sites were not properly called
 alldiv = alldiv[(alldiv$nvariant > 0),]
 
+# remove species where there aren't many sampled individuals
+alldiv = alldiv[(alldiv$nidv >= 10),]
+
 # add coverage covariate
 # coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
 # alldiv = merge(alldiv, coverage, by = "species")
@@ -102,6 +105,8 @@ areas = lapply(areas, read.table, header = T, sep = "\t")
 
 # add names to list
 names(areas) = areas_species
+
+#str(areas)
 ```
 
 ## remove areas outside of native range 
@@ -124,11 +129,20 @@ areas$`Beta vulgaris` = areas$`Beta vulgaris`[1:2,]
 # Brachypodium distachyon is native to Europe, Asia, Africa
 areas$`Brachypodium distachyon` = areas$`Brachypodium distachyon`[3:5,]
 
+# Brassica cretica native to europe
+areas$`Brassica oleracea` = areas$`Brassica oleracea`[1,]
+
+# Brassica fruticulosa native to europe
+areas$`Brassica rapa` = areas$`Brassica rapa`[2,]
+
 # Buddleja alternifolia is native to Asia
 areas$`Buddleja alternifolia` = areas$`Buddleja alternifolia`[2,]
 
 # Cucurbita palmata is only native to North America
 areas$`Cucurbita pepo` = areas$`Cucurbita pepo`[1,]
+
+# Digitaria longiflora native to africa, asia, australia
+areas$`Digitaria exilis`= areas$`Digitaria exilis`[3:5,]
 
 # Malus sylvestris is only native to Europe
 areas$`Malus sylvestris` = areas$`Malus sylvestris`[2,]
@@ -147,6 +161,9 @@ areas$`Populus deltoides` = areas$`Populus deltoides`[1,]
 
 # Nicotiana glauca only native to South America
 areas$`Nicotiana tabacum` = areas$`Nicotiana tabacum`[2,]
+
+# Setaria viridis 
+areas$`Setaria viridis` = areas$`Setaria viridis`[3:6,]
 ```
 
 ## Merge range data with diversity data
@@ -174,10 +191,10 @@ write.csv(alldiv, paste("../results/2023-03-26/diversityAndRangeData_", today, "
 ## Prepare phylogenetic tree
 ```{r}
 # write species list to upload to timetree.org
-write.table(alldiv$species, "../results/2023-03-26/speciesList.txt", row.names = F, col.names = F, quote = F)
+write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
 
 # load time tree
-phy = read.tree("../results/2023-03-26/speciesList.nwk")
+phy = read.tree("../results/2023-03-26/species_list_2023-08-30.nwk")
 phy$tip.label = gsub("_", " ", phy$tip.label)
 
 plot(phy)
@@ -189,6 +206,8 @@ compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
 ```
 
 # Initial data analysis
+
+## distributions of variables
 ```{r}
 # histograms of diversity data
 ggplot(alldiv, aes(x = log10(pi))) +
@@ -207,14 +226,7 @@ ggplot(alldiv, aes(x = bcd)) +
   labs(x = "Bray-Curtis Dissimilarity")
 ```
 
-# drop outliers?
-```{r eval=FALSE, include=FALSE}
-compdata = subset(compdata, subset = pi > 1e-7)
-
-alldiv = alldiv[(alldiv$pi > 1e-7),]
-```
-
-# Confirmatory data analysis
+## correlations between variables
 ```{r}
 # Does pi correlate with k-mer diversity?
 cor(alldiv$pi, alldiv$bcd, method = "spearman", use = "pairwise.complete.obs")
@@ -225,6 +237,22 @@ cor(alldiv$pi, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.o
 cor(alldiv$bcd, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$jac, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 
+# How does the number of individuals correlate with the diversity measures
+# More individuals = more opportunities to discover variants
+cor(alldiv$pi, alldiv$nidv)
+cor(alldiv$bcd, alldiv$nidv)
+cor(alldiv$jac, alldiv$nidv)
+```
+
+# drop outliers?
+```{r eval=FALSE, include=FALSE}
+compdata = subset(compdata, subset = pi > 1e-7)
+
+alldiv = alldiv[(alldiv$pi > 1e-7),]
+```
+
+# Confirmatory data analysis
+```{r}
 # compare effects with phylogeny vs without phylogeny
 lm(log10(rangeArea) ~ log10(pi), alldiv)
 lm(log10(rangeArea) ~ bcd, alldiv)
@@ -233,7 +261,6 @@ lm(log10(rangeArea) ~ jac, alldiv)
 pgls(log10(rangeArea) ~ log10(pi), compdata)
 pgls(log10(rangeArea) ~ bcd, compdata)
 pgls(log10(rangeArea) ~ jac, compdata)
-
 
 # Test if k-mer diversity has stronger effect on range area than SNP diversity
 mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd), compdata)
