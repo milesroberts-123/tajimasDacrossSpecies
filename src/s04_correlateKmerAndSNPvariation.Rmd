@@ -1,5 +1,7 @@
 ---
-title: "2023-04-12 results"
+title: "K-mer approach to Lewontin's paradox results"
+author: "Miles Roberts"
+date: "2023-08-30"
 output:
   html_document:
     df_print: paged
@@ -242,13 +244,6 @@ cor(alldiv$jac, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.
 cor(alldiv$pi, alldiv$nidv)
 cor(alldiv$bcd, alldiv$nidv)
 cor(alldiv$jac, alldiv$nidv)
-```
-
-# drop outliers?
-```{r eval=FALSE, include=FALSE}
-compdata = subset(compdata, subset = pi > 1e-7)
-
-alldiv = alldiv[(alldiv$pi > 1e-7),]
 ```
 
 # Confirmatory data analysis
