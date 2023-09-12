@@ -16,7 +16,9 @@ workflow/data/testDatasets/**
 **.html
 core.**
 **.fa
+**.fa.gz
 **.gff3
+**.gff3.gz
 **.errlog
 **.kmc_pre
 **.kmc_suf

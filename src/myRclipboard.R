@@ -6,6 +6,23 @@
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
 #
+3152663
+
+#
+2876032
+
+#
+3625134
+
+#
+3083905
+
+
+#
+2960284
+
+
+#
 5582578
 
 #
