@@ -6,6 +6,39 @@
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
 #
+7221300
+
+#
+5832702
+
+#
+2803330
+
+#
+3040983
+
+#
+2878373
+
+#
+5293186
+
+#
+2703464
+
+#
+3625538
+
+#
+5357027
+
+#
+3140467
+
+#
+Rscript scripts/download_gbif.R glycine_soja $GBIF_USER $GBIF_EMAIL $GBIF_PWD 20 200 5359668
+
+#
 3152663
 
 #
