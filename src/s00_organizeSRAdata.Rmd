@@ -918,7 +918,8 @@ gossypium_barbadense$layout[(gossypium_barbadense$spots_with_mates > 0)] = "PE"
 gossypium_barbadense$layout[(gossypium_barbadense$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = gossypium_barbadense[,"Run"], replicate = gossypium_barbadense[,"BioSample"], layout = gossypium_barbadense[,"layout"], genome = "gossypium_barbadense", ploidy = 4))
+# real ploidy is 4, but there are assemblies for both subgenomes, allotetraploid
+allReads = rbind(allReads, data.frame(run = gossypium_barbadense[,"Run"], replicate = gossypium_barbadense[,"BioSample"], layout = gossypium_barbadense[,"layout"], genome = "gossypium_barbadense", ploidy = 2))
 ```
 
 ## Gossypium hirsutum
@@ -1409,7 +1410,6 @@ oryza_rufipogon = oryza_rufipogon[grepl("Oryza rufipogon", oryza_rufipogon$Scien
 length(unique(oryza_rufipogon$BioSample))
 
 # add reads to growing list
-# ***not sure about ploidy here***
 allReads = rbind(allReads, data.frame(run = oryza_rufipogon[,"Run"], replicate = oryza_rufipogon[,"BioSample"], layout = "PE", genome = "oryza_rufipogon", ploidy = 2))
 ```
 
@@ -2163,7 +2163,7 @@ rm(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3, brassica, b
 # paste(ls(), collapse = ", ")
 # runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brachypodium_sylvaticum, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_avellana, cucumis_melo, cucumis_sativus, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, juglans_regia, lactuca_sativa, lens_culinaris, lens_ervoides, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_glumipatula, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_hallii, panicum_virgatum, papaver_somniferum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thinopyrum_intermedium, thlaspi_arvense, trifolium_pratense, triticum_aestivum, triticum_dicoccoides, triticum_turgidum, vanilla_planifolia, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, zizania_palustris, ziziphus_jujuba)
 
-runsAllMetaData = list(actinidia_chinensis, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabis_nemorensis, arachis_hypogaea, arachis_ipaensis, camelina_sativa, ficus_carica, nicotiana_tabacum, oryza_punctata)
+runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brachypodium_sylvaticum, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_avellana, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, lactuca_sativa, lens_ervoides, lotus_japonicus, lupinus_angustifolius, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, panicum_hallii, papaver_somniferum, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, quercus_lobata, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, setaria_viridis, solanum_chilense, solanum_melongena, solanum_stenotomum, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, vanilla_planifolia, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium)
 
 sumColumnInList = function(x){
   sum(as.numeric(x[,"bases"]))
@@ -2221,7 +2221,6 @@ sort(table(allReads$genome))
 sum(sort(table(allReads$genome))[1:40])
 
 sum(sort(table(allReads$genome))[41:55])
-
 ```
 
 # output read metadata for snakemake input

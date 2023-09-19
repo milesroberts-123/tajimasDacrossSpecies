@@ -75,17 +75,18 @@ alldiv$species = species
 alldiv$species = str_to_sentence(gsub("_", " ", alldiv$species))
 
 # For now, remove species where invariant sites were not properly called
-alldiv = alldiv[(alldiv$ninvariant > 0),]
+# alldiv = alldiv[(alldiv$ninvariant > 0),]
 
 # For now, remove species where variants sites were not properly called
-alldiv = alldiv[(alldiv$nvariant > 30),]
+# alldiv = alldiv[(alldiv$nvariant > 30),]
 
 # remove species where there aren't many sampled individuals
 # alldiv = alldiv[(alldiv$nidv >= 10),]
 
 # add coverage covariate
-# coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
-# alldiv = merge(alldiv, coverage, by = "species")
+coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
+alldiv = merge(alldiv, coverage, by = "species", all.x = TRUE)
+
 # 
 # gsize = read.table("../results/2023-03-26/genome_size.txt", header = T, sep = "\t")
 # alldiv = merge(alldiv, gsize, by = "species")
@@ -214,6 +215,35 @@ compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
 ```
 
 # Initial data analysis
+
+## relationship between coverage and diveristy
+```{r}
+ggplot(alldiv, aes(x = log10(totalbp), y = log10(pi), label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Total base pairs sequenced across all samples)", y = "log10(Nucleotide diversity)")
+
+ggsave("bp-sequenced-vs-diversity.png")
+
+ggplot(alldiv, aes(x = log10(nidv), y = log10(pi), label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Number of individuals sequenced)", y = "log10(Nucleotide diversity)")
+
+ggplot(alldiv, aes(x = cvbp, y = log10(pi), label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "Coefficient of variation in base pairs sequenced across all samples", y = "log10(Nucleotide diversity)")
+
+ggplot(alldiv, aes(x = log10(totalbp), y = bcd, label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Total base pairs sequenced across all samples)", y = "Bray-Curtis Dissimilarity")
+```
 
 ## distributions of variables
 ```{r}
