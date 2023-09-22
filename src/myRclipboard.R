@@ -6,6 +6,666 @@
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
 #
+3934083
+
+#
+5359681
+
+#
+2754392 2754837
+
+#
+3625708
+
+#
+7885624
+
+#
+2895317
+
+#
+2895528
+
+#
+Coffea canephora
+
+#
+2947330
+
+#
+5333237
+
+#
+3799221
+
+#
+5361880
+
+#
+p<- ggplot(df2, aes(x=dose, y=len, group=supp, color=supp)) + 
+  geom_line() +
+  geom_point()+
+  geom_errorbar(aes(ymin=len-sd, ymax=len+sd), width=.2,
+                 position=position_dodge(0.05))
+                 
+#
+Coefficients:
+  Estimate Std. Error t value  Pr(>|t|)    
+(Intercept)  6.994809   0.651451 10.7373 3.997e-15 ***
+  scale(pi)   -0.473634   0.149922 -3.1592  0.002571 ** 
+  scale(bcd)   0.578056   0.035827 16.1346 < 2.2e-16 ***
+  
+#
+Coefficients:
+  Estimate Std. Error t value  Pr(>|t|)    
+(Intercept)          7.008209   0.657308 10.6620 6.661e-15 ***
+  scale(pi)           -0.480066   0.151916 -3.1601  0.002585 ** 
+  scale(bcd)           0.563273   0.051451 10.9479 2.665e-15 ***
+  scale(totalbp/nidv) -0.075180   0.186425 -0.4033  0.688339  
+
+#
+Show in New WindowClear OutputExpand/Collapse Output
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+  
+  filter, lag
+
+The following objects are masked from ‘package:base’:
+  
+  intersect, setdiff, setequal, union
+
+Loading required package: ape
+
+Attaching package: ‘ape’
+
+The following object is masked from ‘package:dplyr’:
+  
+  where
+
+Loading required package: MASS
+
+Attaching package: ‘MASS’
+
+The following object is masked from ‘package:dplyr’:
+  
+  select
+
+Loading required package: mvtnorm
+Registered S3 method overwritten by 'data.table':
+  method           from
+print.data.table     
+data.table 1.14.8 using 1 threads (see ?getDTthreads).  Latest news: r-datatable.com
+
+Attaching package: ‘data.table’
+
+The following objects are masked from ‘package:dplyr’:
+  
+  between, first, last
+
+Show in New WindowClear OutputExpand/Collapse Output
+species
+<chr>
+  h
+<dbl>
+  ntotal
+<int>
+  nvariant
+<int>
+  ninvariant
+<int>
+  pi
+<dbl>
+  bcd
+<dbl>
+  Actinidia chinensis	3.760000e+01	5799545	104	5799441	6.483267e-06	0.2919747	
+Amaranthus hypochondriacus	1.389610e+04	3443746	77705	3366041	4.035169e-03	0.3740617	
+Ananas comosus	5.504433e+04	3699292	350017	3349275	1.487969e-02	0.4742457	
+Arabidopsis halleri	3.143066e+04	4732743	228408	4504335	6.641108e-03	0.3294606	
+Arabidopsis lyrata	5.874893e+04	4478756	865260	3613496	1.311724e-02	0.4449381	
+Arabidopsis suecica	3.252213e+04	10380293	119480	10260813	3.133065e-03	0.2181825	
+Arabidopsis thaliana	3.458560e+04	4234905	442279	3792626	8.166794e-03	0.4815617	
+Arabis alpina	1.699751e+04	122463	122463	0	1.387971e-01	0.2646135	
+Arabis nemorensis	5.739823e+03	4644164	14489	4629675	1.235922e-03	0.1913472	
+Arachis hypogaea	0.000000e+00	10060178	0	10060178	0.000000e+00	0.4777766	
+...
+1-10 of 74 rows | 1-7 of 13 columns
+Show in New WindowClear OutputExpand/Collapse Output
+
+Show in New WindowClear OutputExpand/Collapse Output
+[1] 0.1330065
+[1] 0.05217481
+[1] 0.09785274
+[1] -0.06411988
+[1] -0.1669882
+[1] 0.08553325
+[1] 0.1524288
+[1] 0.1713082
+Show in New WindowClear OutputExpand/Collapse Output
+
+Call:
+  pgls(formula = log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(totalbp/nidv), 
+       data = compdata)
+
+Residuals:
+  Min       1Q   Median       3Q      Max 
+-0.39463 -0.06737 -0.00417  0.06309  0.43897 
+
+Branch length transformations:
+  
+  kappa  [Fix]  : 1.000
+lambda [Fix]  : 1.000
+delta  [Fix]  : 1.000
+
+Coefficients:
+  Estimate Std. Error t value  Pr(>|t|)    
+(Intercept)          7.008209   0.657308 10.6620 6.661e-15 ***
+  scale(pi)           -0.480066   0.151916 -3.1601  0.002585 ** 
+  scale(bcd)           0.563273   0.051451 10.9479 2.665e-15 ***
+  scale(totalbp/nidv) -0.075180   0.186425 -0.4033  0.688339    
+---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1365 on 54 degrees of freedom
+Multiple R-squared: 0.8424,	Adjusted R-squared: 0.8337 
+F-statistic: 96.23 on 3 and 54 DF,  p-value: < 2.2e-16 
+Show in New WindowClear OutputExpand/Collapse Output
+
+
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> rm(list = ls())
+> 
+  > library(dplyr)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+  
+  filter, lag
+
+The following objects are masked from ‘package:base’:
+  
+  intersect, setdiff, setequal, union
+
+> library(ggplot2)
+> library(caper)
+Loading required package: ape
+
+Attaching package: ‘ape’
+
+The following object is masked from ‘package:dplyr’:
+  
+  where
+
+Loading required package: MASS
+
+Attaching package: ‘MASS’
+
+The following object is masked from ‘package:dplyr’:
+  
+  select
+
+Loading required package: mvtnorm
+> library(stringr)
+> library(data.table)
+Registered S3 method overwritten by 'data.table':
+  method           from
+print.data.table     
+data.table 1.14.8 using 1 threads (see ?getDTthreads).  Latest news: r-datatable.com
+
+Attaching package: ‘data.table’
+
+The following objects are masked from ‘package:dplyr’:
+  
+  between, first, last
+
+> library(cowplot)
+> #library(scico)
+  > 
+  > today = Sys.Date()
+> # List input files
+  > pi = list.files("../results/2023-03-26/genome-wide-pi", full.names = T)
+> bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names = T)
+> jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
+> 
+  > # for now, remove species that can't be processed further for whatever reason
+  > jac = jac[-58]
+> bcd = bcd[-58]
+> 
+  > # get species IDs
+  > species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
+> 
+  > # Load input files
+  > pi = lapply(pi, fread, header = T, data.table = F)
+> bcd = lapply(bcd, fread, header = F, data.table = F)
+> jac = lapply(jac, fread, header = F, data.table = F)
+> 
+  > # calculate mean pairwise dissimilarity
+  > bcdMean = lapply(bcd, function(x){mean(x[,2])})
+> jacMean = lapply(jac, function(x){mean(x[,2])})
+> 
+  > # calculate average number of k-mers included in union
+  > unionMean = lapply(jac, function(x){mean(x[,4])})
+> 
+  > # calculate number of individuals sampled for each dataset
+  > # You get this equation by rewriting the formula for the number of pairwise comparisons (n^2 - n)/2 = N as a polynomial and applying the quadratic formula
+  > backCalcN = function(x){
+    +   sqrt(1/4 + 2*nrow(x)) + 1/2
+    + }
+> 
+  > nidv = lapply(bcd, backCalcN)
+> 
+  > # cbind all diversity data into one dataframe per species
+  > alldiv = Map(cbind, pi, bcdMean, jacMean, unionMean, nidv)
+> 
+  > # Some species have extra data, remove for now
+  > speciesWithExtraData = which(unlist(lapply(alldiv, ncol)) == 12)
+> for(i in speciesWithExtraData){
+  +   alldiv[[i]] = alldiv[[i]][,c(1, 3:6, 9:12)]
+  + }
+> 
+  > # rbind all species data into one dataframe
+  > alldiv = lapply(alldiv, setNames, c("h", "ntotal", "nvariant", "ninvariant", "pi", "bcd", "jac", "umean", "nidv"))
+> 
+  > alldiv = do.call(rbind, alldiv)
+> 
+  > # add species names
+  > alldiv$species = species
+> alldiv$species = str_to_sentence(gsub("_", " ", alldiv$species))
+> 
+  > # For now, remove species where invariant sites were not properly called
+  > # alldiv = alldiv[(alldiv$ninvariant > 0),]
+  > 
+  > # For now, remove species where variants sites were not properly called
+  > # alldiv = alldiv[(alldiv$nvariant > 30),]
+  > 
+  > # remove species where there aren't many sampled individuals
+  > # alldiv = alldiv[(alldiv$nidv >= 10),]
+  > 
+  > # add coverage covariate
+  > coverage = read.table("../results/2023-03-26/bp_sequenced_2023-09-19.txt", header = T, sep = "\t")
+> alldiv = merge(alldiv, coverage, by = "species", all.x = TRUE)
+> 
+  > # 
+  > # gsize = read.table("../results/2023-03-26/genome_size.txt", header = T, sep = "\t")
+  > # alldiv = merge(alldiv, gsize, by = "species")
+  > # 
+  > # alldiv$totalcov = alldiv$totalbp/alldiv$assemblySize
+  > # load range data
+  > areas = list.files("../results/2023-03-26/ranges/areas", full.names = T)
+> 
+  > # extract species names
+  > areas_species = gsub("_areas.txt", "", gsub("../results/2023-03-26/ranges/areas/", "", areas))
+> areas_species = str_to_sentence(gsub("_", " ", areas_species))
+> 
+  > # load data
+  > areas = lapply(areas, read.table, header = T, sep = "\t")
+> 
+  > # add names to list
+  > names(areas) = areas_species
+> 
+  > #str(areas)
+  > # Refer to plants of the world online for native range maps
+  > # powo.science.kew.org
+  > 
+  > # Amaranthus hybridus native to only North and South America
+  > areas$`Amaranthus hypochondriacus` = areas$`Amaranthus hypochondriacus`[c(4,6),]
+> 
+  > # Arabidopsis thaliana is only native to Europe, Asia, and Africa
+  > areas$`Arabidopsis thaliana` = areas$`Arabidopsis thaliana`[2:4,]
+> 
+  > # Arachis glabrata is native to Brazil, remove North America
+  > areas$`Arachis hypogaea` = areas$`Arachis hypogaea`[1,]
+> 
+  > # Beta vulgaris subsp. vulgaris is native to only Europe and Africa
+  > areas$`Beta vulgaris` = areas$`Beta vulgaris`[1:2,]
+> 
+  > # Brachypodium distachyon is native to Europe, Asia, Africa
+  > areas$`Brachypodium distachyon` = areas$`Brachypodium distachyon`[3:5,]
+> 
+  > # Brassica cretica native to europe
+  > areas$`Brassica oleracea` = areas$`Brassica oleracea`[1,]
+> 
+  > # Brassica fruticulosa native to europe
+  > areas$`Brassica rapa` = areas$`Brassica rapa`[2,]
+> 
+  > # Buddleja alternifolia is native to Asia
+  > areas$`Buddleja alternifolia` = areas$`Buddleja alternifolia`[2,]
+> 
+  > # Cajanus scarabaeoides native to Africa, Asia, Australia
+  > areas$`Cajanus cajan` = areas$`Cajanus cajan`[c(1,3,4),]
+> 
+  > # Cucurbita palmata is only native to North America
+  > areas$`Cucurbita pepo` = areas$`Cucurbita pepo`[1,]
+> 
+  > # Digitaria longiflora native to africa, asia, australia
+  > areas$`Digitaria exilis`= areas$`Digitaria exilis`[3:5,]
+> 
+  > # Gossypium arboreum native to asia
+  > areas$`Gossypium arboreum` = areas$`Gossypium arboreum`[2,]
+> 
+  > # Lactuca sativa is native to Iraq
+  > areas$`Lactuca sativa` = areas$`Lactuca sativa`[3,]
+> 
+  > # Malus sylvestris is only native to Europe
+  > areas$`Malus sylvestris` = areas$`Malus sylvestris`[2,]
+> 
+  > # Medicago truncatula only native to europe and africa
+  > areas$`Medicago truncatula` = areas$`Medicago truncatula`[c(4,5),]
+> 
+  > # Mimulus guttatus only native to North America
+  > areas$`Mimulus guttatus` = areas$`Mimulus guttatus`[1,]
+> 
+  > # Musa relative only native to asia and india
+  > areas$`Musa acuminata` = areas$`Musa acuminata`[2,]
+> 
+  > # Populus deltoides only native to north america
+  > areas$`Populus deltoides` = areas$`Populus deltoides`[1,]
+> 
+  > # Nicotiana glauca only native to South America
+  > areas$`Nicotiana tabacum` = areas$`Nicotiana tabacum`[2,]
+> 
+  > # Raphanus raphanistrum is native to europe and africa
+  > areas$`Raphanus sativus` = areas$`Raphanus sativus`[3:4,]
+> 
+  > # Setaria viridis 
+  > areas$`Setaria viridis` = areas$`Setaria viridis`[3:6,]
+> # function to get non-water area
+  > get_nonwater_area = function(x){
+    +   sum(x[,"total_area"] - x[,"water_area"])
+    + }
+> 
+  > # format area data as frame
+  > areas = data.frame(
+    +   species = areas_species,
+    +   rangeArea = unlist(lapply(areas, get_nonwater_area))
+    + )
+> 
+  > # merge with diversity data
+  > alldiv = merge(alldiv, areas, by = "species", all.x = T)
+> 
+  > print(alldiv)
+> 
+  > # save final table
+  > #write.csv(alldiv, paste("../results/2023-03-26/diversityAndRangeData_", today, ".csv", sep = ""), row.names = F, quote = F)
+  > # write species list to upload to timetree.org
+  > #write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
+  > 
+  > # load time tree
+  > phy = read.tree("../results/2023-03-26/species_list_2023-09-19.nwk")
+> 
+  > # remove underscores
+  > phy$tip.label = gsub("_", " ", phy$tip.label)
+> 
+  > # remove variety names
+  > phy$tip.label = gsub(" var..*", "", phy$tip.label)
+> 
+  > # sanity check
+  > plot(phy)
+> # Does pi correlate with k-mer diversity?
+  > cor(alldiv$pi, alldiv$bcd, method = "spearman", use = "pairwise.complete.obs")
+[1] 0.1330065
+> cor(alldiv$pi, alldiv$jac, method = "spearman", use = "pairwise.complete.obs")
+[1] 0.05217481
+> 
+  > # Does k-mer diversity correlate with population size (i.e. range area) more than pi?
+  > cor(alldiv$pi, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
+[1] 0.09785274
+> cor(alldiv$bcd, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
+[1] -0.06411988
+> cor(alldiv$jac, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
+[1] -0.1669882
+> 
+  > # How does the number of individuals correlate with the diversity measures
+  > # More individuals = more opportunities to discover variants
+  > cor(alldiv$pi, alldiv$nidv)
+[1] 0.08553325
+> cor(alldiv$bcd, alldiv$nidv)
+[1] 0.1524288
+> cor(alldiv$jac, alldiv$nidv)
+[1] 0.1713082
+> # For now, remove species where invariant sites were not properly called
+  > alldiv = alldiv[(alldiv$ninvariant > 0),]
+> 
+  > # For now, remove species where variants sites were not properly called
+  > alldiv = alldiv[(alldiv$nvariant > 500),]
+> 
+  > # remove critically endangered species
+  > alldiv = alldiv[(alldiv$rangeArea > 10),]
+> 
+  > # remove species where there aren't many sampled individuals
+  > alldiv = alldiv[(alldiv$nidv >= 10),]
+> mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv) + scale(totalbp/nidv), compdata)
+Error in pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv) +  : 
+                object 'compdata' not found
+              > # create comparative data object for caper models
+                > compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
+              > plot(compdata$phy)
+              > mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv) + scale(totalbp/nidv), compdata)
+              > summary(mod_bcd)
+              
+              Call:
+                pgls(formula = log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv) + 
+                       scale(totalbp/nidv), data = compdata)
+              
+              Residuals:
+                Min       1Q   Median       3Q      Max 
+              -0.40456 -0.04279 -0.01261  0.03703  0.23712 
+              
+              Branch length transformations:
+                
+                kappa  [Fix]  : 1.000
+              lambda [Fix]  : 1.000
+              delta  [Fix]  : 1.000
+              
+              Coefficients:
+                Estimate Std. Error t value  Pr(>|t|)    
+              (Intercept)          7.031085   0.472638 14.8763 < 2.2e-16 ***
+                scale(pi)           -0.320232   0.111483 -2.8725  0.005845 ** 
+                scale(bcd)           0.172188   0.065891  2.6132  0.011647 *  
+                scale(nidv)          0.184823   0.025768  7.1726 2.379e-09 ***
+                scale(totalbp/nidv) -0.064791   0.134054 -0.4833  0.630861    
+              ---
+                Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+              
+              Residual standard error: 0.09817 on 53 degrees of freedom
+              Multiple R-squared:  0.92,	Adjusted R-squared: 0.914 
+              F-statistic: 152.5 on 4 and 53 DF,  p-value: < 2.2e-16 
+              > mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + nidv + totalbp/nidv, compdata)
+              Error in solve.default(xVix, tol = .Machine$double.eps) : 
+                system is computationally singular: reciprocal condition number = 6.32216e-34
+              > mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + log10(nidv) + totalbp/nidv, compdata)
+              Error in solve.default(xVix, tol = .Machine$double.eps) : 
+                system is computationally singular: reciprocal condition number = 4.28735e-34
+              > mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv) + totalbp/nidv, compdata)
+              Error in solve.default(xVix, tol = .Machine$double.eps) : 
+                system is computationally singular: reciprocal condition number = 5.07539e-34
+              > mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv) + scale(totalbp/nidv), compdata)
+              > summary(mod_bcd)
+              
+              Call:
+                pgls(formula = log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv) + 
+                       scale(totalbp/nidv), data = compdata)
+              
+              Residuals:
+                Min       1Q   Median       3Q      Max 
+              -0.40456 -0.04279 -0.01261  0.03703  0.23712 
+              
+              Branch length transformations:
+                
+                kappa  [Fix]  : 1.000
+              lambda [Fix]  : 1.000
+              delta  [Fix]  : 1.000
+              
+              Coefficients:
+                Estimate Std. Error t value  Pr(>|t|)    
+              (Intercept)          7.031085   0.472638 14.8763 < 2.2e-16 ***
+                scale(pi)           -0.320232   0.111483 -2.8725  0.005845 ** 
+                scale(bcd)           0.172188   0.065891  2.6132  0.011647 *  
+                scale(nidv)          0.184823   0.025768  7.1726 2.379e-09 ***
+                scale(totalbp/nidv) -0.064791   0.134054 -0.4833  0.630861    
+              ---
+                Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+              
+              Residual standard error: 0.09817 on 53 degrees of freedom
+              Multiple R-squared:  0.92,	Adjusted R-squared: 0.914 
+              F-statistic: 152.5 on 4 and 53 DF,  p-value: < 2.2e-16 
+              > mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd), compdata)
+              > summary(mod_bcd)
+              
+              Call:
+                pgls(formula = log10(rangeArea) ~ scale(pi) + scale(bcd), data = compdata)
+              
+              Residuals:
+                Min       1Q   Median       3Q      Max 
+              -0.39383 -0.06574 -0.00267  0.06114  0.43903 
+              
+              Branch length transformations:
+                
+                kappa  [Fix]  : 1.000
+              lambda [Fix]  : 1.000
+              delta  [Fix]  : 1.000
+              
+              Coefficients:
+                Estimate Std. Error t value  Pr(>|t|)    
+              (Intercept)  6.994809   0.651451 10.7373 3.997e-15 ***
+                scale(pi)   -0.473634   0.149922 -3.1592  0.002571 ** 
+                scale(bcd)   0.578056   0.035827 16.1346 < 2.2e-16 ***
+                ---
+                Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+              
+              Residual standard error: 0.1355 on 55 degrees of freedom
+              Multiple R-squared: 0.842,	Adjusted R-squared: 0.8362 
+              F-statistic: 146.5 on 2 and 55 DF,  p-value: < 2.2e-16 
+              The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+              which was just loaded, will retire in October 2023.
+              Please refer to R-spatial evolution reports for details, especially
+              https://r-spatial.org/r/2023/05/15/evolution4.html.
+              It may be desirable to make the sf package available;
+              package maintainers should consider adding sf to Suggests:.
+              The sp package is now running under evolution status 2
+              (status 2 uses the sf package in place of rgdal)
+              > # control for the number of individuals sequenced
+                Warning message:
+                multiple methods tables found for ‘elide’ 
+              > mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv), compdata)
+              > summary(mod_bcd)
+              
+              Call:
+                pgls(formula = log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv), 
+                     data = compdata)
+              
+              Residuals:
+                Min       1Q   Median       3Q      Max 
+              -0.40388 -0.04308 -0.01142  0.03185  0.23703 
+              
+              Branch length transformations:
+                
+                kappa  [Fix]  : 1.000
+              lambda [Fix]  : 1.000
+              delta  [Fix]  : 1.000
+              
+              Coefficients:
+                Estimate Std. Error t value  Pr(>|t|)    
+              (Intercept)  7.019555   0.468674 14.9775 < 2.2e-16 ***
+                scale(pi)   -0.314573   0.110077 -2.8578  0.006048 ** 
+                scale(bcd)   0.184642   0.060212  3.0665  0.003380 ** 
+                scale(nidv)  0.184958   0.025583  7.2297 1.745e-09 ***
+                ---
+                Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+              
+              Residual standard error: 0.09747 on 54 degrees of freedom
+              Multiple R-squared: 0.9197,	Adjusted R-squared: 0.9152 
+              F-statistic: 206.1 on 3 and 54 DF,  p-value: < 2.2e-16 
+              > mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(totalbp/nidv), compdata)
+              > summary(mod_bcd)
+              
+              Call:
+                pgls(formula = log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(totalbp/nidv), 
+                     data = compdata)
+              
+              Residuals:
+                Min       1Q   Median       3Q      Max 
+              -0.39463 -0.06737 -0.00417  0.06309  0.43897 
+              
+              Branch length transformations:
+                
+                kappa  [Fix]  : 1.000
+              lambda [Fix]  : 1.000
+              delta  [Fix]  : 1.000
+              
+              Coefficients:
+                Estimate Std. Error t value  Pr(>|t|)    
+              (Intercept)          7.008209   0.657308 10.6620 6.661e-15 ***
+                scale(pi)           -0.480066   0.151916 -3.1601  0.002585 ** 
+                scale(bcd)           0.563273   0.051451 10.9479 2.665e-15 ***
+                scale(totalbp/nidv) -0.075180   0.186425 -0.4033  0.688339 
+              
+#
+Coefficients:
+  Estimate Std. Error t value  Pr(>|t|)    
+(Intercept)  6.994809   0.651451 10.7373 3.997e-15 ***
+  scale(pi)   -0.473634   0.149922 -3.1592  0.002571 ** 
+  scale(bcd)   0.578056   0.035827 16.1346 < 2.2e-16 ***
+  
+#
+"#191900" "#663329" "#D85F4D" "#ECAC54" "#FFFECB"
+
+#
+ "#351338" "#6F2C06" "#6C702C" "#69A3A5" "#DAD2FF"
+#
+theme(strip.background =element_rect(fill="red"))+
+  theme(strip.text = element_text(colour = 'white'))
+  
+#
+df %>% arrange(factor(player, levels = c('P1', 'P3', 'P2', 'P5', 'P4', 'P6', 'P7')))
+
+# Make the original plot
+p <- ggtree(tree)
+
+# generate some random values for each tip label in the data
+d1 <- data.frame(id=tree$tip.label, val=rnorm(30, sd=3))
+
+# Make a second plot with the original, naming the new plot "dot", 
+# using the data you just created, with a point geom.
+p2 <- facet_plot(p, panel="dot", data=d1, geom=geom_point, aes(x=val), color='red3')
+
+# Make some more data with another random value.
+d2 <- data.frame(id=tree$tip.label, value = abs(rnorm(30, mean=100, sd=50)))
+
+# Now add to that second plot, this time using the new d2 data above, 
+# This time showing a bar segment, size 3, colored blue.
+p3 <- facet_plot(p2, panel='bar', data=d2, geom=geom_segment, 
+           aes(x=0, xend=value, y=y, yend=y), size=3, color='blue4') 
+
+# Show all three plots with a scale
+p3 + theme_tree2()
+
+#
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("ggtree")
+
+#
 7221300
 
 #

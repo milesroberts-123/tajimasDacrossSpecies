@@ -12,10 +12,13 @@ output:
 ```{r}
 rm(list = ls())
 
+library(dplyr)
 library(ggplot2)
 library(caper)
 library(stringr)
 library(data.table)
+library(cowplot)
+#library(scico)
 
 today = Sys.Date()
 ```
@@ -30,8 +33,8 @@ bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
 # for now, remove species that can't be processed further for whatever reason
-jac = jac[-53]
-bcd = bcd[-53]
+jac = jac[-58]
+bcd = bcd[-58]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -84,7 +87,7 @@ alldiv$species = str_to_sentence(gsub("_", " ", alldiv$species))
 # alldiv = alldiv[(alldiv$nidv >= 10),]
 
 # add coverage covariate
-coverage = read.table("../results/2023-03-26/bp_sequenced.txt", header = T, sep = "\t")
+coverage = read.table("../results/2023-03-26/bp_sequenced_2023-09-19.txt", header = T, sep = "\t")
 alldiv = merge(alldiv, coverage, by = "species", all.x = TRUE)
 
 # 
@@ -141,11 +144,17 @@ areas$`Brassica rapa` = areas$`Brassica rapa`[2,]
 # Buddleja alternifolia is native to Asia
 areas$`Buddleja alternifolia` = areas$`Buddleja alternifolia`[2,]
 
+# Cajanus scarabaeoides native to Africa, Asia, Australia
+areas$`Cajanus cajan` = areas$`Cajanus cajan`[c(1,3,4),]
+
 # Cucurbita palmata is only native to North America
 areas$`Cucurbita pepo` = areas$`Cucurbita pepo`[1,]
 
 # Digitaria longiflora native to africa, asia, australia
 areas$`Digitaria exilis`= areas$`Digitaria exilis`[3:5,]
+
+# Gossypium arboreum native to asia
+areas$`Gossypium arboreum` = areas$`Gossypium arboreum`[2,]
 
 # Lactuca sativa is native to Iraq
 areas$`Lactuca sativa` = areas$`Lactuca sativa`[3,]
@@ -194,37 +203,38 @@ alldiv = merge(alldiv, areas, by = "species", all.x = T)
 print(alldiv)
 
 # save final table
-write.csv(alldiv, paste("../results/2023-03-26/diversityAndRangeData_", today, ".csv", sep = ""), row.names = F, quote = F)
+#write.csv(alldiv, paste("../results/2023-03-26/diversityAndRangeData_", today, ".csv", sep = ""), row.names = F, quote = F)
 ```
 
 ## Prepare phylogenetic tree
 ```{r}
 # write species list to upload to timetree.org
-write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
+#write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
 
 # load time tree
-phy = read.tree("../results/2023-03-26/species_list_2023-09-12.nwk")
+phy = read.tree("../results/2023-03-26/species_list_2023-09-19.nwk")
+
+# remove underscores
 phy$tip.label = gsub("_", " ", phy$tip.label)
 
-plot(phy)
-```
+# remove variety names
+phy$tip.label = gsub(" var..*", "", phy$tip.label)
 
-## Combine tree and data to get comparative object
-```{r}
-compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
+# sanity check
+plot(phy)
 ```
 
 # Initial data analysis
 
 ## relationship between coverage and diveristy
-```{r}
+```{r eval=FALSE, include=FALSE}
 ggplot(alldiv, aes(x = log10(totalbp), y = log10(pi), label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
   labs(x = "log10(Total base pairs sequenced across all samples)", y = "log10(Nucleotide diversity)")
 
-ggsave("bp-sequenced-vs-diversity.png")
+#ggsave("bp-sequenced-vs-diversity.png")
 
 ggplot(alldiv, aes(x = log10(nidv), y = log10(pi), label = species)) +
   geom_point() +
@@ -246,7 +256,7 @@ ggplot(alldiv, aes(x = log10(totalbp), y = bcd, label = species)) +
 ```
 
 ## distributions of variables
-```{r}
+```{r eval=FALSE, include=FALSE}
 # histograms of diversity data
 ggplot(alldiv, aes(x = log10(pi))) +
   geom_histogram() +
@@ -283,20 +293,53 @@ cor(alldiv$jac, alldiv$nidv)
 ```
 
 # Confirmatory data analysis
+
+## remove outliers before analysis
+```{r}
+# For now, remove species where invariant sites were not properly called
+alldiv = alldiv[(alldiv$ninvariant > 0),]
+
+# For now, remove species where variants sites were not properly called
+alldiv = alldiv[(alldiv$nvariant > 500),]
+
+# remove critically endangered species
+alldiv = alldiv[(alldiv$rangeArea > 10),]
+
+# remove species where there aren't many sampled individuals
+alldiv = alldiv[(alldiv$nidv >= 10),]
+```
+
+## Combine tree and data to get comparative object
+```{r}
+# create comparative data object for caper models
+compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
+plot(compdata$phy)
+```
+
+## fit models
 ```{r}
 # compare effects with phylogeny vs without phylogeny
 lm(log10(rangeArea) ~ log10(pi), alldiv)
 lm(log10(rangeArea) ~ bcd, alldiv)
 lm(log10(rangeArea) ~ jac, alldiv)
 
-pi_vs_bcd = pgls(bcd ~ log10(pi), compdata)
+lmmod = lm(log10(rangeArea) ~ scale(bcd) + scale(nidv), alldiv)
+summary(lmmod)
+
+pi_vs_bcd = pgls(nidv ~ log10(pi), compdata)
 summary(pi_vs_bcd)
 
-area_vs_pi = pgls(log10(rangeArea) ~ log10(pi), compdata)
-summary(area_vs_pi)
+pi_vs_bcd = pgls(bcd ~ log10(pi), compdata)
+summary(pi_vs_bcd)
+plot(pi_vs_bcd)
 
-area_vs_bcd = pgls(log10(rangeArea) ~ bcd, compdata)
+area_vs_pi = pgls(log10(rangeArea) ~ scale(pi), compdata)
+summary(area_vs_pi)
+plot(area_vs_pi)
+
+area_vs_bcd = pgls(log10(rangeArea) ~ scale(bcd), compdata)
 summary(area_vs_bcd)
+plot(area_vs_bcd)
 
 area_vs_jac = pgls(log10(rangeArea) ~ jac, compdata)
 summary(area_vs_jac)
@@ -305,18 +348,66 @@ summary(area_vs_jac)
 mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd), compdata)
 summary(mod_bcd)
 
+# plot out coefficients
+coefplot = data.frame(coef = coefficients(mod_bcd), err = mod_bcd$sterr, label = names(mod_bcd$sterr))
+coefplot = coefplot[-1,]
+coefplot$coef = abs(coefplot$coef)
+
+ggplot(coefplot, aes(x=coef, y=label)) + 
+  geom_point()+
+  geom_errorbar(aes(xmin=coef-err, xmax=coef+err), width=.2, position=position_dodge(0.05)) +
+  geom_vline(xintercept = 0, lty = "dotted", size = 2) +
+  theme_classic() +
+  theme(text = element_text(size = 20)) +
+  labs(x = "Absolute value of coefficient", y = "PGLS model parameter")
+
+ggsave(paste("pgls_coefficients_", today, ".png", sep = ""), width = 7, height = 7)
+
 mod_jac = pgls(log10(rangeArea) ~ scale(pi) + scale(jac), compdata)
 summary(mod_jac)
 
 # control for the number of individuals sequenced
-mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd) + scale(nidv), compdata)
+mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd), compdata)
 summary(mod_bcd)
 
 mod_jac = pgls(log10(rangeArea) ~ scale(pi) + scale(jac) + scale(nidv), compdata)
 summary(mod_jac)
-  
-# try removing outliers
-# compdataNoOut = subset.comparative.data(compdata, subset =  !(species %in% c("Actinidia chinensis", "Camelina sativa")))
+
+# control for amount of sequencing data
+mod_bcd = pgls(log10(rangeArea) ~ scale(bcd), compdata)
+summary(mod_bcd)
+plot(mod_bcd)
+
+mod_pi = pgls(log10(rangeArea) ~ scale(pi), compdata)
+summary(mod_pi)
+plot(mod_pi)
+
+cor(alldiv$nidv, alldiv$totalbp, use = "pairwise.complete.obs")
+cor(log10(alldiv$pi), (alldiv$bcd), use = "pairwise.complete.obs", method = "spearman")
+cor(alldiv$bcd, alldiv$totalbp, use = "pairwise.complete.obs", method = "spearman")
+cor(alldiv$nidv, alldiv$totalbp/alldiv$nidv, method = "spearman")
+#
+mod_bcd = pgls(log10(rangeArea) ~ scale(bcd) + scale(nidv), compdata)
+summary(mod_bcd)
+
+mod_pi = pgls(log10(rangeArea) ~ scale(pi) + scale(nidv), compdata)
+summary(mod_pi)
+
+plot(mod_bcd)
+
+# try contrasts instead of variance-covariance matrices
+alldiv$scale_bcd = scale(alldiv$bcd)
+alldiv$scale_pi = scale(alldiv$pi)
+alldiv$scale_jac = scale(alldiv$jac)
+alldiv$scale_nidv = scale(alldiv$nidv)
+alldiv$scale_bp_per_idv = scale(alldiv$totalbp/alldiv$nidv)
+alldiv$log_range = log10(alldiv$rangeArea)
+
+compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
+
+crunch_mod = crunch(log_range ~ scale_bcd + scale_pi + scale_nidv + scale_bp_per_idv, data = compdata)
+summary(crunch_mod)
+plot(crunch_mod)
 ```
 
 # Final plots
@@ -331,31 +422,80 @@ ggplot(alldiv, aes(x = bcd, y = log10(pi), label = species)) +
 ggsave(paste("../results/2023-03-26/figures/Bray-CurtisDissimilarityVsPi_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 
 # range vs pi
-ggplot(alldiv, aes(x = log10(rangeArea), y = log10(pi), label = species)) +
+r1 = ggplot(alldiv, aes(x = log10(rangeArea), y = log10(pi), label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) +
+  geom_smooth(method = "auto") +
   theme_classic() +
+  theme(text = element_text(size = 20)) +
   xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "log10(Nucleotide diversity)")
 
-ggsave(paste("../results/2023-03-26/figures/rangeVsPi_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
+#ggsave(paste("../results/2023-03-26/figures/rangeVsPi_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 
 # range vs bcd
-ggplot(alldiv, aes(x = log10(rangeArea), y = bcd, label = species)) +
+r2 = ggplot(alldiv, aes(x = log10(rangeArea), y = bcd, label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) + 
+  geom_smooth(method = "auto") +
   theme_classic() +
+  theme(text = element_text(size = 20)) +
   xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "Bray-Curtis dissimilarity")
 
-ggsave(paste("../results/2023-03-26/figures/rangeVsBray-Curtis_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
+#ggsave(paste("../results/2023-03-26/figures/rangeVsBray-Curtis_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
 
 # range vs jaccard dissimilarity
-ggplot(alldiv, aes(x = log10(rangeArea), y = jac, label = species)) +
+r3 = ggplot(alldiv, aes(x = log10(rangeArea), y = jac, label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) + 
+  geom_smooth(method = "auto") +
   theme_classic() +
+  theme(text = element_text(size = 20)) +
   xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "Jaccard dissimilarity")
-ggsave(paste("../results/2023-03-26/figures/rangeVsJaccard_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
+
+gridplot = plot_grid(r1, r2, r3, labels = "AUTO", ncol = 3)
+
+ggsave(paste("../results/2023-03-26/figures/range_vs_diversity_", today, ".png", sep = ""), width = 21, height = 7)
+       
+#ggsave(paste("../results/2023-03-26/figures/rangeVsJaccard_", today, ".png", sep = ""), width = 7, height = 7, unit = "in", scale = 0.5)
+```
+
+## plot phylogeny alongside data
+
+ggtree causes linear models to crash, so need to do this separately
+
+```{r}
+#install.packages("ggtree")
+#if (!require("BiocManager", quietly = TRUE))
+#    install.packages("BiocManager")
+#BiocManager::install("ggtree")
+
+#install.packages("ggtree")
+library(ggtree)
+
+# arrange plot data to match order of tip labels
+plotdf = alldiv %>% arrange(factor(species, levels = phy$tip.label))
+
+# remove species from phylogeny that lack data
+plotphy = drop.tip(phy, tip = phy$tip.label[!(phy$tip.label %in% alldiv$species)])
+
+# get color pallete
+#plotpal = scico(5, palette = "lipari")
+plotpal = c("#351338","#6F2C06","#6C702C","#69A3A5","#DAD2FF")
+#plotpal = c("#191900","#663329","#D85F4D","#ECAC54","#FFFECB")
+
+# plot phylogeny alongside other data
+ggtree(plotphy, size = 1.5) + 
+    geom_facet(panel = "log10(SNP diversity)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(pi)), color = plotpal[1]) +
+  geom_facet(panel = "Bray-Curtis dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = bcd), color = plotpal[2]) +
+  geom_facet(panel = "Jaccard dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = jac), color = plotpal[3]) +
+  geom_facet(panel = "Number of individuals sequenced", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = nidv), color = plotpal[4]) +
+  geom_facet(panel = "Base pairs sequenced per individual", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = totalbp/nidv), color = plotpal[5]) +
+  theme_tree2() +
+  theme(strip.background =element_rect(fill="white")) +
+  theme(strip.text = element_text(colour = 'black'))
+
+ggsave(paste("../results/2023-03-26/tree_with_data_", today, ".png", sep = ""), scale = 2)
 ```
