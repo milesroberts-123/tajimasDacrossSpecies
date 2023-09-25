@@ -5,6 +5,8 @@
 # cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
+SraRunInfo_corylus_americana_PRJNA625120.csv.gz
+
 #
 4928539
 
