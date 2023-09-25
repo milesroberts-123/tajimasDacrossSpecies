@@ -44,7 +44,7 @@ rule gatk_combine_gvcfs:
 
 		# run import step
 		gatk --java-options "-Xmx8g -Xms8g" GenomicsDBImport $(echo {input.calls} | sed 's/calls/-V calls/g') \
-		--batch-size 50 \
+		--batch-size 25 \
 		--reader-threads {threads} \
 		--overwrite-existing-genomicsdb-workspace \
 		--genomicsdb-workspace-path {wildcards.assembly}_{wildcards.chromosome}_database \
