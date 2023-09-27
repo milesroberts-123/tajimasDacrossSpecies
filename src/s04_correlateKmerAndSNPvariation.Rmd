@@ -224,6 +224,44 @@ phy$tip.label = gsub(" var..*", "", phy$tip.label)
 plot(phy)
 ```
 
+## Load range areas
+```{r}
+wcvp_dist = fread("../workflow/data/range/wcvp_distribution.csv.gz", sep = "|", header = T, quote = "", fill = T, encoding = "UTF-8")
+
+wcvp_names = fread("../workflow/data/range/wcvp_names.csv.gz", sep = "|", header = T, quote = "", fill = T, encoding = "UTF-8")
+
+# create species binomial column
+wcvp_names$species = paste(wcvp_names$genus, wcvp_names$species, sep = " ")
+
+# drop names that are not in diversity dataset
+wcvp_names = wcvp_names[(wcvp_names$species %in% alldiv$species),]
+
+# keep only name id -> species key
+wcvp_names = unique(wcvp_names[,c("plant_name_id", "species")])
+
+# drop areas that don't match plant ids
+wcvp_dist = wcvp_dist[(wcvp_dist$plant_name_id %in% wcvp_names$plant_name_id),]
+
+# remove areas that are introduced, extinct, or dubious
+wcvp_dist = wcvp_dist[(wcvp_dist$introduced == 0 & wcvp_dist$extinct == 0 & wcvp_dist$location_doubtful == 0),]
+
+# add in species names to distributions
+wcvp_dist_names = merge(wcvp_dist, wcvp_names, by = "plant_name_id")
+
+# calculate area of countries for each species
+
+code_to_area(x){
+  # get country polygons from area codes
+  
+  # calculate areas of polygons
+  
+}
+for(species in unique(wcvp_dist_names$species)){
+  wcvp_dist_sub = 
+  
+}
+```
+
 # Initial data analysis
 
 ## relationship between coverage and diveristy
@@ -483,16 +521,18 @@ plotphy = drop.tip(phy, tip = phy$tip.label[!(phy$tip.label %in% alldiv$species)
 
 # get color pallete
 #plotpal = scico(5, palette = "lipari")
-plotpal = c("#351338","#6F2C06","#6C702C","#69A3A5","#DAD2FF")
+plotpal = c("#FFCE66","#C07348","#773339","#4C3D72","#5F88C3","#80E6FF")
+#plotpal = c("#021326","#3B5378","#7F5F70","#CE685E","#E5AA7F","#FDF4D9")
 #plotpal = c("#191900","#663329","#D85F4D","#ECAC54","#FFFECB")
 
 # plot phylogeny alongside other data
 ggtree(plotphy, size = 1.5) + 
-    geom_facet(panel = "log10(SNP diversity)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(pi)), color = plotpal[1]) +
-  geom_facet(panel = "Bray-Curtis dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = bcd), color = plotpal[2]) +
-  geom_facet(panel = "Jaccard dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = jac), color = plotpal[3]) +
-  geom_facet(panel = "Number of individuals sequenced", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = nidv), color = plotpal[4]) +
-  geom_facet(panel = "Base pairs sequenced per individual", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = totalbp/nidv), color = plotpal[5]) +
+    geom_facet(panel = "log10(Range area)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(rangeArea)), color = plotpal[1]) +
+    geom_facet(panel = "log10(SNP diversity)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(pi)), color = plotpal[2]) +
+  geom_facet(panel = "Bray-Curtis dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = bcd), color = plotpal[3]) +
+  geom_facet(panel = "Jaccard dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = jac), color = plotpal[4]) +
+  geom_facet(panel = "Individuals sequenced", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = nidv), color = plotpal[5]) +
+  geom_facet(panel = "bp sequenced per individual", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = totalbp/nidv), color = plotpal[6]) +
   theme_tree2() +
   theme(strip.background =element_rect(fill="white")) +
   theme(strip.text = element_text(colour = 'black'))
