@@ -19,6 +19,10 @@ library(stringr)
 library(data.table)
 library(cowplot)
 #library(scico)
+#library(giscoR)
+library(rWCVP)
+library(lwgeom)
+library(sf)
 
 today = Sys.Date()
 ```
@@ -33,8 +37,10 @@ bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
 # for now, remove species that can't be processed further for whatever reason
-jac = jac[-58]
-bcd = bcd[-58]
+jac = jac[-60]
+bcd = bcd[-60]
+
+pi = pi[-36]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -211,8 +217,8 @@ print(alldiv)
 # write species list to upload to timetree.org
 #write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
 
-# load time tree
-phy = read.tree("../results/2023-03-26/species_list_2023-09-19.nwk")
+# load time tree from timetree.org
+phy = read.tree("../results/2023-03-26/species_list_2023-10-03.nwk")
 
 # remove underscores
 phy$tip.label = gsub("_", " ", phy$tip.label)
@@ -226,40 +232,99 @@ plot(phy)
 
 ## Load range areas
 ```{r}
+# load local copies of World Checklist of Vascular Plants
 wcvp_dist = fread("../workflow/data/range/wcvp_distribution.csv.gz", sep = "|", header = T, quote = "", fill = T, encoding = "UTF-8")
 
 wcvp_names = fread("../workflow/data/range/wcvp_names.csv.gz", sep = "|", header = T, quote = "", fill = T, encoding = "UTF-8")
 
-# create species binomial column
-wcvp_names$species = paste(wcvp_names$genus, wcvp_names$species, sep = " ")
+# update species names to match latest names in WCVP
+updated_species_names = data.frame(species = unique(alldiv$species),species_updated = unique(alldiv$species))
 
-# drop names that are not in diversity dataset
-wcvp_names = wcvp_names[(wcvp_names$species %in% alldiv$species),]
+updated_species_names$species_updated[updated_species_names$species == "Arabis nemorensis"] = "Arabis planisiliqua"
+updated_species_names$species_updated[updated_species_names$species == "Dioscorea rotundata"] = "Dioscorea cayenensis subsp. rotundata"
+updated_species_names$species_updated[updated_species_names$species == "Glycine soja"] = "Glycine max subsp. soja"
+updated_species_names$species_updated[updated_species_names$species == "Lens ervoides"] = "Vicia lenticula"
+updated_species_names$species_updated[updated_species_names$species == "Mimulus guttatus"] = "Erythranthe guttata"
+updated_species_names$species_updated[updated_species_names$species == "Populus trichocarpa"] = "Populus tristis"
+updated_species_names$species_updated[updated_species_names$species == "Raphanus sativus"] = "Raphanus raphanistrum subsp. sativus"
+updated_species_names$species_updated[updated_species_names$species == "Salix dunnii"] = "Salix tetrasperma"
+updated_species_names$species_updated[updated_species_names$species == "Solanum stenotomum"] = "Solanum tuberosum"
 
-# keep only name id -> species key
-wcvp_names = unique(wcvp_names[,c("plant_name_id", "species")])
+# loop over each species, and calculate range area in square kilometers
+region_areas = NULL
 
-# drop areas that don't match plant ids
-wcvp_dist = wcvp_dist[(wcvp_dist$plant_name_id %in% wcvp_names$plant_name_id),]
+for(species in updated_species_names$species_updated){
 
-# remove areas that are introduced, extinct, or dubious
-wcvp_dist = wcvp_dist[(wcvp_dist$introduced == 0 & wcvp_dist$extinct == 0 & wcvp_dist$location_doubtful == 0),]
-
-# add in species names to distributions
-wcvp_dist_names = merge(wcvp_dist, wcvp_names, by = "plant_name_id")
-
-# calculate area of countries for each species
-
-code_to_area(x){
-  # get country polygons from area codes
+  print(species)
   
-  # calculate areas of polygons
-  
+  # get native distribution
+species_dist = wcvp_distribution(
+taxon = species,
+taxon_rank = "species",
+native = TRUE,
+introduced = FALSE,
+extinct = TRUE,
+location_doubtful = FALSE,
+wcvp_distributions = wcvp_dist,
+wcvp_names = wcvp_names
+)
+
+# calculate area
+region_area = sum(st_area(species_dist))/1e6
+
+region_areas = rbind(region_areas, data.frame(species_updated = species, area = region_area))
+
 }
-for(species in unique(wcvp_dist_names$species)){
-  wcvp_dist_sub = 
+
+# merge range areas with old species names
+region_areas = merge(updated_species_names, region_areas, by = "species_updated")
+
+# remove weird units
+region_areas$area = as.numeric(region_areas$area)
+
+# merge with diversity data
+alldiv = merge(alldiv, region_areas, by = "species")
+```
+
+## Load plant height data, a proxy for body size, which is a proxy for population density
+```{r}
+height = read.table("../workflow/data/eol_plant_height_data_2023-10-03/records.tsv", header = T, fill = T, quote = "", sep = "\t")
+
+# get height measurements for only species in my dataset
+height_my_species = NULL
+for(i in 1:nrow(alldiv)){
+  # print progress
+  print(i)
   
+  # get species name(s)
+  old_name = alldiv$species[i]
+  new_name = alldiv$species_updated[i]
+  
+  # check old name
+  height_sub = height[grepl(old_name, height$Scientific.Name),]
+  
+  # if new name is different, check new species name
+  if(new_name != old_name){
+    height_sub = rbind(height_sub, height[grepl(new_name, height$Scientific.Name),])
+  }
+  
+  # convert feet to meters
+  height_sub$final_values = height_sub$Measurement.Value
+  height_sub$final_values[(height_sub$Measurement.Unit == "feet")] = height_sub$final_values[(height_sub$Measurement.Unit == "feet")]*0.3048
+  
+  # average across values
+  height_one_species = data.frame(species = old_name, height = mean(height_sub$final_values, na.rm = T))
+  height_my_species = rbind(height_my_species, height_one_species)
 }
+
+
+# add height data to final dataframe
+summary(height_my_species$height)
+alldiv = merge(alldiv, height_my_species, all.x = T, by = "species")
+
+# calculate quantity that's proportional to population size (range/squared height)
+alldiv$popsize = (alldiv$area * 1e6)/(alldiv$height^2)
+summary(alldiv$popsize)
 ```
 
 # Initial data analysis
@@ -328,6 +393,10 @@ cor(alldiv$jac, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.
 cor(alldiv$pi, alldiv$nidv)
 cor(alldiv$bcd, alldiv$nidv)
 cor(alldiv$jac, alldiv$nidv)
+
+#
+cor(alldiv$pi, alldiv$popsize, method = "spearman", use = "pairwise.complete.obs")
+cor(alldiv$bcd, alldiv$popsize, method = "spearman", use = "pairwise.complete.obs")
 ```
 
 # Confirmatory data analysis
@@ -350,6 +419,7 @@ alldiv = alldiv[(alldiv$nidv >= 10),]
 ## Combine tree and data to get comparative object
 ```{r}
 # create comparative data object for caper models
+alldiv = alldiv[!is.na(alldiv$species),]
 compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
 plot(compdata$phy)
 ```

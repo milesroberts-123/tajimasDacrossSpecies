@@ -6,6 +6,31 @@
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
 #
+Salix tetrasperma
+#
+Raphanus raphanistrum subsp. sativus
+#
+Populus tristis
+#
+Erythranthe guttata
+#
+Vicia lenticula
+#
+Dioscorea cayenensis subsp. rotundata
+
+#
+species_dist = wcvp_distribution(
+taxon = "Arabidopsis thaliana"
+rank = "species",
+native = TRUE,
+introduced = FALSE,
+extinct = FALSE,
+location_doubtful = FALSE,
+)
+
+st_area(species_dist)
+
+#
 "#FFCE66" "#C07348" "#773339" "#4C3D72" "#5F88C3" "#80E6FF"
 
 #
