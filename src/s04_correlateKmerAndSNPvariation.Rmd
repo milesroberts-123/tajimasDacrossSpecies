@@ -37,10 +37,10 @@ bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
 # for now, remove species that can't be processed further for whatever reason
-jac = jac[-60]
-bcd = bcd[-60]
+jac = jac[c(-40, -63)]
+bcd = bcd[c(-40, -63)]
 
-pi = pi[-36]
+#pi = pi[-36]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -218,7 +218,7 @@ print(alldiv)
 #write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
 
 # load time tree from timetree.org
-phy = read.tree("../results/2023-03-26/species_list_2023-10-03.nwk")
+phy = read.tree("../results/2023-03-26/species_list_2023-10-06.nwk")
 
 # remove underscores
 phy$tip.label = gsub("_", " ", phy$tip.label)
@@ -288,7 +288,11 @@ alldiv = merge(alldiv, region_areas, by = "species")
 
 ## Load plant height data, a proxy for body size, which is a proxy for population density
 ```{r}
-height = read.table("../workflow/data/eol_plant_height_data_2023-10-03/records.tsv", header = T, fill = T, quote = "", sep = "\t")
+height = fread("../workflow/data/eol_plant_height_data_2023-10-03/records.tsv.gz", header = T, fill = T, quote = "", sep = "\t")
+
+# convert feet to meters
+height$final_values = height$`Measurement Value`
+height$final_values[(height$`Measurement Unit` == "feet")] = height$final_values[(height$`Measurement Unit` == "feet")]*0.3048
 
 # get height measurements for only species in my dataset
 height_my_species = NULL
@@ -301,16 +305,12 @@ for(i in 1:nrow(alldiv)){
   new_name = alldiv$species_updated[i]
   
   # check old name
-  height_sub = height[grepl(old_name, height$Scientific.Name),]
+  height_sub = height[grepl(old_name, height$`Scientific Name`),]
   
   # if new name is different, check new species name
   if(new_name != old_name){
-    height_sub = rbind(height_sub, height[grepl(new_name, height$Scientific.Name),])
+    height_sub = rbind(height_sub, height[grepl(new_name, height$`Scientific Name`),])
   }
-  
-  # convert feet to meters
-  height_sub$final_values = height_sub$Measurement.Value
-  height_sub$final_values[(height_sub$Measurement.Unit == "feet")] = height_sub$final_values[(height_sub$Measurement.Unit == "feet")]*0.3048
   
   # average across values
   height_one_species = data.frame(species = old_name, height = mean(height_sub$final_values, na.rm = T))
