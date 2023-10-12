@@ -1786,6 +1786,12 @@ any(duplicated(solanum_lycopersicum$BioSample))
 # add layout
 solanum_lycopersicum$layout = NA
 solanum_lycopersicum$layout = "PE"
+solanum_lycopersicum$layout[(solanum_lycopersicum$Run == "SRR1572576")] = "SE"
+solanum_lycopersicum$layout[(solanum_lycopersicum$Run == "SRR1572544")] = "SE"
+solanum_lycopersicum$layout[(solanum_lycopersicum$Run == "SRR1572368")] = "SE"
+solanum_lycopersicum$layout[(solanum_lycopersicum$Run == "SRR1572267")] = "SE"
+solanum_lycopersicum$layout[(solanum_lycopersicum$Run == "SRR1572268")] = "SE"
+
 #solanum_lycopersicum$layout[(solanum_lycopersicum$spots_with_mates > 0)] = "PE"
 #solanum_lycopersicum$layout[(solanum_lycopersicum$spots_with_mates == 0)] = "SE"
 
@@ -1866,9 +1872,9 @@ any(duplicated(spinacia_oleracea$BioSample))
 # add layout
 # checked that reads without mates are PE
 spinacia_oleracea$layout = NA
-spinacia_oleracea$layout = "PE"
-#spinacia_oleracea$layout[(spinacia_oleracea$spots_with_mates > 0)] = "PE"
-#spinacia_oleracea$layout[(spinacia_oleracea$spots_with_mates == 0)] = "SE"
+#spinacia_oleracea$layout = "PE"
+spinacia_oleracea$layout[(spinacia_oleracea$spots_with_mates > 0)] = "PE"
+spinacia_oleracea$layout[(spinacia_oleracea$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = spinacia_oleracea[,"Run"], replicate = spinacia_oleracea[,"BioSample"], layout = spinacia_oleracea[,"layout"], genome = "spinacia_oleracea", ploidy = 2, taxonKeys = "11742811"))
