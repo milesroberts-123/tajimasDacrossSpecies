@@ -2177,25 +2177,6 @@ rm(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3, brassica, b
 # bind all metadata together
 # paste(ls(), collapse = ", ")
 runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brachypodium_sylvaticum, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_americana, corylus_avellana, cucumis_melo, cucumis_sativus, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, juglans_regia, lactuca_sativa, lens_culinaris, lens_ervoides, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_hallii, panicum_virgatum, papaver_somniferum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thinopyrum_intermedium, thlaspi_arvense, trifolium_pratense, triticum_aestivum, triticum_dicoccoides, triticum_turgidum, vanilla_planifolia, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, zizania_palustris, ziziphus_jujuba)
-
-sumColumnInList = function(x){
-  sum(as.numeric(x[,"bases"]))
-}
-
-sum(unlist(lapply(runsAllMetaData, sumColumnInList)))
-
-# count number of bp sequenced per species
-coverdf = NULL
-for(x in runsAllMetaData){
-  speciesdf = data.frame(
-    totalbp = sum(as.numeric(x[,"bases"])), # total number of bp sequenced across all samples
-    cvbp = sd(as.numeric(x[,"bases"]))/mean(as.numeric(x[,"bases"])), # coefficient of variation in bp b/w samples
-    species = unique(x[,"ScientificName"])[1] # species name
-  )
-  coverdf = rbind(coverdf, speciesdf)
-}
-
-#write.table(coverdf, "../results/2023-03-26/bp_sequenced_2023-09-19.txt", sep = "\t", quote = F, row.names = F)
 ```
 
 
@@ -2224,6 +2205,29 @@ nrow(allReadsFinal)
 
 # number of genomes
 length(unique(allReadsFinal$genome))
+
+# filter out runs from metadata that didn't make it to final frame
+runsAllMetaData = runsAllMetaData[(runsAllMetaData$Run %in% allReadsFinal$run)]
+
+# count total number of basepairs
+sumColumnInList = function(x){
+  sum(as.numeric(x[,"bases"]))
+}
+
+sum(unlist(lapply(runsAllMetaData, sumColumnInList)))
+
+# count number of bp sequenced per species
+coverdf = NULL
+for(x in runsAllMetaData){
+  speciesdf = data.frame(
+    totalbp = sum(as.numeric(x[,"bases"])), # total number of bp sequenced across all samples
+    cvbp = sd(as.numeric(x[,"bases"]))/mean(as.numeric(x[,"bases"])), # coefficient of variation in bp b/w samples
+    species = unique(x[,"ScientificName"])[1] # species name
+  )
+  coverdf = rbind(coverdf, speciesdf)
+}
+
+#write.table(coverdf, "../results/2023-03-26/bp_sequenced_2023-09-19.txt", sep = "\t", quote = F, row.names = F)
 ```
 
 # DEPRECATED split data into batches

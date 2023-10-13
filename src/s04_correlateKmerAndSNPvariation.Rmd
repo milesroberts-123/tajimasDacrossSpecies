@@ -37,8 +37,8 @@ bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
 # for now, remove species that can't be processed further for whatever reason
-jac = jac[c(-40, -63)]
-bcd = bcd[c(-40, -63)]
+jac = jac[c(-41, -64)]
+bcd = bcd[c(-41, -64)]
 
 #pi = pi[-36]
 
