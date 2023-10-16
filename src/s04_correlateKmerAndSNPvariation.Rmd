@@ -326,6 +326,11 @@ alldiv = merge(alldiv, height_my_species, all.x = T, by = "species")
 alldiv$popsize = (alldiv$area * 1e6)/(alldiv$height^2)
 summary(alldiv$popsize)
 ```
+## genome size, ploidy, mating system data
+```{r}
+# load extra species metadata
+read.table(sep = "\t", fill = T, quote = "", header = T)
+```
 
 # Initial data analysis
 

@@ -318,8 +318,8 @@ brachypodium_distachyon$layout[(brachypodium_distachyon$spots_with_mates == 0)] 
 allReads = rbind(allReads, data.frame(run = brachypodium_distachyon[,"Run"], replicate = brachypodium_distachyon[,"BioSample"], layout = brachypodium_distachyon[,"layout"], genome = "brachypodium_distachyon", ploidy = 2, taxonKeys = "5290143"))
 ```
 
-## Brachypodium sylvaticum
-```{r}
+## Brachypodium sylvaticum, under fort lauderdale accord
+```{r eval=FALSE, include=FALSE}
 # load data for species
 brachypodium_sylvaticum = fread("../workflow/data/SRArunInfo/SraRunInfo_brachypodium_sylvaticum_PRJNA476867.csv.gz", data.table = F)
 
@@ -346,7 +346,8 @@ all(brassica_juncea$spots_with_mates > 0)
 brassica_juncea$layout = "PE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = brassica_juncea[,"Run"], replicate = brassica_juncea[,"BioSample"], layout = brassica_juncea[,"layout"], genome = "brassica_juncea", ploidy = 4, taxonKeys = "3042624"))
+# Brassica juncea is an allotetraploid, but it has two subgenomes with two copies of each subgenome. Therefore, we'll treat it like two diploid genomes
+allReads = rbind(allReads, data.frame(run = brassica_juncea[,"Run"], replicate = brassica_juncea[,"BioSample"], layout = brassica_juncea[,"layout"], genome = "brassica_juncea", ploidy = 2, taxonKeys = "3042624"))
 ```
 
 ## Brassica napus
@@ -1629,9 +1630,9 @@ ids = prunus_persica_supp$ID[(prunus_persica_supp$"Botanical varieties" == "P. p
 prunus_persica = prunus_persica[(prunus_persica$SampleName %in% ids),]
 
 # add layout
-prunus_persica$layout = NA
-prunus_persica$layout[(prunus_persica$spots_with_mates > 0)] = "PE"
-prunus_persica$layout[(prunus_persica$spots_with_mates == 0)] = "SE"
+prunus_persica$layout = "PE"
+#prunus_persica$layout[(prunus_persica$spots_with_mates > 0)] = "PE"
+#prunus_persica$layout[(prunus_persica$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = prunus_persica[,"Run"], replicate = prunus_persica[,"BioSample"], layout = prunus_persica[,"layout"], genome = "prunus_persica", ploidy = 2, taxonKeys = "8324181"))
@@ -2179,7 +2180,7 @@ rm(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3, brassica, b
 # Estimate number of basepairs included in dataset
 # bind all metadata together
 # paste(ls(), collapse = ", ")
-runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brachypodium_sylvaticum, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_americana, corylus_avellana, cucumis_melo, cucumis_sativus, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, juglans_regia, lactuca_sativa, lens_culinaris, lens_ervoides, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_hallii, panicum_virgatum, papaver_somniferum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thinopyrum_intermedium, thlaspi_arvense, trifolium_pratense, triticum_aestivum, triticum_dicoccoides, triticum_turgidum, vanilla_planifolia, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, zizania_palustris, ziziphus_jujuba)
+runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_americana, corylus_avellana, cucumis_melo, cucumis_sativus, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, juglans_regia, lactuca_sativa, lens_culinaris, lens_ervoides, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_hallii, panicum_virgatum, papaver_somniferum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thinopyrum_intermedium, thlaspi_arvense, trifolium_pratense, triticum_aestivum, triticum_dicoccoides, triticum_turgidum, vanilla_planifolia, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, zizania_palustris, ziziphus_jujuba)
 ```
 
 
@@ -2210,7 +2211,7 @@ nrow(allReadsFinal)
 length(unique(allReadsFinal$genome))
 
 # filter out runs from metadata that didn't make it to final frame
-runsAllMetaData = runsAllMetaData[(runsAllMetaData$Run %in% allReadsFinal$run)]
+#runsAllMetaData = runsAllMetaData[(runsAllMetaData$Run %in% allReadsFinal$run)]
 
 # count total number of basepairs
 sumColumnInList = function(x){
@@ -2230,7 +2231,7 @@ for(x in runsAllMetaData){
   coverdf = rbind(coverdf, speciesdf)
 }
 
-#write.table(coverdf, "../results/2023-03-26/bp_sequenced_2023-09-19.txt", sep = "\t", quote = F, row.names = F)
+#write.table(coverdf, "../results/2023-03-26/bp_sequenced_2023-10-16.txt", sep = "\t", quote = F, row.names = F)
 ```
 
 # DEPRECATED split data into batches
