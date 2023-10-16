@@ -1864,6 +1864,9 @@ spinacia_oleracea = fread("../workflow/data/SRArunInfo/SraRunInfo_spinacia_olera
 
 spinacia_oleracea = spinacia_oleracea[(spinacia_oleracea$ScientificName == "Spinacia oleracea"),]
 
+# remove pacbio data
+spinacia_oleracea = spinacia_oleracea[(spinacia_oleracea$Platform == "ILLUMINA"),]
+
 # check for technical replicates
 any(duplicated(spinacia_oleracea$Experiment))
 any(duplicated(spinacia_oleracea$SampleName))
