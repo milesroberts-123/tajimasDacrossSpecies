@@ -339,9 +339,6 @@ alldiv = merge(alldiv, metadata[,c("species", "DNA.amount..1.C..pg.", "Mating.sy
 
 # convert genome size in picograms to megabases
 alldiv$genome.size = alldiv$DNA.amount..1.C..pg. * 0.978e9
-
-# remove any rows that are NA for some reason
-alldiv = alldiv[!is.na(alldiv$species),]
 ```
 
 # Initial data analysis
@@ -431,6 +428,9 @@ alldiv = alldiv[(alldiv$rangeArea > 10),]
 
 # remove species where there aren't many sampled individuals
 alldiv = alldiv[(alldiv$nidv >= 10),]
+
+# remove any rows that are NA for some reason
+alldiv = alldiv[!is.na(alldiv$species),]
 ```
 
 ## Combine tree and data to get comparative object
@@ -617,7 +617,7 @@ phy$tip.label[(phy$tip.label == "Erythranthe guttata")] = "Mimulus guttatus"
 plotphy = drop.tip(phy, tip = phy$tip.label[!(phy$tip.label %in% alldiv$species)])
 
 # change tip labels to be mating system
-plotphy$tip.label = plotdf$
+#plotphy$tip.label = plotdf$Mating.system
 
  # get color pallete
 #plotpal = scico(5, palette = "lipari")
@@ -628,8 +628,8 @@ plotpal = c("#021326","#515A79","#A36267","#E99973","#FDF4D9")
 
 # plot phylogeny alongside other data
 ggtree(plotphy, size = 1.5) + 
-    geom_facet(panel = "log10(GBIF Range area)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(rangeArea)), color = plotpal[1]) +
-    geom_facet(panel = "log10(WCVP Range area)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(area)), color = plotpal[2]) +
+    geom_facet(panel = "GBIF range (km^2)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = rangeArea), color = plotpal[1]) +
+    geom_facet(panel = "WCVP range (km^2)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = area), color = plotpal[2]) +
     geom_facet(panel = "log10(SNP diversity)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(pi)), color = plotpal[3]) +
   geom_facet(panel = "Bray-Curtis dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = bcd), color = plotpal[4]) +
   geom_facet(panel = "Jaccard dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = jac), color = plotpal[5]) +
@@ -639,16 +639,18 @@ ggtree(plotphy, size = 1.5) +
   
 ggsave(paste("../results/2023-03-26/tree_with_primary_variables_", today, ".png", sep = ""), scale = 2)
 
-ggtree(plotphy, size = 1.5) + 
-  #geom_facet(panel = "Mating system", geom = geom_segment, size = 3, data = plotdf, mapping = aes(x = 0, color = Mating.system, yend = y, y = y, xend = 1)) +
-  geom_tiplab(aes(x = 0, label = Mating.system)) +
-  geom_facet(panel = "Ploidy", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = Ploidy), color = plotpal[2]) +
-  geom_facet(panel = "Genome size", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = genome.size), color = plotpal[3]) +
-  geom_facet(panel = "Individuals", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = nidv), color = plotpal[4]) +
-  geom_facet(panel = "Coverage", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = totalbp/(genome.size*nidv)), color = plotpal[5]) +
+# plot technical variables
+p0 = ggtree(plotphy, size = 1.5) %<+% plotdf
+p1 = p0 + geom_tippoint(aes(shape = Mating.system), size = 1.5) + 
+  geom_facet(panel = "Ploidy", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = plotdf$Ploidy), color = plotpal[2]) +
+  geom_facet(panel = "Genome size", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = plotdf$genome.size), color = plotpal[3]) +
+  geom_facet(panel = "Individuals", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = plotdf$nidv), color = plotpal[4]) +
+  geom_facet(panel = "Coverage", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = plotdf$totalbp/(plotdf$genome.size*plotdf$nidv)), color = plotpal[5]) +
   theme_tree2() +
   theme(strip.background =element_rect(fill="white")) +
   theme(strip.text = element_text(colour = 'black'))
+
+p1
 
 ggsave(paste("../results/2023-03-26/tree_with_technical_variables_", today, ".png", sep = ""), scale = 2)
 
