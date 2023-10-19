@@ -1630,9 +1630,9 @@ ids = prunus_persica_supp$ID[(prunus_persica_supp$"Botanical varieties" == "P. p
 prunus_persica = prunus_persica[(prunus_persica$SampleName %in% ids),]
 
 # add layout
-prunus_persica$layout = "PE"
-#prunus_persica$layout[(prunus_persica$spots_with_mates > 0)] = "PE"
-#prunus_persica$layout[(prunus_persica$spots_with_mates == 0)] = "SE"
+#prunus_persica$layout = "PE"
+prunus_persica$layout[(prunus_persica$spots_with_mates > 0)] = "PE"
+prunus_persica$layout[(prunus_persica$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = prunus_persica[,"Run"], replicate = prunus_persica[,"BioSample"], layout = prunus_persica[,"layout"], genome = "prunus_persica", ploidy = 2, taxonKeys = "8324181"))

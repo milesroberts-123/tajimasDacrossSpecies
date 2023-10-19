@@ -5,6 +5,20 @@
 # cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
+# species with no height data in EOL
+"Amaranthus hypochondriacus" "Arachis ipaensis"           "Benincasa hispida"          "Capsella grandiflora"      
+[5] "Chenopodium quinoa"         "Cucurbita argyrosperma"     "Digitaria exilis"           "Dioscorea rotundata"       
+[9] "Glycine soja"               "Lens ervoides"              "Lotus japonicus"            "Macadamia integrifolia"    
+[13] "Malus domestica"            "Musa acuminata"             "Nelumbo nucifera"           "Oryza glaberrima"          
+[17] "Oryza rufipogon"            "Populus trichocarpa"        "Rhododendron griersonianum" "Vanilla planifolia"        
+[21] "Xanthoceras sorbifolium" 
+
+#
+"#021326" "#515A79" "#A36267" "#E99973" "#FDF4D9"
+
+#
+"#021326" "#294B70" "#6B5F76" "#A36267" "#E57A61" "#E5B488" "#FDF4D9"
+
 #
 Salix tetrasperma
 #
