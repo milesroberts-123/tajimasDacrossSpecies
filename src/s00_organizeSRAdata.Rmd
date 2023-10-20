@@ -2235,8 +2235,33 @@ seq_meta$method[(grepl("PCR",seq_meta$V3) & seq_meta$method == "WGS")] = "WGS+PC
 
 sort(table(seq_meta$method))
 
-# save labels to results
-write.table(seq_meta, "../results/2023-03-26/seq_methods_2023-10-20.txt", sep = "\t", quote = F)
+# combine platform labels
+sort(table(seq_meta$V4))
+seq_meta$platform = seq_meta$V4
+seq_meta$platform[(seq_meta$platform == "BGISEQ")] = "OTHER"
+seq_meta$platform[(seq_meta$platform == "ION_TORRENT")] = "OTHER"
+
+# collapse model labels
+sort(table(seq_meta$V6))
+seq_meta$model = seq_meta$V6
+
+seq_meta$model[grepl("HiSeq", seq_meta$model)] = "Illumina HiSeq"
+seq_meta$model[(seq_meta$V1 == "Prunus persica")] = "Illumina HiSeq" # according to associated publication
+
+seq_meta$model[(seq_meta$model %in% c("Illumina Genome Analyzer IIx", "NextSeq 500", "NextSeq 550", "Illumina Genome Analyzer"))] = "Other Illumina"
+
+seq_meta$model[(seq_meta$model %in% c("DNBSEQ-T7", "Ion Torrent Proton", "MGISEQ-2000RS", "BGISEQ-500"))] = "Other Non-Illumina"
+
+sort(table(seq_meta$model))
+
+table(seq_meta$method, seq_meta$model)
+
+# save labels
+names(seq_meta)[1] = "species"
+seq_meta$species[(seq_meta$species == "Erythranthe guttata")] = "Mimulus guttatus"
+
+write.table(seq_meta[,c("species", "method", "platform", "model")], "../results/2023-03-26/seq_methods_2023-10-20.txt", sep = "\t", quote = F)
+
 ```
 
 # Loop over replicates, if there are both SE and PE reads for a single sample, just use the PE reads
