@@ -1947,8 +1947,11 @@ thlaspi_arvense = thlaspi_arvense[(thlaspi_arvense$LibraryStrategy == "WGS" & th
 allReads = rbind(allReads, data.frame(run = thlaspi_arvense[,"Run"], replicate = thlaspi_arvense[,"BioSample"], layout = "PE", genome = "thlaspi_arvense", ploidy = 2, taxonKeys = "3052680"))
 ```
 
-## Trifolium pratense
-```{r}
+## Trifolium pratense, DEPRECATED: study targets specific genes, 
+
+other studies are pool-seq and I don't want to bother with that 
+
+```{r eval=FALSE, include=FALSE}
 trifolium_pratense = fread("../workflow/data/SRArunInfo/SraRunInfo_trifolium_pratense_PRJNA765476.csv.gz", data.table = F)
 
 # add reads to growing list
@@ -2183,7 +2186,7 @@ rm(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3, brassica, b
 # Estimate number of basepairs included in dataset
 # bind all metadata together
 # paste(ls(), collapse = ", ")
-runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_americana, corylus_avellana, cucumis_melo, cucumis_sativus, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, juglans_regia, lactuca_sativa, lens_culinaris, lens_ervoides, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_hallii, panicum_virgatum, papaver_somniferum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thinopyrum_intermedium, thlaspi_arvense, trifolium_pratense, triticum_aestivum, triticum_dicoccoides, triticum_turgidum, vanilla_planifolia, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, zizania_palustris, ziziphus_jujuba)
+runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_americana, corylus_avellana, cucumis_melo, cucumis_sativus, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, juglans_regia, lactuca_sativa, lens_culinaris, lens_ervoides, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_hallii, panicum_virgatum, papaver_somniferum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thinopyrum_intermedium, thlaspi_arvense, triticum_aestivum, triticum_dicoccoides, triticum_turgidum, vanilla_planifolia, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, zizania_palustris, ziziphus_jujuba)
 ```
 
 
@@ -2208,11 +2211,32 @@ seq_meta = as.data.frame(do.call("rbind", seq_meta))
 seq_meta$V1 = gsub(" subsp..*", "", seq_meta$V1)
 seq_meta$V1 = gsub(" var..*", "", seq_meta$V1)
 
-# 
-sort(table(seq_meta$V4))
+# Standardize sequencing method labels
+# combine different methods of reduced representation sequencing
+sort(table(seq_meta$V2))
+seq_meta$method = seq_meta$V2
+seq_meta$method[(seq_meta$method == "GBS")] = "RRS"
+seq_meta$method[(seq_meta$method == "RAD-Seq")] = "RRS"
+seq_meta$method[(seq_meta$method == "WXS" & seq_meta$V1 == "Zizania palustris")] = "RRS" # Zizania publication specifies restriction enzymes
+seq_meta$method[(seq_meta$method == "OTHER" & seq_meta$V3 == "Restriction Digest")] = "RRS"
+seq_meta$method[(seq_meta$method == "OTHER" & seq_meta$V3 == "Reduced Representation")] = "RRS"
+seq_meta$method[(seq_meta$V1 == "Miscanthus sinensis")] = "RRS"
+seq_meta$method[(seq_meta$V1 == "Lens culinaris")] = "RRS"
+seq_meta$method[(seq_meta$V1 == "Helianthus annuus")] = "RRS"
+seq_meta$method[(seq_meta$V1 == "Papaver somniferum")] = "RRS"
 
-names(runsAllMetaData)
-get_seq_variables(runsAllMetaData)
+seq_meta$method[(seq_meta$method == "WGA")] = "WGS"
+seq_meta$method[(seq_meta$method == "WGS;WGA")] = "WGS"
+seq_meta$method[(seq_meta$V1 == "Quercus robur")] = "WGS"
+
+# annotate which WGS studies include PCR
+seq_meta$method[(seq_meta$V1 == "Oryza rufipogon")] = "WGS+PCR"
+seq_meta$method[(grepl("PCR",seq_meta$V3) & seq_meta$method == "WGS")] = "WGS+PCR"
+
+sort(table(seq_meta$method))
+
+# save labels to results
+write.table(seq_meta, "../results/2023-03-26/seq_methods_2023-10-20.txt", sep = "\t", quote = F)
 ```
 
 # Loop over replicates, if there are both SE and PE reads for a single sample, just use the PE reads
