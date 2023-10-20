@@ -551,6 +551,9 @@ castanea_mollissima = fread("../workflow/data/SRArunInfo/SraRunInfo_castanea_mol
 # remove reads used for genome assembly
 castanea_mollissima = castanea_mollissima[!(castanea_mollissima$Run %in% c("SRR10672059", "SRR10672058")),]
 
+# remove oxford nanopore reads
+castanea_mollissima = castanea_mollissima[!(castanea_mollissima$Platform == "OXFORD_NANOPORE"),]
+
 # subset to just one species
 castanea_mollissima = castanea_mollissima[(castanea_mollissima$ScientificName == "Castanea mollissima"),]
 
@@ -2183,6 +2186,34 @@ rm(arabidopsis_lyrata_1, arabidopsis_lyrata_2, arabidopsis_lyrata_3, brassica, b
 runsAllMetaData = list(actinidia_chinensis, aegilops_tauschii, amaranthus_hypochondriacus, ananas_comosus, arabidopsis_halleri, arabidopsis_lyrata, arabidopsis_suecica, arabidopsis_thaliana, arabis_alpina, arabis_nemorensis, arachis_duranensis, arachis_hypogaea, arachis_ipaensis, benincasa_hispida, beta_vulgaris, boechera_stricta, brachypodium_distachyon, brassica_juncea, brassica_napus, brassica_nigra, brassica_oleracea, brassica_rapa, buddleja_alternifolia, cajanus_cajan, camelina_sativa, camellia_sinensis, cannabis_sativa, capsella_grandiflora, capsella_rubella, capsicum_annuum, castanea_mollissima, chenopodium_quinoa, cicer_arietinum, citrullus_lanatus, coffea_arabica, coffea_canephora, corylus_americana, corylus_avellana, cucumis_melo, cucumis_sativus, cucurbita_argyrosperma, cucurbita_pepo, digitaria_exilis, dioscorea_alata, dioscorea_rotundata, durio_zibethinus, elaeis_guineensis, eleusine_coracana, ficus_carica, glycine_max, glycine_soja, gossypium_arboreum, gossypium_barbadense, gossypium_hirsutum, helianthus_annuus, heliosperma_pusillum, hordeum_vulgare, juglans_regia, lactuca_sativa, lens_culinaris, lens_ervoides, linum_usitatissimum, lotus_japonicus, lupinus_angustifolius, macadamia_integrifolia, malus_domestica, malus_sylvestris, mangifera_indica, manihot_esculenta, medicago_truncatula, mimulus_guttatus, miscanthus_sinensis, momordica_charantia, musa_acuminata, nelumbo_nucifera, nicotiana_tabacum, olea_europaea, oryza_barthii, oryza_brachyantha, oryza_glaberrima, oryza_longistaminata, oryza_meridionalis, oryza_punctata, oryza_rufipogon, oryza_sativa, panicum_hallii, panicum_virgatum, papaver_somniferum, phaseolus_vulgaris, phoenix_dactylifera, pisum_sativum, populus_deltoides, populus_trichocarpa, prunus_armeniaca, prunus_avium, prunus_persica, quercus_lobata, quercus_robur, raphanus_sativus, rhododendron_griersonianum, salix_dunnii, secale_cereale, sesamum_indicum, setaria_italica, setaria_viridis, solanum_chilense, solanum_lycopersicum, solanum_melongena, solanum_pimpinellifolium, solanum_stenotomum, sorghum_bicolor, spinacia_oleracea, spirodela_polyrhiza, striga_hermonthica, tetracentron_sinense, thinopyrum_intermedium, thlaspi_arvense, trifolium_pratense, triticum_aestivum, triticum_dicoccoides, triticum_turgidum, vanilla_planifolia, vigna_radiata, vigna_umbellata, vigna_unguiculata, vitis_vinifera, xanthoceras_sorbifolium, zea_mays, zizania_palustris, ziziphus_jujuba)
 ```
 
+
+# Get sequencing strategy and instrument for each sepcies
+```{r}
+get_seq_variables = function(x){
+  species = unique(x$ScientificName)[1]
+  strat = paste(unique(x$LibraryStrategy), collapse = ";")
+  selec = paste(unique(x$LibrarySelection), collapse = ";")
+  plat = paste(unique(x$Platform), collapse = ";")
+  model = paste(unique(x$Model), collapse = ";")
+  most_model = names(sort(table(x$Model), decreasing = T))[1]
+  
+  return(c(species, strat, selec, plat, model, most_model))
+}
+
+seq_meta = lapply(runsAllMetaData, FUN = get_seq_variables)
+
+seq_meta = as.data.frame(do.call("rbind", seq_meta))
+
+# remove subsp. and variety from species names
+seq_meta$V1 = gsub(" subsp..*", "", seq_meta$V1)
+seq_meta$V1 = gsub(" var..*", "", seq_meta$V1)
+
+# 
+sort(table(seq_meta$V4))
+
+names(runsAllMetaData)
+get_seq_variables(runsAllMetaData)
+```
 
 # Loop over replicates, if there are both SE and PE reads for a single sample, just use the PE reads
 ```{r}
