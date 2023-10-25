@@ -5,6 +5,11 @@
 # cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
+#
+castanea_mollissima
+juglans_regia
+ziziphus_jujuba
+
 # species with no height data in EOL
 "Amaranthus hypochondriacus" "Arachis ipaensis"           "Benincasa hispida"          "Capsella grandiflora"      
 [5] "Chenopodium quinoa"         "Cucurbita argyrosperma"     "Digitaria exilis"           "Dioscorea rotundata"       
