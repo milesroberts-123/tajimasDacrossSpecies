@@ -6,6 +6,209 @@
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
 #
+
+Call:
+  lm(formula = log10(tf) ~ log10(sweepS) + h + log10(mu) + log10(R) + 
+       tau + sigma + sigma2 + sigma * h + f0 + f1 + N + n + lambda + 
+       n * lambda + rcat, data = fix_times)
+
+Residuals:
+  Min       1Q   Median       3Q      Max 
+-1.24797 -0.17344 -0.02458  0.13214  1.84352 
+
+Coefficients:
+  Estimate Std. Error  t value Pr(>|t|)    
+(Intercept)    7.402e+00  7.843e-02   94.378  < 2e-16 ***
+  log10(sweepS) -4.814e-01  2.782e-03 -173.021  < 2e-16 ***
+  h              6.245e-02  1.111e-02    5.622 1.91e-08 ***
+  log10(mu)     -1.164e-03  7.407e-03   -0.157  0.87514    
+log10(R)       2.081e-03  1.380e-03    1.508  0.13153    
+tau            2.691e-07  1.116e-05    0.024  0.98076    
+sigma          2.760e-03  2.425e-02    0.114  0.90940    
+sigma2        -1.862e-02  2.160e-02   -0.862  0.38854    
+f0             2.109e+00  4.971e-02   42.424  < 2e-16 ***
+  f1            -5.638e+00  4.939e-02 -114.164  < 2e-16 ***
+  N              1.955e-04  1.105e-05   17.694  < 2e-16 ***
+  n             -9.474e-03  9.849e-03   -0.962  0.33610    
+lambda        -7.095e-04  1.173e-03   -0.605  0.54517    
+rcat2-cycle    6.108e-02  5.069e-03   12.050  < 2e-16 ***
+  rcatchaos     -1.350e-02  5.068e-03   -2.663  0.00775 ** 
+  rcatgrowing    7.817e-02  5.069e-03   15.422  < 2e-16 ***
+  rcatshrinking -7.232e-02  5.069e-03  -14.268  < 2e-16 ***
+  h:sigma       -2.523e-02  1.939e-02   -1.301  0.19316    
+n:lambda       6.453e-04  7.439e-04    0.868  0.38566    
+---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2775 on 29980 degrees of freedom
+Multiple R-squared:  0.608,	Adjusted R-squared:  0.6078 
+F-statistic:  2584 on 18 and 29980 DF,  p-value: < 2.2e-16
+
+#
+Call:
+  glm(formula = fails ~ log10(sweepS) + h + log10(mu) + log10(R) + 
+        tau + sigma + sigma2 + sigma * h + f0 + f1 + N + lambda + 
+        n + n * lambda + rcat, family = "quasipoisson", data = fix_times)
+
+Deviance Residuals: 
+  Min       1Q   Median       3Q      Max  
+-44.096   -7.206   -4.368    0.948  125.778  
+
+Coefficients:
+  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    4.876e+00  3.694e-01  13.202  < 2e-16 ***
+  log10(sweepS) -5.041e-01  1.352e-02 -37.287  < 2e-16 ***
+  h             -8.067e-01  5.397e-02 -14.947  < 2e-16 ***
+  log10(mu)      7.202e-03  3.514e-02   0.205   0.8376    
+log10(R)      -1.384e-02  6.547e-03  -2.114   0.0345 *  
+  tau            5.908e-05  5.317e-05   1.111   0.2665    
+sigma         -3.576e-02  1.133e-01  -0.316   0.7523    
+sigma2        -8.433e-02  1.031e-01  -0.818   0.4135    
+f0             2.037e+01  2.108e-01  96.607  < 2e-16 ***
+  f1            -1.164e+00  2.301e-01  -5.060 4.22e-07 ***
+  N              4.997e-04  5.247e-05   9.523  < 2e-16 ***
+  lambda        -3.617e-03  5.250e-03  -0.689   0.4909    
+n             -7.643e-01  4.951e-02 -15.438  < 2e-16 ***
+  rcat2-cycle    3.918e-01  2.427e-02  16.140  < 2e-16 ***
+  rcatchaos      5.627e-01  2.355e-02  23.896  < 2e-16 ***
+  rcatgrowing   -2.741e-02  2.677e-02  -1.024   0.3057    
+rcatshrinking -1.201e-01  2.756e-02  -4.358 1.32e-05 ***
+  h:sigma        2.312e-01  9.395e-02   2.461   0.0139 *  
+  lambda:n       1.315e-03  3.750e-03   0.351   0.7259    
+---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for quasipoisson family taken to be 152.7203)
+
+Null deviance: 5436965  on 29998  degrees of freedom
+Residual deviance: 3127675  on 29980  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 6
+
+
+
+
+#
+Call:
+  lm(formula = log10(tf) ~ log10(sweepS) + h + log10(mu) + log10(R) + 
+       tau + sigma + sigma2 + sigma * h + f0 + f1 + N + n + rcat, 
+     data = fix_times)
+
+Residuals:
+  Min       1Q   Median       3Q      Max 
+-1.24894 -0.17353 -0.02443  0.13184  1.84390 
+
+Coefficients:
+  Estimate Std. Error  t value Pr(>|t|)    
+(Intercept)    7.392e+00  7.707e-02   95.914  < 2e-16 ***
+  log10(sweepS) -4.814e-01  2.782e-03 -173.020  < 2e-16 ***
+  h              6.235e-02  1.111e-02    5.612 2.01e-08 ***
+  log10(mu)     -1.243e-03  7.407e-03   -0.168  0.86669    
+log10(R)       2.089e-03  1.380e-03    1.514  0.13015    
+tau            3.285e-07  1.116e-05    0.029  0.97651    
+sigma          2.734e-03  2.425e-02    0.113  0.91023    
+sigma2        -1.863e-02  2.160e-02   -0.863  0.38835    
+f0             2.109e+00  4.971e-02   42.423  < 2e-16 ***
+  f1            -5.638e+00  4.939e-02 -114.164  < 2e-16 ***
+  N              1.955e-04  1.105e-05   17.689  < 2e-16 ***
+  n             -1.399e-03  3.206e-03   -0.436  0.66255    
+rcat2-cycle    6.105e-02  5.069e-03   12.045  < 2e-16 ***
+  rcatchaos     -1.355e-02  5.068e-03   -2.673  0.00753 ** 
+  rcatgrowing    7.817e-02  5.069e-03   15.423  < 2e-16 ***
+  rcatshrinking -7.232e-02  5.069e-03  -14.267  < 2e-16 ***
+  h:sigma       -2.511e-02  1.939e-02   -1.295  0.19531    
+---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2775 on 29982 degrees of freedom
+Multiple R-squared:  0.608,	Adjusted R-squared:  0.6078 
+F-statistic:  2907 on 16 and 29982 DF,  p-value: < 2.2e-16
+
+
+#
+glm(formula = fails ~ log10(sweepS) + h + log10(mu) + log10(R) + 
+      tau + f0 + f1 + N + lambda + n + r + sigma + sigma2 + sigma * 
+      h, family = "quasipoisson", data = fix_times)
+
+Deviance Residuals: 
+  Min       1Q   Median       3Q      Max  
+-44.770   -7.215   -4.383    0.981  124.849  
+
+Coefficients:
+  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)    4.805e+00  3.644e-01  13.187  < 2e-16 ***
+  log10(sweepS) -5.047e-01  1.352e-02 -37.330  < 2e-16 ***
+  h             -8.051e-01  5.401e-02 -14.906  < 2e-16 ***
+  log10(mu)      8.999e-03  3.516e-02   0.256   0.7980    
+log10(R)      -1.356e-02  6.548e-03  -2.071   0.0383 *  
+  tau            5.518e-05  5.317e-05   1.038   0.2994    
+f0             2.037e+01  2.109e-01  96.596  < 2e-16 ***
+  f1            -1.186e+00  2.301e-01  -5.154 2.57e-07 ***
+  N              4.972e-04  5.249e-05   9.472  < 2e-16 ***
+  lambda        -1.824e-03  1.750e-03  -1.042   0.2972    
+n             -7.475e-01  1.630e-02 -45.870  < 2e-16 ***
+  r              2.300e-01  6.434e-03  35.746  < 2e-16 ***
+  sigma         -3.980e-02  1.133e-01  -0.351   0.7254    
+sigma2        -8.145e-02  1.031e-01  -0.790   0.4297    
+h:sigma        2.299e-01  9.404e-02   2.445   0.0145 *  
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for quasipoisson family taken to be 152.8066)
+
+Null deviance: 5436965  on 29998  degrees of freedom
+Residual deviance: 3129222  on 29984  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 6
+
+
+
+#
+Call:
+  lm(formula = log10(tf) ~ log10(sweepS) + h + log10(mu) + log10(R) + 
+       tau + sigma + sigma2 + sigma * h + f0 + f1 + N + lambda + 
+       n + r + K, data = fix_times)
+
+Residuals:
+  Min       1Q   Median       3Q      Max 
+-1.00005 -0.18252 -0.01897  0.15571  1.76524 
+
+Coefficients: (2 not defined because of singularities)
+Estimate Std. Error  t value Pr(>|t|)    
+(Intercept)    4.546e+00  8.169e-02   55.655  < 2e-16 ***
+  log10(sweepS) -4.376e-01  2.352e-03 -186.038  < 2e-16 ***
+  h              5.692e-02  1.397e-02    4.073 4.65e-05 ***
+  log10(mu)     -2.298e-04  9.328e-03   -0.025   0.9803    
+log10(R)       2.326e-03  1.755e-03    1.326   0.1850    
+tau           -2.291e-05  1.405e-05   -1.630   0.1030    
+sigma          3.508e-02  3.075e-02    1.141   0.2540    
+sigma2        -3.489e-02  2.729e-02   -1.279   0.2011    
+f0             1.137e+00  3.138e-02   36.247  < 2e-16 ***
+  f1            -2.630e+00  3.142e-02  -83.715  < 2e-16 ***
+  N              1.834e-04  1.407e-05   13.032  < 2e-16 ***
+  lambda         1.143e-03  4.680e-04    2.442   0.0146 *  
+  n              3.779e-03  1.818e-03    2.079   0.0376 *  
+  r                     NA         NA       NA       NA    
+K                     NA         NA       NA       NA    
+h:sigma       -2.433e-02  2.440e-02   -0.997   0.3187    
+---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2873 on 19986 degrees of freedom
+Multiple R-squared:  0.6842,	Adjusted R-squared:  0.684 
+F-statistic:  3331 on 13 and 19986 DF,  p-value: < 2.2e-16
+
+
+#
+expected_seg_sites = function(N,mu,sigma){
+
+4*mu*(N/(1 + sigma/(2-sigma)))*sum(1/(N-1))
+
+}
+
+#
 castanea_mollissima
 juglans_regia
 ziziphus_jujuba

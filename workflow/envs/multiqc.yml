@@ -1,4 +1,4 @@
 name: multiqc
 
 dependencies:
- - multiqc=1.13
+ - multiqc=1.18

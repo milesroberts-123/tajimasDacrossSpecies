@@ -12,6 +12,8 @@ output:
 ```{r}
 rm(list = ls())
 
+# remove.packages(c("dplyr", "ggplot2", "caper", "stringr", "data.table", "cowplot", "rWCVP", "lwgeom", "sf"))
+
 library(dplyr)
 library(ggplot2)
 library(caper)
@@ -23,6 +25,7 @@ library(cowplot)
 library(rWCVP)
 library(lwgeom)
 library(sf)
+
 
 today = Sys.Date()
 ```
@@ -37,8 +40,8 @@ bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
 # for now, remove species that can't be processed further for whatever reason
-jac = jac[c(-41, -64)]
-bcd = bcd[c(-41, -64)]
+jac = jac[c(-45, -68)]
+bcd = bcd[c(-45, -68)]
 
 #pi = pi[-36]
 
@@ -250,6 +253,7 @@ updated_species_names$species_updated[updated_species_names$species == "Populus 
 updated_species_names$species_updated[updated_species_names$species == "Raphanus sativus"] = "Raphanus raphanistrum subsp. sativus"
 updated_species_names$species_updated[updated_species_names$species == "Salix dunnii"] = "Salix tetrasperma"
 updated_species_names$species_updated[updated_species_names$species == "Solanum stenotomum"] = "Solanum tuberosum"
+updated_species_names$species_updated[updated_species_names$species == "Boechera stricta"] = "Boechera drummondii"
 
 # loop over each species, and calculate range area in square kilometers
 region_areas = NULL
@@ -341,7 +345,19 @@ alldiv = merge(alldiv, metadata[,c("species", "DNA.amount..1.C..pg.", "Mating.sy
 alldiv$genome.size = alldiv$DNA.amount..1.C..pg. * 0.978e9
 ```
 
+## save final organized dataframe
+```{r}
+write.table(alldiv, paste("final_covariates_", today, ".txt", sep = ""), row.names = F, quote = F, sep = "\t")
+```
+
 # Initial data analysis
+
+## load saved data for plotting
+```{r}
+alldiv = read.table("../results/2023-03-26/final_covariates_2023-11-06.txt", sep = "\t", header = T)
+
+
+```
 
 ## relationship between coverage and diveristy
 ```{r eval=FALSE, include=FALSE}

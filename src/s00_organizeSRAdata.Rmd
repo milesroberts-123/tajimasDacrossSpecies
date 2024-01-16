@@ -4,6 +4,11 @@
 ```{r}
 rm(list = ls())
 
+# set random number generation seed using randomly picked seed
+#sample(1:(.Machine$integer.max), size = 1)
+set.seed(1577935165)
+
+# load libraries
 library(data.table)
 
 # if (!require("BiocManager", quietly = TRUE))
@@ -261,9 +266,9 @@ boechera_stricta_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_boechera_stri
 # subset second dataset by values in this publication
 # https://doi.org/10.1093/gbe/evac043
 # SRP134283-SRP134373, SRP134393-SRP134433, SRP134436-SRP134479, SRP134481-SRP134572, and SRP134581-SRP134671
-sraprojects = paste("SRP", c(134283:134373, 134393:134433, 134436:134479, 134481:134572, 134581:134671), sep = "")
+#sraprojects = paste("SRP", c(134283:134373, 134393:134433, 134436:134479, 134481:134572, 134581:134671), sep = "")
 
-boechera_stricta_2 = boechera_stricta_2[(boechera_stricta_2$SRAStudy %in% sraprojects),]
+#boechera_stricta_2 = boechera_stricta_2[(boechera_stricta_2$SRAStudy %in% sraprojects),]
 
 # bind both datasets
 boechera_stricta = rbind(boechera_stricta_1, boechera_stricta_2)
@@ -274,7 +279,7 @@ boechera_stricta$layout[(boechera_stricta$spots_with_mates > 0)] = "PE"
 boechera_stricta$layout[(boechera_stricta$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = boechera_stricta[,"Run"], replicate = boechera_stricta[,"BioSample"], layout = boechera_stricta[,"layout"], genome = "boechera_stricta", ploidy = 2, taxonKeys = "3043392"))
+allReads = rbind(allReads, data.frame(run = boechera_stricta[,"Run"], replicate = boechera_stricta[,"LibraryName"], layout = boechera_stricta[,"layout"], genome = "boechera_stricta", ploidy = 2, taxonKeys = "3043392"))
 
 # remove technical replicates from dataset 2
 # for each technical replicate, just take the sample with the most bases
@@ -366,7 +371,8 @@ all(brassica_napus$spots_with_mates > 0)
 
 # add reads to growing list
 # use experiment ID instead of BioSample ID because BioSample ID is not unique for each sample
-allReads = rbind(allReads, data.frame(run = brassica_napus[,"Run"], replicate = brassica_napus[,"Experiment"], layout = "PE", genome = "brassica_napus", ploidy = 4, taxonKeys = "3042551"))
+# ploidy is not actually 2, but we can treat it like a diploid for genotype calling because it's allopolyploid
+allReads = rbind(allReads, data.frame(run = brassica_napus[,"Run"], replicate = brassica_napus[,"Experiment"], layout = "PE", genome = "brassica_napus", ploidy = 2, taxonKeys = "3042551"))
 
 ```
 
@@ -689,8 +695,8 @@ allReads = rbind(allReads, data.frame(run = corylus_avellana[,"Run"], replicate 
 # load data
 cucumis_melo = fread("../workflow/data/SRArunInfo/SraRunInfo_cucumis_melo_PRJNA565104.csv.gz", data.table = F)
 
-# remove reads from outgroup based on publication, 
-# see Supplementary table 1
+# remove reads from outgroup based on source publication, 
+# see Supplementary table 1 of source publication
 runs2drop = paste("MS-", c(893:898, 900, 901, 995), sep = "")
 
 cucumis_melo = cucumis_melo[!(cucumis_melo$SampleName %in% runs2drop),]
@@ -780,8 +786,11 @@ dioscorea_alata = merge(dioscorea_alata, dioscorea_alata_ploidy, by = "SampleNam
 # What's the most common type of ploidy
 table(dioscorea_alata$`Inferred Ploidy`)
 
+# only use accessions with a known ploidy of 2
+dioscorea_alata = dioscorea_alata[(dioscorea_alata$`Inferred Ploidy` == 2) & !is.na(dioscorea_alata$`Inferred Ploidy`),]
+
 # if ploidy is NA, just assume it's 2 because that's by far the most common
-dioscorea_alata$`Inferred Ploidy`[is.na(dioscorea_alata$`Inferred Ploidy`)] = 2
+#dioscorea_alata$`Inferred Ploidy`[is.na(dioscorea_alata$`Inferred Ploidy`)] = 2
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = dioscorea_alata[,"Run"], replicate = dioscorea_alata[,"BioSample"], layout = "SE", genome = "dioscorea_alata", ploidy = dioscorea_alata$`Inferred Ploidy`, taxonKeys = "2754392 2754837"))
@@ -1507,7 +1516,8 @@ panicum_virgatum$layout[(panicum_virgatum$spots_with_mates > 0)] = "PE"
 panicum_virgatum$layout[(panicum_virgatum$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = panicum_virgatum[,"Run"], replicate = panicum_virgatum[,"BioSample"], layout = panicum_virgatum[,"layout"], genome = "panicum_virgatum", ploidy = 4, taxonKeys = "2705162"))
+# species is tetraploid, but the assembly has two separate subgenomes
+allReads = rbind(allReads, data.frame(run = panicum_virgatum[,"Run"], replicate = panicum_virgatum[,"BioSample"], layout = panicum_virgatum[,"layout"], genome = "panicum_virgatum", ploidy = 2, taxonKeys = "2705162"))
 ```
 
 ## Papaver somniferum
@@ -1528,6 +1538,7 @@ phaseolus_vulgaris = phaseolus_vulgaris[(phaseolus_vulgaris$LibrarySelection == 
 # check for technical replicates
 any(duplicated(phaseolus_vulgaris$Experiment))
 any(duplicated(phaseolus_vulgaris$SampleName))
+any(duplicated(phaseolus_vulgaris$LibraryName))
 any(duplicated(phaseolus_vulgaris$BioSample))
 
 # add layout
@@ -2260,7 +2271,7 @@ table(seq_meta$method, seq_meta$model)
 names(seq_meta)[1] = "species"
 seq_meta$species[(seq_meta$species == "Erythranthe guttata")] = "Mimulus guttatus"
 
-write.table(seq_meta[,c("species", "method", "platform", "model")], "../results/2023-03-26/seq_methods_2023-10-20.txt", sep = "\t", quote = F, row.names = F)
+#write.table(seq_meta[,c("species", "method", "platform", "model")], "../results/2023-03-26/seq_methods_2023-10-20.txt", sep = "\t", quote = F, row.names = F)
 ```
 
 # Loop over replicates, if there are both SE and PE reads for a single sample, just use the PE reads
