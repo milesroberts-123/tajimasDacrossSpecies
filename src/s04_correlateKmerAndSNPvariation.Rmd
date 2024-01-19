@@ -1,7 +1,7 @@
 ---
 title: "K-mer approach to Lewontin's paradox results"
 author: "Miles Roberts"
-date: "2023-09-12"
+date: "2024-01-17"
 output:
   html_document:
     df_print: paged
@@ -40,10 +40,9 @@ bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
 # for now, remove species that can't be processed further for whatever reason
-jac = jac[c(-45, -68)]
-bcd = bcd[c(-45, -68)]
-
-#pi = pi[-36]
+jac = jac[c(-48, -72)]
+bcd = bcd[c(-48, -72)]
+pi = pi[c(-71,-98)]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -111,12 +110,15 @@ alldiv = merge(alldiv, coverage, by = "species", all.x = TRUE)
 # load range data
 areas = list.files("../results/2023-03-26/ranges/areas", full.names = T)
 
+# remove files with no data
+areas = areas[c(-33, -44, -96, -106)]
+
 # extract species names
 areas_species = gsub("_areas.txt", "", gsub("../results/2023-03-26/ranges/areas/", "", areas))
 areas_species = str_to_sentence(gsub("_", " ", areas_species))
 
 # load data
-areas = lapply(areas, read.table, header = T, sep = "\t")
+areas = lapply(areas, read.table, header = +T, sep = "\t")
 
 # add names to list
 names(areas) = areas_species
@@ -125,7 +127,7 @@ names(areas) = areas_species
 ```
 
 ## remove areas outside of native range 
-```{r}
+```{r eval=FALSE, include=FALSE}
 # Refer to plants of the world online for native range maps
 # powo.science.kew.org
 
@@ -218,7 +220,7 @@ print(alldiv)
 ## Prepare phylogenetic tree
 ```{r}
 # write species list to upload to timetree.org
-#write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
+write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
 
 # load time tree from timetree.org
 phy = read.tree("../results/2023-03-26/species_list_2023-10-16.nwk")
@@ -325,21 +327,30 @@ for(i in 1:nrow(alldiv)){
 # add height data to final dataframe
 summary(height_my_species$height)
 alldiv = merge(alldiv, height_my_species, all.x = T, by = "species")
-
-# calculate quantity that's proportional to population size (range/squared height)
-alldiv$WCVP.popsize = (alldiv$area * 1e6)/(alldiv$height^2)
-summary(alldiv$WCVP.popsize)
-
-alldiv$GBIF.popsize = (alldiv$rangeArea * 1e6)/(alldiv$height^2)
-summary(alldiv$GBIF.popsize)
 ```
+
 ## genome size, ploidy, mating system data
 ```{r}
 # load extra species metadata
-metadata = read.table("../results/2023-03-26/species_metadata_2023-10-16.txt", sep = "\t", fill = T, quote = "", header = T)
+metadata = read.table("../results/2023-03-26/species_metadata_2024-01-19.txt", sep = "\t", fill = T, quote = "", header = T)
 names(metadata)[1] = "species"
 
-alldiv = merge(alldiv, metadata[,c("species", "DNA.amount..1.C..pg.", "Mating.system", "Ploidy")], by = "species", all.x = T)
+# remove weird space character
+metadata$species = gsub("<a0>", " ", metadata$species)
+
+# merge metadata with diversity data
+alldiv = merge(alldiv, metadata[,c("species", "DNA.amount..1.C..pg.", "Mating.system", "Ploidy", "Height..m.")], by = "species", all.x = T)
+
+# combine different height columns into one
+alldiv$height_final = alldiv$height
+alldiv$height_final[is.na(alldiv$height_final)] = alldiv$Height..m.[is.na(alldiv$height_final)]
+
+# calculate quantity that's proportional to population size (range/squared height)
+alldiv$WCVP.popsize = (alldiv$area * 1e6)/(alldiv$height_final^2)
+summary(alldiv$WCVP.popsize)
+
+alldiv$GBIF.popsize = (alldiv$rangeArea * 1e6)/(alldiv$height_final^2)
+summary(alldiv$GBIF.popsize)
 
 # convert genome size in picograms to megabases
 alldiv$genome.size = alldiv$DNA.amount..1.C..pg. * 0.978e9
@@ -355,17 +366,15 @@ write.table(alldiv, paste("final_covariates_", today, ".txt", sep = ""), row.nam
 ## load saved data for plotting
 ```{r}
 alldiv = read.table("../results/2023-03-26/final_covariates_2023-11-06.txt", sep = "\t", header = T)
-
-
 ```
 
 ## relationship between coverage and diveristy
 ```{r eval=FALSE, include=FALSE}
-ggplot(alldiv, aes(x = log10(totalbp), y = log10(pi), label = species)) +
+ggplot(alldiv, aes(x = log10(totalbp/nidv), y = log10(pi), label = species)) +
   geom_point() +
   geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
-  labs(x = "log10(Total base pairs sequenced across all samples)", y = "log10(Nucleotide diversity)")
+  labs(x = "log10(Average number of base pairs sequenced per individual)", y = "log10(Nucleotide diversity)")
 
 #ggsave("bp-sequenced-vs-diversity.png")
 
@@ -386,6 +395,18 @@ ggplot(alldiv, aes(x = log10(totalbp), y = bcd, label = species)) +
   geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
   labs(x = "log10(Total base pairs sequenced across all samples)", y = "Bray-Curtis Dissimilarity")
+
+ggplot(alldiv, aes(x = log10(pi), y = bcd, label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Nucleotide diversity)", y = "Bray-Curtis Dissimilarity")
+
+ggplot(alldiv, aes(x = log10(pi), y = jac, label = species)) +
+  geom_point() +
+  geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Nucleotide diversity)", y = "Jaccard Dissimilarity")
 ```
 
 ## distributions of variables
@@ -417,6 +438,10 @@ cor(alldiv$pi, alldiv$jac, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$pi, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$bcd, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$jac, alldiv$rangeArea, method = "spearman", use = "pairwise.complete.obs")
+
+cor(alldiv$pi, alldiv$area, method = "spearman", use = "pairwise.complete.obs")
+cor(alldiv$bcd, alldiv$area, method = "spearman", use = "pairwise.complete.obs")
+cor(alldiv$jac, alldiv$area, method = "spearman", use = "pairwise.complete.obs")
 
 # How does the number of individuals correlate with the diversity measures
 # More individuals = more opportunities to discover variants

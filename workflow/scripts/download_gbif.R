@@ -1,7 +1,7 @@
 # PARAMETERS
 print("Parsing arguments...")
 args = commandArgs(trailingOnly=TRUE)
-package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igraph", "raster", "rgeos", "maps", "sf", "rnaturalearth") # list of needed packages
+package_list = c("rgbif", "rworldmap", "ggplot2", "stringr", "alphahull", "igraph", "raster", "maps", "sf", "rnaturalearth") # list of needed packages
 #kept_columns = c(
 #	"species", 
 #	"decimalLongitude",

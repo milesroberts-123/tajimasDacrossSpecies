@@ -11,6 +11,10 @@ set.seed(1577935165)
 # load libraries
 library(data.table)
 
+# maximum number of base pairs to process for each species
+# This is based on the number of basepairs in the brassica napus dataset, which I was just barely able to process on the MSU HPCC
+maxbp = 7.5e12
+
 # if (!require("BiocManager", quietly = TRUE))
 #     install.packages("BiocManager")
 # 
@@ -2345,6 +2349,8 @@ sum(sort(table(allReads$genome))[41:55])
 # write.table(testSet, file = "samples.tsv", sep = "\t", quote = F, row.names = F)
 
 write.table(allReadsFinal, file = "../config/samples.tsv", sep = "\t", quote = F, row.names = F)
+
+#write.table(allReads, file = "../config/samples.tsv", sep = "\t", quote = F, row.names = F)
 
 # write run numbers and metadata to workflow input
 # need to replace write path with "../workflow/data/samples_pe.tsv" when I'm ready
