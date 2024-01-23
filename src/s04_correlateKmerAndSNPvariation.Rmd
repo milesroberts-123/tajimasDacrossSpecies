@@ -220,10 +220,10 @@ print(alldiv)
 ## Prepare phylogenetic tree
 ```{r}
 # write species list to upload to timetree.org
-write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
+#write.table(alldiv$species, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
 
 # load time tree from timetree.org
-phy = read.tree("../results/2023-03-26/species_list_2023-10-16.nwk")
+phy = read.tree("../results/2023-03-26/species_list_2024-01-17.nwk")
 
 # remove underscores
 phy$tip.label = gsub("_", " ", phy$tip.label)
@@ -234,6 +234,9 @@ phy$tip.label = gsub(" subsp..*", "", phy$tip.label)
 
 # sanity check
 plot(phy)
+
+# check that all species I have data for are in phylogeny. Output should be TRUE
+all(alldiv$species %in% phy$tip.label)
 ```
 
 ## Load range areas
@@ -337,6 +340,7 @@ names(metadata)[1] = "species"
 
 # remove weird space character
 metadata$species = gsub("<a0>", " ", metadata$species)
+metadata$species = gsub(" $", "", metadata$species)
 
 # merge metadata with diversity data
 alldiv = merge(alldiv, metadata[,c("species", "DNA.amount..1.C..pg.", "Mating.system", "Ploidy", "Height..m.")], by = "species", all.x = T)
@@ -369,45 +373,102 @@ alldiv = read.table("../results/2023-03-26/final_covariates_2023-11-06.txt", sep
 ```
 
 ## relationship between coverage and diveristy
-```{r eval=FALSE, include=FALSE}
-ggplot(alldiv, aes(x = log10(totalbp/nidv), y = log10(pi), label = species)) +
+```{r}
+ggplot(alldiv, aes(x = log10(totalbp/(nidv*genome.size)), y = log10(pi))) +
   geom_point() +
-  geom_text(position = position_jitter(seed = 1)) +
+  #geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
-  labs(x = "log10(Average number of base pairs sequenced per individual)", y = "log10(Nucleotide diversity)")
+  labs(x = "log10(Average coverage per individual)", y = "log10(Nucleotide diversity)")
 
-#ggsave("bp-sequenced-vs-diversity.png")
+ggsave(paste("ida_coverage-vs-pi_", today, ".png"))
 
-ggplot(alldiv, aes(x = log10(nidv), y = log10(pi), label = species)) +
+ggplot(alldiv, aes(x = log10(totalbp/(nidv*genome.size)), y = jac)) +
   geom_point() +
-  geom_text(position = position_jitter(seed = 1)) +
+  #geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
-  labs(x = "log10(Number of individuals sequenced)", y = "log10(Nucleotide diversity)")
+  labs(x = "log10(Average coverage per individual)", y = "Jaccard dissimilarity")
 
-ggplot(alldiv, aes(x = cvbp, y = log10(pi), label = species)) +
+ggsave(paste("ida_coverage-vs-jac_", today, ".png"))
+
+ggplot(alldiv, aes(x = log10(totalbp/(nidv*genome.size)), y = bcd)) +
   geom_point() +
-  geom_text(position = position_jitter(seed = 1)) +
+  #geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Average coverage per individual)", y = "Bray-Curtis dissimilarity")
+
+ggsave(paste("ida_coverage-vs-bcd_", today, ".png"))
+
+ggplot(alldiv, aes(x = cvbp, y = log10(pi))) +
+  geom_point() +
+  #geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
   labs(x = "Coefficient of variation in base pairs sequenced across all samples", y = "log10(Nucleotide diversity)")
 
-ggplot(alldiv, aes(x = log10(totalbp), y = bcd, label = species)) +
-  geom_point() +
-  geom_text(position = position_jitter(seed = 1)) +
-  theme_classic() +
-  labs(x = "log10(Total base pairs sequenced across all samples)", y = "Bray-Curtis Dissimilarity")
+ggsave(paste("ida_cvbp-vs-pi_", today, ".png"))
 
-ggplot(alldiv, aes(x = log10(pi), y = bcd, label = species)) +
+ggplot(alldiv, aes(x = cvbp, y = jac)) +
   geom_point() +
-  geom_text(position = position_jitter(seed = 1)) +
+  #geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
-  labs(x = "log10(Nucleotide diversity)", y = "Bray-Curtis Dissimilarity")
+  labs(x = "Coefficient of variation in base pairs sequenced across all samples", y = "Jaccard dissimilarity")
 
-ggplot(alldiv, aes(x = log10(pi), y = jac, label = species)) +
+ggsave(paste("ida_cvbp-vs-jac_", today, ".png"))
+
+ggplot(alldiv, aes(x = cvbp, y = bcd)) +
   geom_point() +
-  geom_text(position = position_jitter(seed = 1)) +
+  #geom_text(position = position_jitter(seed = 1)) +
   theme_classic() +
-  labs(x = "log10(Nucleotide diversity)", y = "Jaccard Dissimilarity")
+  labs(x = "Coefficient of variation in base pairs sequenced across all samples", y = "Bray-Curtis dissimilarity")
+
+ggsave(paste("ida_cvbp-vs-bcd_", today, ".png"))
+
+ggplot(alldiv, aes(x = log10(pi), y = bcd)) +
+  geom_point() +
+  #geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Nucleotide diversity)", y = "Bray-Curtis dissimilarity")
+
+ggsave(paste("ida_pi_vs_bcd_", today, ".png", sep = ""))
+
+ggplot(alldiv, aes(x = log10(pi), y = jac)) +
+  geom_point() +
+  #geom_text(position = position_jitter(seed = 1)) +
+  theme_classic() +
+  labs(x = "log10(Nucleotide diversity)", y = "Jaccard dissimilarity")
+
+ggsave(paste("ida_pi_vs_jac_", today, ".png", sep = ""))
+
+ggplot(alldiv, aes(x = bcd, y = jac)) +
+  geom_point() +
+  #geom_text(position = position_jitter(seed = 1), color = "deepskyblue") +
+  theme_classic() +
+  labs(x = "Bray-Curtis dissimilarity", y = "Jaccard dissimilarity")
+
+ggsave(paste("ida_bcd_vs_jac_", today, ".png", sep = ""))
+
+# compare the different population size metrics
+
+ggplot(alldiv, aes(x = log10(WCVP.popsize), y = log10(GBIF.popsize))) +
+  geom_point() +
+  #geom_text(position = position_jitter(seed = 1), color = "deepskyblue") +
+  theme_classic() +
+  labs(x = "log10(WCVP population size proxy)", y = "log10(GBIF population size proxy)")
+
+ggsave(paste("ida_wcvp-vs-gbif_", today, ".png", sep = ""))
+
+# plot height for each species, from tallest to shortest
+species_order = alldiv$species[sort(alldiv$height_final, decreasing = T, index.return = T)$ix]
+
+ggplot(alldiv, aes(x = species, y = height_final)) +
+  geom_bar(stat = "identity") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  scale_x_discrete(limits = species_order) + 
+  labs(x = "Species", y = "Height (m)")
+
+ggsave(paste("ida_height-by-species_", today, ".png", sep = ""), width = 16, height = 4.5, units = "in")
 ```
+
 
 ## distributions of variables
 ```{r eval=FALSE, include=FALSE}
@@ -462,13 +523,13 @@ cor(alldiv$bcd, alldiv$popsize, method = "spearman", use = "pairwise.complete.ob
 alldiv = alldiv[(alldiv$ninvariant > 0),]
 
 # For now, remove species where variants sites were not properly called
-alldiv = alldiv[(alldiv$nvariant > 500),]
+alldiv = alldiv[(alldiv$nvariant > 100),]
 
 # remove critically endangered species
-alldiv = alldiv[(alldiv$rangeArea > 10),]
+# alldiv = alldiv[(alldiv$rangeArea > 10),]
 
 # remove species where there aren't many sampled individuals
-alldiv = alldiv[(alldiv$nidv >= 10),]
+alldiv = alldiv[(alldiv$nidv >= 5),]
 
 # remove any rows that are NA for some reason
 alldiv = alldiv[!is.na(alldiv$species),]
@@ -477,7 +538,6 @@ alldiv = alldiv[!is.na(alldiv$species),]
 ## Combine tree and data to get comparative object
 ```{r}
 # create comparative data object for caper models
-alldiv = alldiv[!is.na(alldiv$species),]
 compdata = comparative.data(phy, alldiv, names.col = "species", vcv = T)
 plot(compdata$phy)
 ```
@@ -653,8 +713,6 @@ plotdf$Ploidy = as.numeric(plotdf$Ploidy)
 plotdf = plotdf[!is.na(plotdf$species),]
 
 # remove species from phylogeny that lack data
-phy$tip.label[(phy$tip.label == "Erythranthe guttata")] = "Mimulus guttatus"
-
 plotphy = drop.tip(phy, tip = phy$tip.label[!(phy$tip.label %in% alldiv$species)])
 
 # change tip labels to be mating system
@@ -669,8 +727,8 @@ plotpal = c("#021326","#515A79","#A36267","#E99973","#FDF4D9")
 
 # plot phylogeny alongside other data
 ggtree(plotphy, size = 1.5) + 
-    geom_facet(panel = "GBIF range (km^2)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = rangeArea), color = plotpal[1]) +
-    geom_facet(panel = "WCVP range (km^2)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = area), color = plotpal[2]) +
+    geom_facet(panel = "log10(GBIF pop size proxy)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(GBIF.popsize)), color = plotpal[1]) +
+    geom_facet(panel = "log10(WCVP pop size proxy)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(WCVP.popsize)), color = plotpal[2]) +
     geom_facet(panel = "log10(SNP diversity)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(pi)), color = plotpal[3]) +
   geom_facet(panel = "Bray-Curtis dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = bcd), color = plotpal[4]) +
   geom_facet(panel = "Jaccard dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = jac), color = plotpal[5]) +
@@ -678,7 +736,7 @@ ggtree(plotphy, size = 1.5) +
   theme(strip.background =element_rect(fill="white")) +
   theme(strip.text = element_text(colour = 'black'))
   
-ggsave(paste("../results/2023-03-26/tree_with_primary_variables_", today, ".png", sep = ""), scale = 2)
+ggsave(paste("tree_with_primary_variables_", today, ".png", sep = ""), scale = 2)
 
 # plot technical variables
 p0 = ggtree(plotphy, size = 1.5) %<+% plotdf
@@ -693,6 +751,6 @@ p1 = p0 + geom_tippoint(aes(shape = Mating.system), size = 1.5) +
 
 p1
 
-ggsave(paste("../results/2023-03-26/tree_with_technical_variables_", today, ".png", sep = ""), scale = 2)
+ggsave(paste("tree_with_technical_variables_", today, ".png", sep = ""), scale = 2)
 
 ```

@@ -539,6 +539,9 @@ capsicum_annuum = capsicum_annuum[grepl("Capsicum annuum", capsicum_annuum$Scien
 
 length(unique(capsicum_annuum$BioSample))
 
+# randomly subset data
+capsicum_annuum = capsicum_annuum[(capsicum_annuum$BioSample %in% sample(capsicum_annuum$BioSample, size = 1200, replace = F)),]
+
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = capsicum_annuum[,"Run"], replicate = capsicum_annuum[,"BioSample"], layout = "SE", genome = "capsicum_annuum", ploidy = 2, taxonKeys = "3799221"))
 
