@@ -5,6 +5,113 @@
 # cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
+
+#
+
+> mod_pi = pgls(log10(WCVP.popsize) ~ log10(pi) + log10(totalbp/(nidv*genome.size)) + nidv + log10(genome.size), compdata)
+> summary(mod_pi)
+
+Call:
+  pgls(formula = log10(WCVP.popsize) ~ log10(pi) + log10(totalbp/(nidv * 
+                                                                    genome.size)) + nidv + log10(genome.size), data = compdata)
+
+Residuals:
+  Min       1Q   Median       3Q      Max 
+-1.72360 -0.12329 -0.02051  0.16214  1.37396 
+
+Branch length transformations:
+  
+  kappa  [Fix]  : 1.000
+lambda [Fix]  : 1.000
+delta  [Fix]  : 1.000
+
+Coefficients:
+  Estimate  Std. Error t value  Pr(>|t|)    
+(Intercept)                         35.54998469  4.70742967  7.5519 5.356e-11 ***
+  log10(pi)                            1.25268923  0.23004838  5.4453 5.275e-07 ***
+  log10(totalbp/(nidv * genome.size)) -0.86412361  0.27405590 -3.1531 0.0022574 ** 
+  nidv                                -0.00060475  0.00019749 -3.0622 0.0029715 ** 
+  log10(genome.size)                  -2.16317612  0.54236979 -3.9884 0.0001438 ***
+  ---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3615 on 82 degrees of freedom
+Multiple R-squared: 0.6183,	Adjusted R-squared: 0.5996 
+F-statistic:  33.2 on 4 and 82 DF,  p-value: < 2.2e-16 
+> 
+  > mod_jac = pgls(log10(WCVP.popsize) ~ jac + log10(totalbp/(nidv*genome.size)) + nidv + log10(genome.size), compdata)
+> summary(mod_jac)
+
+Call:
+  pgls(formula = log10(WCVP.popsize) ~ jac + log10(totalbp/(nidv * 
+                                                              genome.size)) + nidv + log10(genome.size), data = compdata)
+
+Residuals:
+  Min       1Q   Median       3Q      Max 
+-1.69259 -0.14729 -0.01656  0.15277  1.33915 
+
+Branch length transformations:
+  
+  kappa  [Fix]  : 1.000
+lambda [Fix]  : 1.000
+delta  [Fix]  : 1.000
+
+Coefficients:
+  Estimate  Std. Error t value  Pr(>|t|)    
+(Intercept)                         12.81246837  7.27026134  1.7623  0.081743 .  
+jac                                  4.01485823  0.69211409  5.8009 1.195e-07 ***
+  log10(totalbp/(nidv * genome.size))  0.77961107  0.29032833  2.6853  0.008768 ** 
+  nidv                                -0.00090472  0.00019193 -4.7138 9.825e-06 ***
+  log10(genome.size)                  -0.35343751  0.75090991 -0.4707  0.639120    
+---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3552 on 82 degrees of freedom
+Multiple R-squared: 0.6315,	Adjusted R-squared: 0.6135 
+F-statistic: 35.13 on 4 and 82 DF,  p-value: < 2.2e-16 
+> 
+  > mod_bcd = pgls(log10(WCVP.popsize) ~ bcd + log10(totalbp/(nidv*genome.size)) + nidv + log10(genome.size), compdata)
+> summary(mod_bcd)
+
+Call:
+  pgls(formula = log10(WCVP.popsize) ~ bcd + log10(totalbp/(nidv * 
+                                                              genome.size)) + nidv + log10(genome.size), data = compdata)
+
+Residuals:
+  Min       1Q   Median       3Q      Max 
+-1.24792 -0.12384  0.01189  0.18057  0.85289 
+
+Branch length transformations:
+  
+  kappa  [Fix]  : 1.000
+lambda [Fix]  : 1.000
+delta  [Fix]  : 1.000
+
+Coefficients:
+  Estimate  Std. Error t value  Pr(>|t|)    
+(Intercept)                          9.68376495  5.72064974  1.6928 0.0942949 .  
+bcd                                 10.26947244  1.21401864  8.4591 8.575e-13 ***
+  log10(totalbp/(nidv * genome.size))  1.01562155  0.25076430  4.0501 0.0001156 ***
+  nidv                                -0.00159581  0.00019089 -8.3597 1.351e-12 ***
+  log10(genome.size)                  -0.17126798  0.57882456 -0.2959 0.7680627    
+---
+  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3083 on 82 degrees of freedom
+Multiple R-squared: 0.7224,	Adjusted R-squared: 0.7089 
+F-statistic: 53.36 on 4 and 82 DF,  p-value: < 2.2e-16 
+
+
+
+
+#
+
+mywrapper <- function(data, xcol, ycol, colorVar) {
+  plot <- ggplot(data = data, aes_string(x = xcol, y = ycol, color = colorVar)) + geom_point()
+  print(plot)
+  return(plot)
+}
+
 #
 
 Call:
