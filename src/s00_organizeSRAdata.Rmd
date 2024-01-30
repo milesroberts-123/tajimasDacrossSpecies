@@ -208,7 +208,7 @@ allReads = rbind(allReads, data.frame(run = arabis_nemorensis[,"Run"], replicate
 ## Arachis hypogaea and Arachis duranensis and Arachis ipaensis
 ```{r}
 # load GBS data for A. hypogaea
-arachis_hypogaea = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_hypogaea_PRJNA479538.csv.gz", data.table = F)
+# arachis_hypogaea = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_hypogaea_PRJNA479538.csv.gz", data.table = F)
 
 # load data for species
 arachis_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_PRJNA490832.csv.gz", data.table = F)
@@ -218,14 +218,18 @@ arachis_3 = fread("../workflow/data/SRArunInfo/SraRunInfo_arachis_PRJNA525866.cs
 # split reads by species
 arachis = rbind(arachis_1, arachis_2, arachis_3)
 
-# arachis_hypogaea = arachis[grepl("Arachis hypogaea", arachis$ScientificName),]
+arachis_hypogaea = arachis[grepl("Arachis hypogaea", arachis$ScientificName),]
 
 arachis_duranensis = arachis[(arachis$ScientificName == "Arachis duranensis"),]
 
 arachis_ipaensis = arachis[(arachis$ScientificName == "Arachis ipaensis"),]
 
+# remove large sample that will hold up entire pipeline
+arachis_duranensis = arachis_duranensis[(arachis_duranensis$Run != "SRR8784099"),]
+
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = arachis_hypogaea[,"Run"], replicate = arachis_hypogaea[,"BioSample"], layout = "SE", genome = "arachis_hypogaea", ploidy = 4, taxonKeys = "5353813"))
+# arachis hypogae is a tetraploid, but both subgenomes are in assembly, so we can treat it as a diploid for genotype calling
+allReads = rbind(allReads, data.frame(run = arachis_hypogaea[,"Run"], replicate = arachis_hypogaea[,"BioSample"], layout = "PE", genome = "arachis_hypogaea", ploidy = 2, taxonKeys = "5353813"))
 
 allReads = rbind(allReads, data.frame(run = arachis_duranensis[,"Run"], replicate = arachis_duranensis[,"BioSample"], layout = "PE", genome = "arachis_duranensis", ploidy = 2, taxonKeys = "5353841"))
 
@@ -1508,6 +1512,9 @@ panicum_hallii$layout = "PE"
 
 # modify layout for reads that seem PE but are actually SE
 panicum_hallii$layout[(panicum_hallii$Run == "SRR097411")] = "SE"
+
+# drop sample that has too much data to process within 7 day limit
+panicum_hallii = panicum_hallii[(panicum_hallii$BioSample != "SAMN05660343"),]
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = panicum_hallii[,"Run"], replicate = panicum_hallii[,"BioSample"], layout = panicum_hallii[,"layout"], genome = "panicum_hallii", ploidy = 2, taxonKeys = "2705116"))

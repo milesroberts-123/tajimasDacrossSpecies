@@ -25,6 +25,7 @@ library(cowplot)
 library(rWCVP)
 library(lwgeom)
 library(sf)
+library(ggpubr)
 
 
 today = Sys.Date()
@@ -40,9 +41,11 @@ bcd = list.files("../results/2023-03-26/bray-curtis-dissimilarities", full.names
 jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T)
 
 # for now, remove species that can't be processed further for whatever reason
-jac = jac[c(-48, -72)]
-bcd = bcd[c(-48, -72)]
-pi = pi[c(-71,-98)]
+# pi: zizania palustris, panicum virgatum
+# jac and bcd: panicum hallii, lens culinaris
+jac = jac[c(-50, -74)]
+bcd = bcd[c(-50, -74)]
+pi = pi[c(-73,-101)]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -205,7 +208,7 @@ get_nonwater_area = function(x){
 # format area data as frame
 areas = data.frame(
   species = areas_species,
-  rangeArea = unlist(lapply(areas, get_nonwater_area))
+  gbif.area = unlist(lapply(areas, get_nonwater_area))
 )
 
 # merge with diversity data
@@ -279,7 +282,7 @@ wcvp_distributions = wcvp_dist,
 wcvp_names = wcvp_names
 )
 
-# calculate area
+# calculate area, convert to square kilometers (1000 x 1000 meters)
 region_area = sum(st_area(species_dist))/1e6
 
 region_areas = rbind(region_areas, data.frame(species_updated = species, area = region_area))
@@ -335,7 +338,7 @@ alldiv = merge(alldiv, height_my_species, all.x = T, by = "species")
 ## genome size, ploidy, mating system data
 ```{r}
 # load extra species metadata
-metadata = read.table("../results/2023-03-26/species_metadata_2024-01-24.txt", sep = "\t", fill = T, quote = "", header = T)
+metadata = read.table("../results/2023-03-26/species_metadata_2024-01-26.txt", sep = "\t", fill = T, quote = "", header = T)
 names(metadata)[1] = "species"
 
 # remove weird space character
@@ -343,7 +346,7 @@ metadata$species = gsub("<a0>", " ", metadata$species)
 metadata$species = gsub(" $", "", metadata$species)
 
 # merge metadata with diversity data
-alldiv = merge(alldiv, metadata[,c("species", "DNA.amount..1.C..pg.", "Mating.system", "Ploidy", "Height..m.")], by = "species", all.x = T)
+alldiv = merge(alldiv, metadata[,c("species", "DNA.amount..1.C..pg.", "Mating.system", "Ploidy", "Height..m.", "cultivation.status")], by = "species", all.x = T)
 
 # combine different height columns into one
 alldiv$height_final = alldiv$height
@@ -353,11 +356,17 @@ alldiv$height_final[is.na(alldiv$height_final)] = alldiv$Height..m.[is.na(alldiv
 alldiv$WCVP.popsize = (alldiv$area * 1e6)/(alldiv$height_final^2)
 summary(alldiv$WCVP.popsize)
 
-alldiv$GBIF.popsize = (alldiv$rangeArea * 1e6)/(alldiv$height_final^2)
+alldiv$GBIF.popsize = (alldiv$gbif.area * 1e6)/(alldiv$height_final^2)
 summary(alldiv$GBIF.popsize)
 
 # convert genome size in picograms to megabases
 alldiv$genome.size = alldiv$DNA.amount..1.C..pg. * 0.978e9
+
+# calculate average coverage per individual
+alldiv$meancov = alldiv$totalbp/(alldiv$genome.size*alldiv$nidv)
+
+# re-order mating system variable
+alldiv$Mating.system = factor(alldiv$Mating.system, levels = c("selfing", "mixed", "outcrossing"))
 ```
 
 ## save final organized dataframe
@@ -379,46 +388,86 @@ alldiv = read.table("../results/2023-03-26/final_covariates_2023-11-06.txt", sep
 
 # function for simple scatterplot
 my_ggplot_wrap <- function(data, xcol, ycol, xname, yname, filename, filew = 7, fileh = 7) {
-  ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
+  myplot = ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
     geom_point() +
     geom_smooth(method = "loess", color = "pink") +
     theme_classic() +
+    stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho") +
     labs(x = xname, y = yname)
   
+  myplot
+  
   ggsave(filename, width = filew, height = fileh)
+
+  return(myplot)
 }
 
 # function to color points by third variable
-my_ggplot_wrap_xyz <- function(data, xcol, ycol, xname, yname, filename, zcol, lcol, hcol, lname, filew = 9, fileh = 7) {
-  ggplot(data = data, aes_string(x = xcol, y = ycol, color = zcol)) + 
+my_ggplot_wrap_xyz <- function(data, xcol, ycol, xname, yname, filename, zcol, lcol, hcol, lname, mylims, filew = 9, fileh = 7) {
+  myplot = ggplot(data = data, aes_string(x = xcol, y = ycol, color = zcol)) + 
     geom_point() +
     geom_smooth(method = "loess", color = "pink") +
     theme_classic() +
-    scale_color_gradient(low = lcol, high = hcol, name = lname) +
+    stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho") +
+    scale_color_gradient(low = lcol, high = hcol, name = lname, limits = mylims) +
     labs(x = xname, y = yname)
   
+  myplot
+  
   ggsave(filename, width = filew, height = fileh)
+
+  return(myplot)
 }
 
-my_ggplot_wrap(alldiv, "log10(totalbp/(nidv*genome.size))", "log10(pi)", "log10(Average coverage per individual)", "log10(Nucleotide diversity)", paste("ida_coverage-vs-pi_", today, ".png"))
+# function to create boxplots
+my_ggplot_wrap_box <- function(data, xcol, ycol, xname, yname, filename, filew = 7, fileh = 7) {
+  myplot = ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
+    geom_boxplot() +
+    theme_classic() +
+    stat_kruskal_test() +
+    labs(x = xname, y = yname)
+  
+  myplot
+  
+  ggsave(filename, width = filew, height = fileh)
 
-my_ggplot_wrap(alldiv, "log10(totalbp/(nidv*genome.size))", "jac", "log10(Average coverage per individual)", "Jaccard dissimilarity", paste("ida_coverage-vs-jac_", today, ".png"))
+  return(myplot)
+}
 
-my_ggplot_wrap(alldiv, "log10(totalbp/(nidv*genome.size))", "bcd", "log10(Average coverage per individual)", "Bray-Curtis dissimilarity", paste("ida_coverage-vs-bcd_", today, ".png"))
+# scatterplots
+ida_meancov_vs_pi = my_ggplot_wrap(alldiv, "log10(meancov)", "log10(pi)", "log10(mean coverage per biosample)", "log10(Nucleotide diversity)", paste("ida_coverage-vs-pi_", today, ".png", sep = ""))
 
-my_ggplot_wrap(alldiv, "cvbp", "log10(pi)", "Coefficient of variation in base pairs sequenced across all samples", "log10(Nucleotide diversity)", paste("ida_cvbp-vs-pi_", today, ".png"))
+ida_meancov_vs_jac = my_ggplot_wrap(alldiv, "log10(meancov)", "jac", "log10(mean coverage per biosample)", "Jaccard dissimilarity", paste("ida_coverage-vs-jac_", today, ".png", sep = ""))
 
-my_ggplot_wrap(alldiv, "cvbp", "jac", "Coefficient of variation in base pairs sequenced across all samples", "Jaccard dissimilarity", paste("ida_cvbp-vs-jac_", today, ".png"))
+ida_meancov_vs_bcd = my_ggplot_wrap(alldiv, "log10(meancov)", "bcd", "log10(mean coverage per biosample)", "Bray-Curtis dissimilarity", paste("ida_coverage-vs-bcd_", today, ".png", sep = ""))
 
-my_ggplot_wrap(alldiv, "cvbp", "bcd", "Coefficient of variation in base pairs sequenced across all samples", "Bray-Curtis dissimilarity", paste("ida_cvbp-vs-bcd_", today, ".png"))
+ida_cvbp_vs_pi = my_ggplot_wrap(alldiv, "cvbp", "log10(pi)", "Coefficient of variation in bp sequenced", "log10(Nucleotide diversity)", paste("ida_cvbp-vs-pi_", today, ".png", sep = ""))
 
-my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", "log10(Nucleotide diversity)", "Jaccard dissimilarity", paste("ida_pi-vs-jac_", today, ".png"), "log10(totalbp/(nidv*genome.size))", "#FEF2F2", "#190C64", "log10(mean cov/sample)")
+ida_cvbp_vs_jac = my_ggplot_wrap(alldiv, "cvbp", "jac", "Coefficient of variation in bp sequenced", "Jaccard dissimilarity", paste("ida_cvbp-vs-jac_", today, ".png", sep = ""))
 
-my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log10(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_", today, ".png"), "log10(totalbp/(nidv*genome.size))", "#FEF2F2", "#190C64", "log10(mean cov/sample)")
+ida_cvbp_vc_bcd = my_ggplot_wrap(alldiv, "cvbp", "bcd", "Coefficient of variation in bp sequenced", "Bray-Curtis dissimilarity", paste("ida_cvbp-vs-bcd_", today, ".png", sep = ""))
 
-my_ggplot_wrap_xyz(alldiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("ida_jac-vs-bcd_", today, ".png"), "log10(totalbp/(nidv*genome.size))", "#FEF2F2", "#190C64", "log10(mean cov/sample)")
+ida_pi_vs_jac = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", "log10(Nucleotide diversity)", "Jaccard dissimilarity", paste("ida_pi-vs-jac_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
-my_ggplot_wrap(alldiv, "log10(WCVP.popsize)", "log10(GBIF.popsize)", "log10(WCVP population size proxy)", "log10(GBIF population size proxy)", paste("ida_wcvp-vs-gbif_", today, ".png"))
+ida_pi_vs_bcd = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log10(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
+
+my_ggplot_wrap_xyz(alldiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("ida_jac-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov/sample)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
+
+my_ggplot_wrap(alldiv, "log10(area)", "log10(gbif.area)", "log10(WCVP range size in square km)", "log10(GBIF range size in square km)", paste("ida_wcvp-vs-gbif_", today, ".png", sep = ""))
+
+# plot diversity by mating system
+ida_mating_vs_pi = my_ggplot_wrap_box(alldiv, "Mating.system", "log10(pi)", "Mating system", "log10(Nucleotide diversity)", paste("mating_vs_pi_", today, ".png", sep = ""))
+
+ida_mating_vs_jac = my_ggplot_wrap_box(alldiv, "Mating.system", "jac", "Mating system", "Jaccard dissimilarity", paste("mating_vs_jac_", today, ".png", sep = ""))
+
+ida_mating_vs_bcd = my_ggplot_wrap_box(alldiv, "Mating.system", "bcd", "Mating system", "Bray-Curtis dissimilarity", paste("mating_vs_bcd_", today, ".png", sep = ""))
+
+# plot diversity by cultivation status
+ida_cult_vs_pi = my_ggplot_wrap_box(alldiv, "cultivation.status", "log10(pi)", "Cultivation status", "log10(Nucleotide diversity)", paste("cultivation_vs_pi_", today, ".png", sep = ""))
+
+ida_cult_vs_jac = my_ggplot_wrap_box(alldiv, "cultivation.status", "jac", "Cultivation status", "Jaccard dissimilarity", paste("cultivation_vs_jac_", today, ".png", sep = ""))
+
+ida_cult_vs_bcd = my_ggplot_wrap_box(alldiv, "cultivation.status", "bcd", "Cultivation status", "Bray-Curtis dissimilarity", paste("cultivation_vs_bcd_", today, ".png", sep = ""))
 
 # plot height for each species, from tallest to shortest
 species_order = alldiv$species[sort(alldiv$height_final, decreasing = T, index.return = T)$ix]
@@ -474,7 +523,7 @@ cor(alldiv$pi, alldiv$nidv)
 cor(alldiv$bcd, alldiv$nidv)
 cor(alldiv$jac, alldiv$nidv)
 
-#
+# Correlations between population size and diversity, not-corrected for phylogeny
 cor(alldiv$pi, alldiv$popsize, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$bcd, alldiv$popsize, method = "spearman", use = "pairwise.complete.obs")
 ```
@@ -499,51 +548,52 @@ cor(alldiv$bcd, alldiv$popsize, method = "spearman", use = "pairwise.complete.ob
 #alldiv = alldiv[!is.na(alldiv$species),]
 
 # remove all species with <1x coverage on average across individuals
-alldiv = alldiv[(log10(alldiv$totalbp/(alldiv$nidv*alldiv$genome.size)) > 0),]
+subdiv = alldiv[(log10(alldiv$meancov) > 0),]
+subdiv = subdiv[(subdiv$nvariant > 1000),]
 ```
 
 ## replot trends
 ```{r}
-myggplotwrap(alldiv, "log10(totalbp/(nidv*genome.size))", "log10(pi)", "log10(Average coverage per individual)", "log10(Nucleotide diversity)", paste("cda_coverage-vs-pi_", today, ".png"))
+my_ggplot_wrap(subdiv, "log10(meancov)", "log10(pi)", "log10(Average coverage per individual)", "log10(Nucleotide diversity)", paste("cda_coverage-vs-pi_", today, ".png"))
 
-myggplotwrap(alldiv, "log10(totalbp/(nidv*genome.size))", "jac", "log10(Average coverage per individual)", "Jaccard dissimilarity", paste("cda_coverage-vs-jac_", today, ".png"))
+my_ggplot_wrap(subdiv, "log10(meancov)", "jac", "log10(Average coverage per individual)", "Jaccard dissimilarity", paste("cda_coverage-vs-jac_", today, ".png"))
 
-myggplotwrap(alldiv, "log10(totalbp/(nidv*genome.size))", "bcd", "log10(Average coverage per individual)", "Bray-Curtis dissimilarity", paste("cda_coverage-vs-bcd_", today, ".png"))
+my_ggplot_wrap(subdiv, "log10(meancov)", "bcd", "log10(Average coverage per individual)", "Bray-Curtis dissimilarity", paste("cda_coverage-vs-bcd_", today, ".png"))
 
-myggplotwrap(alldiv, "cvbp", "log10(pi)", "Coefficient of variation in base pairs sequenced across all samples", "log10(Nucleotide diversity)", paste("cda_cvbp-vs-pi_", today, ".png"))
+my_ggplot_wrap(subdiv, "cvbp", "log10(pi)", "Coefficient of variation in base pairs sequenced across all samples", "log10(Nucleotide diversity)", paste("cda_cvbp-vs-pi_", today, ".png"))
 
-myggplotwrap(alldiv, "cvbp", "jac", "Coefficient of variation in base pairs sequenced across all samples", "Jaccard dissimilarity", paste("cda_cvbp-vs-jac_", today, ".png"))
+my_ggplot_wrap(subdiv, "cvbp", "jac", "Coefficient of variation in base pairs sequenced across all samples", "Jaccard dissimilarity", paste("cda_cvbp-vs-jac_", today, ".png"))
 
-myggplotwrap(alldiv, "cvbp", "bcd", "Coefficient of variation in base pairs sequenced across all samples", "Bray-Curtis dissimilarity", paste("cda_cvbp-vs-bcd_", today, ".png"))
+my_ggplot_wrap(subdiv, "cvbp", "bcd", "Coefficient of variation in base pairs sequenced across all samples", "Bray-Curtis dissimilarity", paste("cda_cvbp-vs-bcd_", today, ".png"))
 
-myggplotwrap(alldiv, "log10(pi)", "jac", "log10(Nucleotide diversity)", "Jaccard dissimilarity", paste("cda_pi-vs-jac_", today, ".png"))
+cda_pi_vs_jac = my_ggplot_wrap_xyz(subdiv, "log10(pi)", "jac", "log10(Nucleotide diversity)", "Jaccard dissimilarity", paste("cda_pi-vs-jac_", today, ".png"), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
-myggplotwrap(alldiv, "log10(pi)", "bcd", "log10(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("cda_pi-vs-bcd_", today, ".png"))
+cda_pi_vs_bcd = my_ggplot_wrap_xyz(subdiv, "log10(pi)", "bcd", "log10(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("cda_pi-vs-bcd_", today, ".png"), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
-myggplotwrap(alldiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("cda_jac-vs-bcd_", today, ".png"))
+myggplotwrap(subdiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("cda_jac-vs-bcd_", today, ".png"))
 
-myggplotwrap(alldiv, "log10(WCVP.popsize)", "log10(GBIF.popsize)", "log10(WCVP population size proxy)", "log10(GBIF population size proxy)", paste("cda_wcvp-vs-gbif_", today, ".png"))
+my_ggplot_wrap(subdiv, "log10(WCVP.popsize)", "log10(GBIF.popsize)", "log10(WCVP population size proxy)", "log10(GBIF population size proxy)", paste("cda_wcvp-vs-gbif_", today, ".png"))
 ```
 
 ## Combine tree and data to get comparative object
 ```{r}
 # create comparative data object for caper models
-compdata = comparative.data(phy, alldiv[,c("species","pi", "jac", "bcd", "genome.size", "totalbp", "nidv", "WCVP.popsize")], names.col = "species", vcv = T)
+compdata = comparative.data(phy, subdiv[,c("species","pi", "jac", "bcd", "genome.size", "meancov", "nidv", "cvbp", "cultivation.status", "Mating.system", "WCVP.popsize")], names.col = "species", vcv = T)
 ```
 
 ## fit models
 ```{r}
 # check for multicollinarity before fitting models
-cor(alldiv[,c("pi", "jac", "bcd", "genome.size", "totalbp", "nidv", "WCVP.popsize", "GBIF.popsize")], method = "spearman", use = "pairwise.complete.obs")
+cor(subdiv[,c("pi", "jac", "bcd", "genome.size", "meancov", "nidv", "cvbp", "WCVP.popsize", "GBIF.popsize")], method = "spearman", use = "pairwise.complete.obs")
 
 # build models 
-mod_pi = pgls(log10(WCVP.popsize) ~ log10(pi) + log10(totalbp/(nidv*genome.size)) + nidv + log10(genome.size), compdata)
+mod_pi = pgls(log10(pi) ~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + cultivation.status + Mating.system, compdata)
 summary(mod_pi)
 
-mod_jac = pgls(log10(WCVP.popsize) ~ jac + log10(totalbp/(nidv*genome.size)) + nidv + log10(genome.size), compdata)
+mod_jac = pgls(log10(WCVP.popsize) ~ jac + log10(meancov) + nidv + log10(genome.size), compdata)
 summary(mod_jac)
 
-mod_bcd = pgls(log10(WCVP.popsize) ~ bcd + log10(totalbp/(nidv*genome.size)) + nidv + log10(genome.size), compdata)
+mod_bcd = pgls(log10(WCVP.popsize) ~ bcd + log10(meancov) + nidv + log10(genome.size), compdata)
 summary(mod_bcd)
 
 # model diagnostics
@@ -558,37 +608,6 @@ plot(mod_bcd)
 
 
 
-
-
-# compare effects with phylogeny vs without phylogeny
-lm(log10(rangeArea) ~ log10(pi), alldiv)
-lm(log10(rangeArea) ~ bcd, alldiv)
-lm(log10(rangeArea) ~ jac, alldiv)
-
-lmmod = lm(log10(rangeArea) ~ scale(bcd) + scale(nidv), alldiv)
-summary(lmmod)
-
-pi_vs_bcd = pgls(nidv ~ log10(pi), compdata)
-summary(pi_vs_bcd)
-
-pi_vs_bcd = pgls(bcd ~ log10(pi), compdata)
-summary(pi_vs_bcd)
-plot(pi_vs_bcd)
-
-area_vs_pi = pgls(log10(rangeArea) ~ scale(pi), compdata)
-summary(area_vs_pi)
-plot(area_vs_pi)
-
-area_vs_bcd = pgls(log10(rangeArea) ~ scale(bcd), compdata)
-summary(area_vs_bcd)
-plot(area_vs_bcd)
-
-area_vs_jac = pgls(log10(rangeArea) ~ jac, compdata)
-summary(area_vs_jac)
-
-# Test if k-mer diversity has stronger effect on range area than SNP diversity
-mod_bcd = pgls(log10(rangeArea) ~ scale(pi) + scale(bcd), compdata)
-summary(mod_bcd)
 
 # plot out coefficients
 coefplot = data.frame(coef = coefficients(mod_bcd), err = mod_bcd$sterr, label = names(mod_bcd$sterr))
@@ -653,6 +672,37 @@ plot(crunch_mod)
 ```
 
 # Final plots
+
+```{r}
+# Look at how coverage influences metrics
+ggarrange(ida_meancov_vs_pi, ida_cvbp_vs_pi, ida_meancov_vs_jac, ida_cvbp_vs_jac, ida_meancov_vs_bcd, ida_cvbp_vc_bcd, ncol = 2, nrow = 3, labels = c("A", "B", "C", "D", "E", "F"))
+
+ggsave(paste("coverage_vs_diversity_", today, ".png", sep = ""), width = 8, height = 10, units = "in")
+
+# Look at how mating system and cultivation status influence diversity
+ggarrange(ida_mating_vs_pi, ida_cult_vs_pi, ida_mating_vs_jac, ida_cult_vs_jac, ida_mating_vs_bcd, ida_cult_vs_bcd, ncol = 2, nrow = 3, labels = c("A", "B", "C", "D", "E", "F"))
+
+ggsave(paste("mating_cultivation_vs_diversity_", today, ".png", sep = ""), width = 8, height = 10, units = "in")
+
+# Compare how k-mer metrics compare to SNP metrics after removing low coverage data
+ggarrange(ida_pi_vs_jac, ida_pi_vs_bcd, cda_pi_vs_jac, cda_pi_vs_bcd, ncol = 2, nrow = 2, common.legend = T, labels = c("A", "B", "C", "D"))
+
+ggsave(paste("pi_vs_jac_and_bcd_high_vs_low_cov_", today, ".png", sep = ""), width = 8, height = 7, units = "in")
+
+# Compare population sizes to diversity metrics, without correcting for phylogeny
+my_ggplot_wrap(subdiv, "log10(pi)", "log10(WCVP.popsize)", "log10(Nucleotide diversity)", "log10(WCVP pop size proxy)", paste("cda_pi-vs-wcvp_", today, ".png"))
+
+my_ggplot_wrap(subdiv, "log10(pi)", "log10(GBIF.popsize)", "log10(Nucleotide diversity)", "log10(GBIF pop size proxy)", paste("cda_pi-vs-gbif_", today, ".png"))
+
+my_ggplot_wrap(subdiv, "jac", "log10(WCVP.popsize)", "Jaccard dissimilarity", "log10(WCVP pop size proxy)", paste("cda_jac-vs-wcvp_", today, ".png"))
+
+my_ggplot_wrap(subdiv, "jac", "log10(GBIF.popsize)", "Jaccard dissimilarity", "log10(GBIF pop size proxy)", paste("cda_jac-vs-gbif_", today, ".png"))
+
+my_ggplot_wrap(subdiv, "bcd", "log10(WCVP.popsize)", "Bray-Curtis dissimilarity", "log10(WCVP pop size proxy)", paste("cda_bcd-vs-wcvp_", today, ".png"))
+
+my_ggplot_wrap(subdiv, "bcd", "log10(GBIF.popsize)", "Bray-Curtis dissimilarity", "log10(GBIF pop size proxy)", paste("cda_bcd-vs-gbif_", today, ".png"))
+```
+
 ```{r}
 # pi vs bcd
 ggplot(alldiv, aes(x = bcd, y = log10(pi), label = species)) +
