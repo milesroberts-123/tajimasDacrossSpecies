@@ -2288,7 +2288,10 @@ seq_meta$species[(seq_meta$species == "Erythranthe guttata")] = "Mimulus guttatu
 #write.table(seq_meta[,c("species", "method", "platform", "model")], "../results/2023-03-26/seq_methods_2023-10-20.txt", sep = "\t", quote = F, row.names = F)
 ```
 
-# Loop over replicates, if there are both SE and PE reads for a single sample, just use the PE reads
+# Loop over replicates, calculate coverage
+
+If there are both SE and PE reads for a single sample, just use the PE reads
+
 ```{r}
 # I could either throw out read 2 of the PE reads and treat all data as single end, or I could retain just paired-end data... Not sure which is better
 # I'll throw out the single-end reads because the paired-end data will align better
@@ -2335,7 +2338,12 @@ for(x in runsAllMetaData){
   coverdf = rbind(coverdf, speciesdf)
 }
 
-#write.table(coverdf, "../results/2023-03-26/bp_sequenced_2023-10-16.txt", sep = "\t", quote = F, row.names = F)
+# change species names
+coverdf$species = gsub(" var\\..*", "", coverdf$species)
+coverdf$species = gsub(" subsp\\..*", "", coverdf$species)
+coverdf$species[(coverdf$species == "Erythranthe guttata")] = "Mimulus guttatus"
+
+#write.table(coverdf, "../results/2023-03-26/bp_sequenced_2024-01-31.txt", sep = "\t", quote = F, row.names = F)
 ```
 
 # DEPRECATED split data into batches
