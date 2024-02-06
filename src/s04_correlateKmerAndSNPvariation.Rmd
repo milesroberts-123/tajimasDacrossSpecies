@@ -135,7 +135,7 @@ names(areas) = areas_species
 # powo.science.kew.org
 
 # Amaranthus hybridus native to only North and South America
-areas$`Amaranthus hypochondriacus` = areas$`Amaranthus hypochondriacus`[c(4,6),]
+areas$`Amaranthus hypochondriacus` = areas$`Amaranthus hypochondriacus`[1:2,]
 
 # Arabidopsis thaliana is only native to Europe, Asia, and Africa
 areas$`Arabidopsis thaliana` = areas$`Arabidopsis thaliana`[2:4,]
@@ -144,13 +144,13 @@ areas$`Arabidopsis thaliana` = areas$`Arabidopsis thaliana`[2:4,]
 areas$`Arachis duranensis` = areas$`Arachis duranensis`[1,]
 
 # Arachis glabrata is native to Brazil, remove North America
-areas$`Arachis hypogaea` = areas$`Arachis hypogaea`[1,]
+areas$`Arachis hypogaea` = areas$`Arachis hypogaea`[2,]
 
 # Beta vulgaris subsp. vulgaris is native to only Europe and Africa
-areas$`Beta vulgaris` = areas$`Beta vulgaris`[1:2,]
+areas$`Beta vulgaris` = areas$`Beta vulgaris`[2:3,]
 
 # Brachypodium distachyon is native to Europe, Asia, Africa
-areas$`Brachypodium distachyon` = areas$`Brachypodium distachyon`[3:5,]
+areas$`Brachypodium distachyon` = areas$`Brachypodium distachyon`[2:4,]
 
 # Brassica juncea is native only to Europe
 areas$`Brassica juncea` = areas$`Brassica juncea`[4,]
@@ -186,13 +186,13 @@ areas$`Cucumis melo` = areas$`Cucumis melo`[2,]
 areas$`Cucurbita pepo` = areas$`Cucurbita pepo`[1,]
 
 # Digitaria longiflora native to africa, asia, australia
-areas$`Digitaria exilis`= areas$`Digitaria exilis`[3:5,]
+areas$`Digitaria exilis`= areas$`Digitaria exilis`[2:4,]
 
 # Dioscorea communis is native only to africa
 areas$`Dioscorea rotundata` = areas$`Dioscorea rotundata`[2,]
 
 # Gossypium arboreum native to asia
-areas$`Gossypium arboreum` = areas$`Gossypium arboreum`[2,]
+areas$`Gossypium arboreum` = areas$`Gossypium arboreum`[3,]
 
 # Gossypium thurberi is native only to north america
 areas$`Gossypium hirsutum` = areas$`Gossypium hirsutum`[1,]
@@ -242,7 +242,7 @@ areas$`Papaver somniferum` = areas$`Papaver somniferum`[4:6,]
 # Populus deltoides only native to north america
 areas$`Populus deltoides` = areas$`Populus deltoides`[1,]
 
-# Prunus avidum is native to europe, asia, africa
+# Prunus avium is native to europe, asia, africa
 areas$`Prunus avium` = areas$`Prunus avium`[2:3,]
 
 # Raphanus raphanistrum is native to europe and africa
@@ -251,8 +251,8 @@ areas$`Raphanus sativus` = areas$`Raphanus sativus`[3:4,]
 # Setaria faberi is native only to asia
 areas$`Setaria italica` = areas$`Setaria italica`[3,]
 
-# Setaria viridis 
-areas$`Setaria viridis` = areas$`Setaria viridis`[3:6,]
+# Setaria viridis is native to europe, africa, asia, australia
+areas$`Setaria viridis` = areas$`Setaria viridis`[2:5,]
 
 # Thlaspi arvense is native to europe and asia
 areas$`Thlaspi arvense` = areas$`Thlaspi arvense`[3:4,]
@@ -540,13 +540,15 @@ ida_cvbp_vs_jac = my_ggplot_wrap(alldiv, "cvbp", "jac", "Coefficient of variatio
 
 ida_cvbp_vc_bcd = my_ggplot_wrap(alldiv, "cvbp", "bcd", "Coefficient of variation in bp sequenced", "Bray-Curtis dissimilarity", paste("ida_cvbp-vs-bcd_", today, ".png", sep = ""))
 
+ida_jac_vs_bcd = my_ggplot_wrap(alldiv, "jac", "bcd", "Jaccard Dissimilarity", "Bray-Curtis dissimilarity", paste("ida_jac-vs-bcd_", today, ".png", sep = ""))
+
 ida_pi_vs_jac = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", "log10(Nucleotide diversity)", "Jaccard dissimilarity", paste("ida_pi-vs-jac_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
 ida_pi_vs_bcd = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log10(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
 my_ggplot_wrap_xyz(alldiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("ida_jac-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov/sample)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
-my_ggplot_wrap_line(alldiv, "log10(area)", "log10(gbif.area)", "log10(WCVP range size in square km)", "log10(GBIF range size in square km)", paste("ida_wcvp-vs-gbif_", today, ".png", sep = ""))
+ida_wcvp_vs_gbif = my_ggplot_wrap_line(alldiv, "log10(area)", "log10(gbif.area)", "log10(WCVP range size in square km)", "log10(GBIF range size in square km)", paste("ida_wcvp-vs-gbif_", today, ".png", sep = ""))
 
 # plot diversity by mating system
 ida_mating_vs_pi = my_ggplot_wrap_box(alldiv, "Mating.system", "log10(pi)", "Mating system", "log10(Nucleotide diversity)", paste("mating_vs_pi_", today, ".png", sep = ""))
@@ -650,6 +652,7 @@ cor(alldiv$bcd, alldiv$popsize, method = "spearman", use = "pairwise.complete.ob
 # remove all species with <1x coverage on average across individuals
 subdiv = alldiv[(log10(alldiv$meancov) > 0),]
 subdiv = subdiv[(subdiv$nvariant > 1000),]
+#subdiv = subdiv[(subdiv$species != "Brassica rapa"),] # omit other outlier species
 ```
 
 ## replot trends
@@ -689,7 +692,10 @@ cda_bcd_vs_gbif = my_ggplot_wrap(subdiv, "bcd", "log10(GBIF.popsize)", "Bray-Cur
 ## Combine tree and data to get comparative object
 ```{r}
 # create comparative data object for caper models
-compdata = comparative.data(phy, subdiv[,c("species","pi", "jac", "bcd", "genome.size", "meancov", "nidv", "cvbp", "cultivation.status", "Mating.system", "WCVP.popsize")], names.col = "species", vcv = T)
+# keep GBIF data separate from WCVP be
+compdata = comparative.data(phy, subdiv[,c("species","pi", "jac", "bcd", "genome.size", "meancov", "nidv", "cvbp", "cultivation.status", "Mating.system", "WCVP.popsize", "area", "height_final")], names.col = "species", vcv = T)
+
+gbif_compdata = comparative.data(phy, subdiv[,c("species","pi", "jac", "bcd", "genome.size", "meancov", "nidv", "cvbp", "cultivation.status", "Mating.system", "GBIF.popsize", "gbif.area")], names.col = "species", vcv = T)
 ```
 
 ## fit models
@@ -697,6 +703,10 @@ compdata = comparative.data(phy, subdiv[,c("species","pi", "jac", "bcd", "genome
 ```{r}
 # check for multicollinarity before fitting models
 cor(compdata$data[,c(-8,-9)], method = "spearman", use = "pairwise.complete.obs")
+
+##############################
+# WCVP population size vs pi #
+##############################
 
 # build models 
 mod_pi_1 = pgls(scale(log10(pi)) ~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
@@ -706,91 +716,134 @@ plot(mod_pi_1)
 mod_pi_2 = pgls(scale(log10(pi)) ~ log10(WCVP.popsize) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
 summary(mod_pi_2)
 
-AIC(mod_pi_1, mod_pi_2)
-
 mod_pi_3 = pgls(scale(log10(pi)) ~ log10(WCVP.popsize) + nidv + log10(genome.size) + cvbp + Mating.system, compdata)
 summary(mod_pi_3)
 plot(mod_pi_3)
 
-AIC(mod_pi_1, mod_pi_2, mod_pi_3)
+mod_mat_wcvp_pop_vs_pi = model.matrix(~ log10(WCVP.popsize) + nidv + log10(genome.size) + cvbp + Mating.system, data = compdata$data) # minimal model, extract matrix
 
 # Jaccard dissimilarity vs WCVP popsize
 mod_jac_1 = pgls(scale(jac) ~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
 summary(mod_jac_1)
 plot(mod_jac_1)
 
+mod_mat_wcvp_pop_vs_jac = model.matrix(~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata$data) # minimal model, extract matrix
+
 # Bray-Curtis dissimilarity vs WCVP popsize
 mod_bcd_1 = pgls(scale(bcd) ~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
 summary(mod_bcd_1)
+plot(mod_bcd_1)
 
-# subtract off effects of covariates from response
-mod_mat_pi = model.matrix(~ log10(WCVP.popsize) + nidv + log10(genome.size) + cvbp + Mating.system, data = compdata$data)
+mod_mat_wcvp_pop_vs_bcd = model.matrix(~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata$data) # minimal model, extract matrix
 
-mod_mat_jac = model.matrix(~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, data = compdata$data)
+################################
+# WCVP range size vs diversity #
+################################
 
-mod_mat_bcd = model.matrix(~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, data = compdata$data)
+# pi
+mod_pi_wcvp_area_1 = pgls(scale(log10(pi)) ~ log10(area) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
+summary(mod_pi_wcvp_area_1)
 
-mod_coeff_pi = coefficients(mod_pi_3)
+mod_pi_wcvp_area_2 = pgls(scale(log10(pi)) ~ log10(area) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
+summary(mod_pi_wcvp_area_2)
 
-mod_coeff_jac = coefficients(mod_jac_1)
+mod_pi_wcvp_area_3 = pgls(scale(log10(pi)) ~ log10(area) + nidv + log10(genome.size) + cvbp + Mating.system, compdata)
+summary(mod_pi_wcvp_area_3)
+plot(mod_pi_wcvp_area_3)
 
-mod_coeff_bcd = coefficients(mod_bcd_1)
+mod_mat_wcvp_area_vs_pi = model.matrix(~log10(area) + nidv + log10(genome.size) + cvbp + Mating.system, data = compdata$data) # minimal model, extract matrix
 
-# Plotting response against summed linear model should give a 1:1 line
-plot(mod_bcd_1$y, mod_mat %*% mod_coeff + mod_bcd_1$residuals)
-abline(a = 0, b = 1)
+# jaccard dissimilarity
+mod_jac_wcvp_area_1 = pgls(scale(jac) ~ log10(area) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
+summary(mod_jac_wcvp_area_1)
+plot(mod_jac_wcvp_area_1)
 
-# correct response for phylogeny and other covariates, then plot against predictor of interest
-C_inv_pi = t(solve(chol(mod_pi_3$Vt)))
-C_inv_jac = t(solve(chol(mod_jac_1$Vt)))
-C_inv_bcd = t(solve(chol(mod_bcd_1$Vt)))
+mod_mat_wcvp_area_vs_jac = model.matrix(~ log10(area) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, data = compdata$data) # minimal model, extract matrix
 
-y_star_pi = C_inv_pi %*% mod_pi_3$y
-X_star_pi = (C_inv_pi %*% mod_mat_pi)
+# bray-curtis dissimilarity
+mod_bcd_wcvp_area_1 = pgls(scale(bcd) ~ log10(area) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
+summary(mod_bcd_wcvp_area_1)
 
-y_star_jac = C_inv_jac %*% mod_jac_1$y
-X_star_jac = (C_inv_jac %*% mod_mat_jac)
+mod_bcd_wcvp_area_2 = pgls(scale(bcd) ~ log10(area) + log10(meancov) + nidv + log10(genome.size) + cvbp + cultivation.status, compdata)
+summary(mod_bcd_wcvp_area_2)
+plot(mod_bcd_wcvp_area_2)
 
-y_star_bcd = C_inv_bcd %*% mod_bcd_1$y
-X_star_bcd = (C_inv_bcd %*% mod_mat_bcd)
+mod_mat_wcvp_area_vs_bcd = model.matrix(~ log10(area) + log10(meancov) + nidv + log10(genome.size) + cvbp + cultivation.status, data = compdata$data) # minimal model, extract matrix
 
-# confirm that results of pgls match results of ordinary least squares on transformed data
-# remove intercept column, already included in 
-mod_star_bcd = lm(y_star_bcd ~ X_star_bcd - 1)
-coeff_star_bcd = coefficients(mod_star_bcd)
-(coeff_star_bcd - mod_coeff_bcd)/mod_coeff_bcd * 100 # percent difference in coefficients
+#######################
+# height vs diversity #
+#######################
 
-# Isolate effect of covariate I'm interested in
-# subtract extra covariates and slope from both sides of the equation
-# Remember: the intercept is not a simple constant here! It's been scaled by C_inv
-y_star_corrected_pi = y_star_pi - (X_star_pi[,c(1,3:ncol(X_star_pi))] %*% mod_coeff_pi[c(1,3:length(mod_coeff_pi))])
+# pi
+mod_pi_height_1 = pgls(scale(log10(pi)) ~ height_final + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
+summary(mod_pi_height_1)
 
-y_star_corrected_jac = y_star_jac - (X_star_jac[,c(1,3:ncol(X_star_jac))] %*% mod_coeff_jac[c(1,3:length(mod_coeff_jac))])
+mod_pi_height_2 = pgls(scale(log10(pi)) ~ height_final + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
+summary(mod_pi_height_2)
 
-y_star_corrected_bcd = y_star_bcd - (X_star_bcd[,c(1,3:ncol(X_star_bcd))] %*% mod_coeff_bcd[c(1,3:length(mod_coeff_bcd))])
+mod_pi_height_3 = pgls(scale(log10(pi)) ~ height_final + nidv + log10(genome.size) + cvbp + Mating.system, compdata)
+summary(mod_pi_height_3)
 
-#plot(X_star[,2], y_star_corrected_2)
-#abline(a = 0, coeff_star[2])
+# jaccard dissimilarity
+mod_jac_height_1 = pgls(scale(jac) ~ height_final + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
+summary(mod_jac_height_1)
 
-# plot response, scaled by phylogeny and corrected for other covariates, against diversity
-my_ggplot_wrap_lm = function(x,y,b,xlab,ylab){
-  myplot = ggplot(mapping = aes(x = x, y = y)) +
-    geom_point() +
-    geom_abline(intercept = 0, slope = b) +
-    theme_classic() +
-    labs(x = xlab, y = ylab)
-    
-  return(myplot)
-}
+# bray-curtis dissimilarity
+mod_bcd_height_1 = pgls(scale(bcd) ~ height_final + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, compdata)
+summary(mod_bcd_height_1)
 
-my_ggplot_wrap_lm(X_star_pi[,2], y_star_corrected_pi, mod_coeff_pi[2], "log10(WCVP.popsize)")
+mod_bcd_height_2 = pgls(scale(bcd) ~ height_final + log10(meancov) + nidv + log10(genome.size) + cvbp + cultivation.status, compdata)
+summary(mod_bcd_height_2)
 
-my_ggplot_wrap_lm(X_star_jac[,2], y_star_corrected_jac, mod_coeff_jac[2])
+#####################################
+# GBIF population size vs diversity #
+#####################################
 
-my_ggplot_wrap_lm(X_star_bcd[,2], y_star_corrected_bcd, mod_coeff_bcd[2])
+# pi
+mod_pi_gbif_pop_1 = pgls(scale(log10(pi)) ~ log10(GBIF.popsize + 1) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_pi_gbif_pop_1)
 
+mod_pi_gbif_pop_2 = pgls(scale(log10(pi)) ~ log10(GBIF.popsize + 1) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_pi_gbif_pop_2)
 
+mod_pi_gbif_pop_3 = pgls(scale(log10(pi)) ~ log10(GBIF.popsize + 1) + nidv + log10(genome.size) + cvbp + Mating.system, gbif_compdata)
+summary(mod_pi_gbif_pop_3)
 
+# jaccard dissimilarity
+mod_jac_gbif_pop_1 = pgls(scale(jac) ~ log10(GBIF.popsize + 1) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_jac_gbif_pop_1)
+
+mod_jac_gbif_pop_2 = pgls(scale(jac) ~ log10(GBIF.popsize + 1) + log10(meancov) + nidv + log10(genome.size) + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_jac_gbif_pop_2)
+
+# bray-curtis dissimilarity
+mod_bcd_gbif_pop_1 = pgls(scale(bcd) ~ log10(GBIF.popsize + 1) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_bcd_gbif_pop_1)
+
+################################
+# GBIF range size vs diversity #
+################################
+
+# pi
+mod_pi_gbif_area_1 = pgls(scale(log10(pi)) ~ log10(gbif.area + 1) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_pi_gbif_area_1)
+
+mod_pi_gbif_area_2 = pgls(scale(log10(pi)) ~ log10(gbif.area + 1) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_pi_gbif_area_2)
+
+mod_pi_gbif_area_3 = pgls(scale(log10(pi)) ~ log10(gbif.area + 1) + nidv + log10(genome.size) + cvbp + Mating.system, gbif_compdata)
+summary(mod_pi_gbif_area_3)
+
+# jaccard dissimilarity
+mod_jac_gbif_area_1 = pgls(scale(jac) ~ log10(gbif.area + 1) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_jac_gbif_area_1)
+
+mod_jac_gbif_area_2 = pgls(scale(jac) ~ log10(gbif.area + 1) + log10(meancov) + nidv + log10(genome.size) + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_jac_gbif_area_2)
+
+# bray-curtis dissimilarity
+mod_bcd_gbif_area_1 = pgls(scale(bcd) ~ log10(gbif.area + 1) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, gbif_compdata)
+summary(mod_bcd_gbif_area_1)
 
 # function to perform phylogenetic least squares, adjust for covariates, and plot primary variable against responses
 correct_and_plot = function(mod_mat, y, V, primary, xlab, ylab){
@@ -828,23 +881,38 @@ correct_and_plot = function(mod_mat, y, V, primary, xlab, ylab){
     geom_abline(intercept = 0, slope = coeff_star[primary], color = "pink") +
     theme_classic() +
     stat_regline_equation(aes(label = paste(..eq.label.., ..adj.rr.label.., sep = "~~~~"))) +
-    annotate(geom = "text", x = 3, y = (max(y_star_corrected) + min(y_star_corrected))*0.5, label = p.label) +
+    annotate(geom = "text", x = 1.5, y = (max(y_star_corrected) + min(y_star_corrected))*0.5, label = p.label) +
     labs(x = xlab, y = ylab)
+  
+  #print(X_star[,primary])
     
   return(myplot)
 }
 
-wcvp_vs_pi_corrected = correct_and_plot(mod_mat_pi, mod_pi_1$y, mod_pi_1$Vt, "log10(WCVP.popsize)", "log10(WCVP pop size proxy), scaled", "Nucleotide diversity, scaled and adjusted")
+# create plots, save to objects
 
-wcvp_vs_jac_corrected = correct_and_plot(mod_mat_jac, mod_jac_1$y, mod_jac_1$Vt, "log10(WCVP.popsize)", "log10(WCVP pop size proxy), scaled", "Jaccard dissimilarity, scaled and adjusted")
+wcvp_pop_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_pi, mod_pi_1$y, mod_pi_1$Vt, "log10(WCVP.popsize)", "log10(WCVP pop size proxy), scaled", "log10(Nucleotide diversity), scaled and adjusted")
 
-wcvp_vs_bcd_corrected = correct_and_plot(mod_mat_bcd, mod_bcd_1$y, mod_bcd_1$Vt, "log10(WCVP.popsize)", "log10(WCVP pop size proxy), scaled", "Bray-Curtis dissimilarity, scaled and adjusted")
+wcvp_pop_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_jac, mod_jac_1$y, mod_jac_1$Vt, "log10(WCVP.popsize)", "log10(WCVP pop size proxy), scaled", "Jaccard dissimilarity, scaled and adjusted")
+
+wcvp_pop_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_bcd, mod_bcd_1$y, mod_bcd_1$Vt, "log10(WCVP.popsize)", "log10(WCVP pop size proxy), scaled", "Bray-Curtis dissimilarity, scaled and adjusted")
+
+wcvp_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_area_vs_pi, mod_pi_wcvp_area_3$y, mod_pi_wcvp_area_3$Vt, "log10(area)", "log10(WCVP range size in square km), scaled", "log10(Nucleotide diversity), scaled and adjusted")
+
+wcvp_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_area_vs_jac, mod_jac_wcvp_area_1$y, mod_jac_wcvp_area_1$Vt, "log10(area)", "log10(WCVP range size in square km), scaled", "Jaccard dissimilarity, scaled and adjusted")
+
+wcvp_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_area_vs_bcd, mod_bcd_wcvp_area_2$y, mod_bcd_wcvp_area_2$Vt, "log10(area)", "log10(WCVP range size in square km), scaled", "Bray-Curtis dissimilarity, scaled and adjusted")
 
 ```
 
 # Final plots
 
 ```{r}
+# make initial data analysis plots, confirming relationship between WCVP and GBIF, jaccard and bray-curtis
+ggarrange(ida_wcvp_vs_gbif, ida_jac_vs_bcd, nrow = 1, ncol = 2, labels = c("A", "B"))
+
+ggsave(paste("wcvp_vs_gbif_and_jac_vs_bcd_", today, ".png", sep = ""))
+
 # Look at how coverage influences metrics
 ggarrange(ida_meancov_vs_pi, ida_cvbp_vs_pi, ida_meancov_vs_jac, ida_cvbp_vs_jac, ida_meancov_vs_bcd, ida_cvbp_vc_bcd, ncol = 2, nrow = 3, labels = c("A", "B", "C", "D", "E", "F"))
 
@@ -866,9 +934,9 @@ ggarrange(cda_pi_vs_gbif, cda_pi_vs_wcvp, cda_jac_vs_gbif, cda_jac_vs_wcvp, cda_
 ggsave(paste("diversity_vs_popsize_", today, ".png", sep = ""), width = 8, height = 10, units = "in")
 
 # plot phylogenetic least squares models
-ggarrange(wcvp_vs_pi_corrected, wcvp_vs_jac_corrected, wcvp_vs_bcd_corrected, nrow = 1, ncol = 3, labels = c("A", "B", "C"))
+ggarrange(wcvp_pop_vs_pi_corrected, wcvp_pop_vs_jac_corrected, wcvp_pop_vs_bcd_corrected, wcvp_area_vs_pi_corrected, wcvp_area_vs_jac_corrected, wcvp_area_vs_bcd_corrected,nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"))
 
-ggsave(paste("wcpv_vs_diversity_corrected_", today, ".png", sep = ""), height = 4.5, width = 13.5, units = "in")
+ggsave(paste("wcpv_vs_diversity_corrected_", today, ".png", sep = ""), height = 9, width = 13.5, units = "in")
 ```
 
 ```{r}
@@ -990,6 +1058,76 @@ ggsave(paste("tree_with_technical_variables_", today, ".png", sep = ""), scale =
 
 # DEPRECATED
 ```{r}
+# subtract off effects of covariates from response
+mod_mat_pi = model.matrix(~ log10(WCVP.popsize) + nidv + log10(genome.size) + cvbp + Mating.system, data = compdata$data)
+
+mod_mat_jac = model.matrix(~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, data = compdata$data)
+
+mod_mat_bcd = model.matrix(~ log10(WCVP.popsize) + log10(meancov) + nidv + log10(genome.size) + cvbp + Mating.system + cultivation.status, data = compdata$data)
+
+mod_coeff_pi = coefficients(mod_pi_3)
+
+mod_coeff_jac = coefficients(mod_jac_1)
+
+mod_coeff_bcd = coefficients(mod_bcd_1)
+
+# Plotting response against summed linear model should give a 1:1 line
+plot(mod_bcd_1$y, mod_mat %*% mod_coeff + mod_bcd_1$residuals)
+abline(a = 0, b = 1)
+
+# correct response for phylogeny and other covariates, then plot against predictor of interest
+C_inv_pi = t(solve(chol(mod_pi_3$Vt)))
+C_inv_jac = t(solve(chol(mod_jac_1$Vt)))
+C_inv_bcd = t(solve(chol(mod_bcd_1$Vt)))
+
+y_star_pi = C_inv_pi %*% mod_pi_3$y
+X_star_pi = (C_inv_pi %*% mod_mat_pi)
+
+y_star_jac = C_inv_jac %*% mod_jac_1$y
+X_star_jac = (C_inv_jac %*% mod_mat_jac)
+
+y_star_bcd = C_inv_bcd %*% mod_bcd_1$y
+X_star_bcd = (C_inv_bcd %*% mod_mat_bcd)
+
+# confirm that results of pgls match results of ordinary least squares on transformed data
+# remove intercept column, already included in 
+mod_star_bcd = lm(y_star_bcd ~ X_star_bcd - 1)
+coeff_star_bcd = coefficients(mod_star_bcd)
+(coeff_star_bcd - mod_coeff_bcd)/mod_coeff_bcd * 100 # percent difference in coefficients
+
+# Isolate effect of covariate I'm interested in
+# subtract extra covariates and slope from both sides of the equation
+# Remember: the intercept is not a simple constant here! It's been scaled by C_inv
+y_star_corrected_pi = y_star_pi - (X_star_pi[,c(1,3:ncol(X_star_pi))] %*% mod_coeff_pi[c(1,3:length(mod_coeff_pi))])
+
+y_star_corrected_jac = y_star_jac - (X_star_jac[,c(1,3:ncol(X_star_jac))] %*% mod_coeff_jac[c(1,3:length(mod_coeff_jac))])
+
+y_star_corrected_bcd = y_star_bcd - (X_star_bcd[,c(1,3:ncol(X_star_bcd))] %*% mod_coeff_bcd[c(1,3:length(mod_coeff_bcd))])
+
+#plot(X_star[,2], y_star_corrected_2)
+#abline(a = 0, coeff_star[2])
+
+# plot response, scaled by phylogeny and corrected for other covariates, against diversity
+my_ggplot_wrap_lm = function(x,y,b,xlab,ylab){
+  myplot = ggplot(mapping = aes(x = x, y = y)) +
+    geom_point() +
+    geom_abline(intercept = 0, slope = b) +
+    theme_classic() +
+    labs(x = xlab, y = ylab)
+    
+  return(myplot)
+}
+
+my_ggplot_wrap_lm(X_star_pi[,2], y_star_corrected_pi, mod_coeff_pi[2], "log10(WCVP.popsize)")
+
+my_ggplot_wrap_lm(X_star_jac[,2], y_star_corrected_jac, mod_coeff_jac[2])
+
+my_ggplot_wrap_lm(X_star_bcd[,2], y_star_corrected_bcd, mod_coeff_bcd[2])
+
+
+
+
+
 y_star_corrected = y_star - (X_star[,3:ncol(X_star)] %*% coeff_star[3:length(coeff_star)])
 
 plot(X_star[,1:2] %*% mod_coeff[1:2], y_star_corrected) # data should center around 1:1 reference line
