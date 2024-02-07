@@ -43,9 +43,9 @@ jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T
 # for now, remove species that can't be processed further for whatever reason
 # pi: zizania palustris, panicum virgatum
 # jac and bcd: panicum hallii, lens culinaris
-jac = jac[c(-52, -76)]
-bcd = bcd[c(-52, -76)]
-pi = pi[c(-75,-103)]
+jac = jac[c(-53, -77)]
+bcd = bcd[c(-53, -77)]
+pi = pi[c(-76,-105)]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -126,7 +126,8 @@ areas = lapply(areas, read.table, header = +T, sep = "\t")
 # add names to list
 names(areas) = areas_species
 
-#str(areas)
+# copy object so that we can separate out whether invaded areas are included or not
+native_areas = areas
 ```
 
 ## remove areas outside of native range 
@@ -135,130 +136,130 @@ names(areas) = areas_species
 # powo.science.kew.org
 
 # Amaranthus hybridus native to only North and South America
-areas$`Amaranthus hypochondriacus` = areas$`Amaranthus hypochondriacus`[1:2,]
+native_areas$`Amaranthus hypochondriacus` = native_areas$`Amaranthus hypochondriacus`[1:2,]
 
 # Arabidopsis thaliana is only native to Europe, Asia, and Africa
-areas$`Arabidopsis thaliana` = areas$`Arabidopsis thaliana`[2:4,]
+native_areas$`Arabidopsis thaliana` = native_areas$`Arabidopsis thaliana`[2:4,]
 
 # Arachis duranensis is native to south america, remove asia
-areas$`Arachis duranensis` = areas$`Arachis duranensis`[1,]
+native_areas$`Arachis duranensis` = native_areas$`Arachis duranensis`[1,]
 
 # Arachis glabrata is native to Brazil, remove North America
-areas$`Arachis hypogaea` = areas$`Arachis hypogaea`[2,]
+native_areas$`Arachis hypogaea` = native_areas$`Arachis hypogaea`[2,]
 
 # Beta vulgaris subsp. vulgaris is native to only Europe and Africa
-areas$`Beta vulgaris` = areas$`Beta vulgaris`[2:3,]
+native_areas$`Beta vulgaris` = native_areas$`Beta vulgaris`[2:3,]
 
 # Brachypodium distachyon is native to Europe, Asia, Africa
-areas$`Brachypodium distachyon` = areas$`Brachypodium distachyon`[2:4,]
+native_areas$`Brachypodium distachyon` = native_areas$`Brachypodium distachyon`[2:4,]
 
 # Brassica juncea is native only to Europe
-areas$`Brassica juncea` = areas$`Brassica juncea`[4,]
+native_areas$`Brassica juncea` = native_areas$`Brassica juncea`[4,]
 
 # Brassica cretica native to europe
-areas$`Brassica oleracea` = areas$`Brassica oleracea`[1,]
+native_areas$`Brassica oleracea` = native_areas$`Brassica oleracea`[1,]
 
 # Brassica fruticulosa native to europe
-areas$`Brassica rapa` = areas$`Brassica rapa`[2,]
+native_areas$`Brassica rapa` = native_areas$`Brassica rapa`[2,]
 
 # Buddleja alternifolia is native to Asia
-areas$`Buddleja alternifolia` = areas$`Buddleja alternifolia`[2,]
+native_areas$`Buddleja alternifolia` = native_areas$`Buddleja alternifolia`[2,]
 
 # Cajanus scarabaeoides native to Africa, Asia, Australia
-areas$`Cajanus cajan` = areas$`Cajanus cajan`[c(1,3,4),]
+native_areas$`Cajanus cajan` = native_areas$`Cajanus cajan`[c(1,3,4),]
 
 # Camelina sativa is not native to North America
-areas$`Camelina sativa` = areas$`Camelina sativa`[c(2,3),]
+native_areas$`Camelina sativa` = native_areas$`Camelina sativa`[c(2,3),]
 
 # Cannabis sativa is native only to Asia
-areas$`Cannabis sativa` = areas$`Cannabis sativa`[5,]
+native_areas$`Cannabis sativa` = native_areas$`Cannabis sativa`[5,]
 
 # Capsicum annuum is native to north america and south america
-areas$`Capsicum annuum` = areas$`Capsicum annuum`[c(1,2),]
+native_areas$`Capsicum annuum` = native_areas$`Capsicum annuum`[c(1,2),]
 
 # Castanea mollissima is native only to asia
-areas$`Castanea mollissima` = areas$`Castanea mollissima`[2,]
+native_areas$`Castanea mollissima` = native_areas$`Castanea mollissima`[2,]
 
 # Cucumis myriocarpus is native only to africa
-areas$`Cucumis melo` = areas$`Cucumis melo`[2,]
+native_areas$`Cucumis melo` = native_areas$`Cucumis melo`[2,]
 
 # Cucurbita palmata is only native to North America
-areas$`Cucurbita pepo` = areas$`Cucurbita pepo`[1,]
+native_areas$`Cucurbita pepo` = native_areas$`Cucurbita pepo`[1,]
 
 # Digitaria longiflora native to africa, asia, australia
-areas$`Digitaria exilis`= areas$`Digitaria exilis`[2:4,]
+native_areas$`Digitaria exilis`= native_areas$`Digitaria exilis`[2:4,]
 
 # Dioscorea communis is native only to africa
-areas$`Dioscorea rotundata` = areas$`Dioscorea rotundata`[2,]
+native_areas$`Dioscorea rotundata` = native_areas$`Dioscorea rotundata`[2,]
 
 # Gossypium arboreum native to asia
-areas$`Gossypium arboreum` = areas$`Gossypium arboreum`[3,]
+native_areas$`Gossypium arboreum` = native_areas$`Gossypium arboreum`[3,]
 
 # Gossypium thurberi is native only to north america
-areas$`Gossypium hirsutum` = areas$`Gossypium hirsutum`[1,]
+native_areas$`Gossypium hirsutum` = native_areas$`Gossypium hirsutum`[1,]
 
 # Helianthus maximiliani is native only to north america
-areas$`Helianthus annuus` = areas$`Helianthus annuus`[1,]
+native_areas$`Helianthus annuus` = native_areas$`Helianthus annuus`[1,]
 
 # Juglans mandshuica is native only to asia
-areas$`Juglans regia` = areas$`Juglans regia`[2,]
+native_areas$`Juglans regia` = native_areas$`Juglans regia`[2,]
 
 # Lactuca sativa is native to Iraq
-areas$`Lactuca sativa` = areas$`Lactuca sativa`[3,]
+native_areas$`Lactuca sativa` = native_areas$`Lactuca sativa`[3,]
 
 # Linum bienne is native to europe, africa, and asia
-areas$`Linum usitatissimum` = areas$`Linum usitatissimum`[c(3,4),]
+native_areas$`Linum usitatissimum` = native_areas$`Linum usitatissimum`[c(3,4),]
 
 # Malus sylvestris is only native to Europe
-areas$`Malus sylvestris` = areas$`Malus sylvestris`[2,]
+native_areas$`Malus sylvestris` = native_areas$`Malus sylvestris`[2,]
 
 # Medicago truncatula only native to europe and africa
-areas$`Medicago truncatula` = areas$`Medicago truncatula`[c(4,5),]
+native_areas$`Medicago truncatula` = native_areas$`Medicago truncatula`[c(4,5),]
 
 # Mimulus guttatus only native to North America
-areas$`Mimulus guttatus` = areas$`Mimulus guttatus`[1,]
+native_areas$`Mimulus guttatus` = native_areas$`Mimulus guttatus`[1,]
 
 # Miscanthus sacchariflorus is native only to asia
-areas$`Miscanthus sinensis` = areas$`Miscanthus sinensis`[3,]
+native_areas$`Miscanthus sinensis` = native_areas$`Miscanthus sinensis`[3,]
 
 # Musa relative only native to asia and india
-areas$`Musa acuminata` = areas$`Musa acuminata`[2,]
+native_areas$`Musa acuminata` = native_areas$`Musa acuminata`[2,]
 
 # Nicotiana glauca is native only to south america
-areas$`Nicotiana tabacum` = areas$`Nicotiana tabacum`[2,]
+native_areas$`Nicotiana tabacum` = native_areas$`Nicotiana tabacum`[2,]
 
 # Oryza rufipogon is native to asia and australia
-areas$`Oryza rufipogon` = areas$`Oryza rufipogon`[c(2,3),]
+native_areas$`Oryza rufipogon` = native_areas$`Oryza rufipogon`[c(2,3),]
 
 # Panicum hallii is native only to north america
-areas$`Panicum hallii` = areas$`Panicum hallii`[1,]
+native_areas$`Panicum hallii` = native_areas$`Panicum hallii`[1,]
 
 # Panicum capillare is native only to north america
-areas$`Panicum virgatum` = areas$`Panicum virgatum`[1,]
+native_areas$`Panicum virgatum` = native_areas$`Panicum virgatum`[1,]
 
 # Papaver rhoeas is native to Africa, Europe, Asia
-areas$`Papaver somniferum` = areas$`Papaver somniferum`[4:6,]
+native_areas$`Papaver somniferum` = native_areas$`Papaver somniferum`[4:6,]
 
 # Populus deltoides only native to north america
-areas$`Populus deltoides` = areas$`Populus deltoides`[1,]
+native_areas$`Populus deltoides` = native_areas$`Populus deltoides`[1,]
 
 # Prunus avium is native to europe, asia, africa
-areas$`Prunus avium` = areas$`Prunus avium`[2:3,]
+native_areas$`Prunus avium` = native_areas$`Prunus avium`[2:3,]
 
 # Raphanus raphanistrum is native to europe and africa
-areas$`Raphanus sativus` = areas$`Raphanus sativus`[3:4,]
+native_areas$`Raphanus sativus` = native_areas$`Raphanus sativus`[3:4,]
 
 # Setaria faberi is native only to asia
-areas$`Setaria italica` = areas$`Setaria italica`[3,]
+native_areas$`Setaria italica` = native_areas$`Setaria italica`[3,]
 
 # Setaria viridis is native to europe, africa, asia, australia
-areas$`Setaria viridis` = areas$`Setaria viridis`[2:5,]
+native_areas$`Setaria viridis` = native_areas$`Setaria viridis`[2:5,]
 
 # Thlaspi arvense is native to europe and asia
-areas$`Thlaspi arvense` = areas$`Thlaspi arvense`[3:4,]
+native_areas$`Thlaspi arvense` = native_areas$`Thlaspi arvense`[3:4,]
 
 # Triticum urartu is native only to asia 
-areas$`Triticum aestivum` = areas$`Triticum aestivum`[2,]
+native_areas$`Triticum aestivum` = native_areas$`Triticum aestivum`[2,]
 ```
 
 ## Merge range data with diversity data
@@ -271,7 +272,8 @@ get_nonwater_area = function(x){
 # format area data as frame
 areas = data.frame(
   species = areas_species,
-  gbif.area = unlist(lapply(areas, get_nonwater_area))
+  gbif_all_area = unlist(lapply(areas, get_nonwater_area)),
+  gbif_native_area = unlist(lapply(native_areas, get_nonwater_area))
 )
 
 # merge with diversity data
@@ -357,10 +359,23 @@ wcvp_distributions = wcvp_dist,
 wcvp_names = wcvp_names
 )
 
+# get native + invaded species distribution
+species_dist_invaded = wcvp_distribution(
+taxon = species,
+taxon_rank = "species",
+native = TRUE,
+introduced = TRUE,
+extinct = TRUE,
+location_doubtful = FALSE,
+wcvp_distributions = wcvp_dist,
+wcvp_names = wcvp_names
+)
+
 # calculate area, convert to square kilometers (1000 x 1000 meters)
 region_area = sum(st_area(species_dist))/1e6
+region_area_invaded = sum(st_area(species_dist_invaded))/1e6
 
-region_areas = rbind(region_areas, data.frame(species_updated = species, area = region_area))
+region_areas = rbind(region_areas, data.frame(species_updated = species, wcvp_native_area = region_area, wcvp_all_area = region_area_invaded))
 
 }
 
@@ -428,11 +443,17 @@ alldiv$height_final = alldiv$height
 alldiv$height_final[is.na(alldiv$height_final)] = alldiv$Height..m.[is.na(alldiv$height_final)]
 
 # calculate quantity that's proportional to population size (range/squared height)
-alldiv$WCVP.popsize = (alldiv$area * 1e6)/(alldiv$height_final^2)
-summary(alldiv$WCVP.popsize)
+alldiv$wcvp_all_popsize = (alldiv$wcvp_all_area * 1e6)/(alldiv$height_final^2)
+summary(alldiv$wcvp_all_popsize)
 
-alldiv$GBIF.popsize = (alldiv$gbif.area * 1e6)/(alldiv$height_final^2)
-summary(alldiv$GBIF.popsize)
+alldiv$wcvp_native_popsize = (alldiv$wcvp_native_area * 1e6)/(alldiv$height_final^2)
+summary(alldiv$wcvp_native_popsize)
+
+alldiv$gbif_all_popsize = (alldiv$gbif_all_area * 1e6)/(alldiv$height_final^2)
+summary(alldiv$gbif_all_popsize)
+
+alldiv$gbif_invaded_popsize = (alldiv$gbif_native_area * 1e6)/(alldiv$height_final^2)
+summary(alldiv$gbif_invaded_popsize)
 
 # convert genome size in picograms to megabases
 alldiv$genome.size = alldiv$DNA.amount..1.C..pg. * 0.978e9
