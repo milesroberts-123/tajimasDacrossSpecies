@@ -26,10 +26,21 @@ maxbp = 7.5e12
 allReads = NULL
 ```
 
-## Function to calculate average coverage
-```{r eval=FALSE, include=FALSE}
-dp = function(x, G){
-  mean(x[,"bases"]/G)
+## Functions
+```{r}
+# take SRA dataframe and maximum number of basepairs
+# output random sample where total number of bp does not exceed maximum
+random_subset = function(x, maxbp){
+  output = NULL
+  print("Begin random sampling...")
+  while(sum(output$bases) < maxbp){
+    print(paste("Percent complete:", sum(output$bases)/maxbp * 100))
+    row_to_add = sample(1:nrow(x), replace = F, size = 1) # randomly sample
+    output = rbind(output, x[row_to_add,]) # save randomly sampled row 
+    x = x[-row_to_add,] # drop row so that it's not sampled again
+  }
+  return(output)
+  print("Done! :)")
 }
 
 ```
@@ -621,6 +632,9 @@ cicer_arietinum$layout = NA
 cicer_arietinum$layout[(cicer_arietinum$spots_with_mates > 0)] = "PE"
 cicer_arietinum$layout[(cicer_arietinum$spots_with_mates == 0)] = "SE"
 
+# randomly sample 
+cicer_arietinum = random_subset(cicer_arietinum, maxbp = maxbp)
+
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = cicer_arietinum[,"Run"], replicate = cicer_arietinum[,"BioSample"], layout = cicer_arietinum[,"layout"], genome = "cicer_arietinum", ploidy = 2, taxonKeys = "2947330"))
 ```
@@ -957,7 +971,7 @@ gossypium_barbadense$layout[(gossypium_barbadense$spots_with_mates == 0)] = "SE"
 
 # add reads to growing list
 # real ploidy is 4, but there are assemblies for both subgenomes, allotetraploid
-allReads = rbind(allReads, data.frame(run = gossypium_barbadense[,"Run"], replicate = gossypium_barbadense[,"BioSample"], layout = gossypium_barbadense[,"layout"], genome = "gossypium_barbadense", ploidy = 2, taxonKeys = "3934083"))
+allReads = rbind(allReads, data.frame(run = gossypium_barbadense[,"Run"], replicate = gossypium_barbadense[,"BioSample"], layout = gossypium_barbadense[,"layout"], genome = "gossypium_barbadense", ploidy = 2, taxonKeys = "3152666"))
 ```
 
 ## Gossypium hirsutum
@@ -979,6 +993,9 @@ any(gossypium_hirsutum$spots_with_mates == 0)
 gossypium_hirsutum$layout = NA
 gossypium_hirsutum$layout[(gossypium_hirsutum$spots_with_mates > 0)] = "PE"
 gossypium_hirsutum$layout[(gossypium_hirsutum$spots_with_mates == 0)] = "SE"
+
+# randomly subset
+gossypium_hirsutum = random_subset(gossypium_hirsutum, maxbp = maxbp)
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = gossypium_hirsutum[,"Run"], replicate = gossypium_hirsutum[,"BioSample"], layout = gossypium_hirsutum[,"layout"], genome = "gossypium_hirsutum", ploidy = 4, taxonKeys = "3152653"))
@@ -1178,7 +1195,7 @@ malus_domestica = malus[(malus$ScientificName == "Malus domestica"),]
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = malus_sylvestris[,"Run"], replicate = malus_sylvestris[,"BioSample"], layout = "PE", genome = "malus_sylvestris", ploidy = 2, taxonKeys = "3001509"))
 
-allReads = rbind(allReads, data.frame(run = malus_domestica[,"Run"], replicate = malus_domestica[,"BioSample"], layout = "PE", genome = "malus_domestica", ploidy = 2, taxonKeys = "3001162"))
+allReads = rbind(allReads, data.frame(run = malus_domestica[,"Run"], replicate = malus_domestica[,"BioSample"], layout = "PE", genome = "malus_domestica", ploidy = 2, taxonKeys = "7864241"))
 ```
 
 ## Mangifera indica

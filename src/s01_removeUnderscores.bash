@@ -4,7 +4,7 @@
 for FILE in ../config/assemblies/*
 do
 	echo Removing underscores in $FILE...
-	seqkit replace -p "_" -r "" $FILE > tmp.fa
+	seqkit replace -p "_" -r "." $FILE > tmp.fa
 	mv tmp.fa $FILE
 done
 
@@ -12,7 +12,7 @@ done
 for FILE in ../config/annotations/*
 do
 	echo Removing underscores in $FILE...
-	sed 's/_//g' $FILE > tmp.gff3
+	sed 's/_/./g' $FILE > tmp.gff3
 	mv tmp.gff3 $FILE
 done
 
