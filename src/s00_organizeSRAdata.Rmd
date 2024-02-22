@@ -34,7 +34,10 @@ random_subset = function(x, maxbp){
   output = NULL
   print("Begin random sampling...")
   while(sum(output$bases) < maxbp){
-    print(paste("Percent complete:", sum(output$bases)/maxbp * 100))
+    percent_complete = round(sum(output$bases)/maxbp * 100, digits = 1)
+    if(percent_complete %% 1 == 0){
+      print(paste("Percent complete:", percent_complete))
+    }
     row_to_add = sample(1:nrow(x), replace = F, size = 1) # randomly sample
     output = rbind(output, x[row_to_add,]) # save randomly sampled row 
     x = x[-row_to_add,] # drop row so that it's not sampled again
@@ -914,6 +917,9 @@ glycine_max$layout = NA
 glycine_max$layout[(glycine_max$spots_with_mates > 0)] = "PE"
 glycine_max$layout[(glycine_max$spots_with_mates == 0)] = "SE"
 
+# random subset
+glycine_max = random_subset(glycine_max, maxbp = maxbp)
+
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = glycine_max[,"Run"], replicate = glycine_max[,"BioSample"], layout = glycine_max[,"layout"], genome = "glycine_max", ploidy = 2, taxonKeys = "5359681"))
 ```
@@ -1488,6 +1494,9 @@ length(unique(oryza_sativa$BioSample))
 oryza_sativa$layout = NA
 oryza_sativa$layout = "PE" # even the samples without mates are actually paired-end
 
+# randomly subset
+oryza_sativa = random_subset(oryza_sativa, maxbp = maxbp)
+
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = oryza_sativa[,"Run"], replicate = oryza_sativa[,"BioSample"], layout = oryza_sativa[,"layout"], genome = "oryza_sativa", ploidy = 2, taxonKeys = "4135983"))
 ```
@@ -1900,6 +1909,9 @@ sorghum_bicolor$layout = "PE"
 #sorghum_bicolor$layout[(sorghum_bicolor$spots_with_mates > 0)] = "PE"
 #sorghum_bicolor$layout[(sorghum_bicolor$spots_with_mates == 0)] = "SE"
 
+# random subsample
+sorghum_bicolor = random_subset(sorghum_bicolor, maxbp = maxbp)
+
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = sorghum_bicolor[,"Run"], replicate = sorghum_bicolor[,"BioSample"], layout = sorghum_bicolor[,"layout"], genome = "sorghum_bicolor", ploidy = 2, taxonKeys = "2705185"))
 ```
@@ -2001,7 +2013,7 @@ allReads = rbind(allReads, data.frame(run = trifolium_pratense[,"Run"], replicat
 ```
 
 ## Triticum aestivum
-```{r}
+```{r eval=FALSE, include=FALSE}
 # load data
 triticum_aestivum_1 = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_aestivum_PRJEB48738.csv.gz", data.table = F)
 triticum_aestivum_2 = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_aestivum_PRJEB48988.csv.gz", data.table = F)
@@ -2027,7 +2039,7 @@ allReads = rbind(allReads, data.frame(run = triticum_aestivum[,"Run"], replicate
 ```
 
 ## Triticum dicoccoides
-```{r}
+```{r eval=FALSE, include=FALSE}
 triticum_dicoccoides = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_dicoccoides_PRJEB42105.csv.gz", data.table = F)
 
 # subset just RAD-seq because WGS data is for chloroplast only
@@ -2043,7 +2055,7 @@ allReads = rbind(allReads, data.frame(run = triticum_dicoccoides[,"Run"], replic
 ```
 
 ## Triticum turgidum
-```{r}
+```{r eval=FALSE, include=FALSE}
 triticum_turgidum = fread("../workflow/data/SRArunInfo/SraRunInfo_triticum_turgidum_PRJNA663409.csv.gz", data.table = F)
 
 # subset relevant species

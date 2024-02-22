@@ -6,6 +6,9 @@
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
 #
+https://stackoverflow.com/questions/67794202/fatal-error-with-ggplot-after-updating-to-latest-rstudio-version
+
+#
 "SRR14552933" "SRR14470440" "SRR14470037" "SRR14469942" "SRR14470105" "SRR14552823"
 
 "SRR14552933" "SRR14470440" "SRR14470037" "SRR14469942" "SRR14470105" "SRR14552823"
