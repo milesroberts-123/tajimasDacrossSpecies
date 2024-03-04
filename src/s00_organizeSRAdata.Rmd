@@ -1004,7 +1004,7 @@ gossypium_hirsutum$layout[(gossypium_hirsutum$spots_with_mates == 0)] = "SE"
 gossypium_hirsutum = random_subset(gossypium_hirsutum, maxbp = maxbp)
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = gossypium_hirsutum[,"Run"], replicate = gossypium_hirsutum[,"BioSample"], layout = gossypium_hirsutum[,"layout"], genome = "gossypium_hirsutum", ploidy = 4, taxonKeys = "3152653"))
+allReads = rbind(allReads, data.frame(run = gossypium_hirsutum[,"Run"], replicate = gossypium_hirsutum[,"BioSample"], layout = gossypium_hirsutum[,"layout"], genome = "gossypium_hirsutum", ploidy = 2, taxonKeys = "3152653"))
 ```
 
 ## Helianthus annuus
