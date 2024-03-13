@@ -44,9 +44,9 @@ jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T
 # for now, remove species that can't be processed further for whatever reason
 # pi: panicum virgatum
 # jac and bcd: panicum hallii, lens culinaris
-jac = jac[c(-54, -78)]
-bcd = bcd[c(-54, -78)]
-pi = pi[c(-77)]
+jac = jac[c(-56, -80)]
+bcd = bcd[c(-56, -80)]
+pi = pi[c(-79)]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -60,8 +60,8 @@ jac = lapply(jac, fread, header = F, data.table = F)
 bcdMean = lapply(bcd, function(x){mean(x[,2])})
 jacMean = lapply(jac, function(x){mean(x[,2])})
 
-# calculate average number of k-mers included in union
-unionMean = lapply(jac, function(x){mean(x[,4])})
+# calculate average number of k-mers included in union, scaled by dissimilarity
+unionMean = lapply(jac, function(x){mean(x[,4]*x[,2])})
 
 # calculate number of individuals sampled for each dataset
 # You get this equation by rewriting the formula for the number of pairwise comparisons (n^2 - n)/2 = N as a polynomial and applying the quadratic formula
@@ -452,6 +452,8 @@ alldiv$genome.size = alldiv$DNA.amount..1.C..pg. * 0.978e9
 # calculate average coverage per individual
 alldiv$totalbp[(alldiv$species == "Cicer arietinum")] = 7.5e12 # chickpea was subset
 alldiv$totalbp[(alldiv$species == "Glycine max")] = 7.5e12 # soybean was subset
+alldiv$totalbp[(alldiv$species == "Gossypium hirsutum")] = 7.5e12 # cotton was subset
+
 alldiv$meancov = alldiv$totalbp/(alldiv$genome.size*alldiv$nidv)
 
 # re-order mating system variable
@@ -1360,7 +1362,125 @@ genome_mod_mat_height = model.matrix(~ log10(genome.size) + log10(height_final) 
 
 # create plots
 
-correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_pi$y, genome_gbif_all_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+## gbif all 
+genome_gbif_all_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_pi$y, genome_gbif_all_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+
+genome_gbif_all_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_jac$y, genome_gbif_all_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+
+genome_gbif_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_bcd$y, genome_gbif_all_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+
+## gbif native
+genome_gbif_native_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_pi$y, genome_gbif_native_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+
+genome_gbif_native_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_jac$y, genome_gbif_native_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+
+genome_gbif_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_bcd$y, genome_gbif_native_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+
+## wcvp all
+genome_wcvp_all_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_pi$y, genome_wcvp_all_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+
+genome_wcvp_all_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_jac$y, genome_wcvp_all_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+
+genome_wcvp_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_bcd$y, genome_wcvp_all_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+
+## wcvp native
+genome_wcvp_native_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_pi$y, genome_wcvp_native_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+
+genome_wcvp_native_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_jac$y, genome_wcvp_native_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+
+genome_wcvp_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_bcd$y, genome_wcvp_native_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+
+## height
+genome_height_vs_pi_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_pi$y, genome_height_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+
+genome_height_vs_jac_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_jac$y, genome_height_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+
+genome_height_vs_bcd_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_bcd$y, genome_height_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+```
+
+## Do k-mers uncover more between species variation?
+```{r eval=FALSE, include=FALSE}
+summary(subdiv$jac/(subdiv$pi*30))
+
+# A point mutation generates up to k new k-mers in a genome
+# Thus, each SNP corresponds to at most k presence-absence differences in a pair of genomes
+subdiv$excess_color = ifelse(subdiv$jac/(subdiv$pi*30) > 1, "greater", "lesser")
+
+ggplot(subdiv, aes(x = reorder(species,-log10(jac/(pi*30))), y = log10(jac/(pi*30)), color = excess_color, fill = excess_color)) +
+  geom_bar(stat = "identity") +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  geom_hline(yintercept = log10(1))
+
+# calculate mean, variance accounting for phylogeny
+pi_int = pgls(-log10(pi) ~ 1, data = compdata)
+jac_int = pgls(jac ~ 1, data = compdata)
+bcd_int = pgls(bcd ~ 1, data = compdata)
+
+phylocv = function(mod){
+  my_sd = sqrt(sum(mod$residuals**2)/(length(mod$residuals) - 1))
+  my_mean = coefficients(mod)
+  return(my_sd/my_mean)
+}
+
+phylocv(pi_int)
+phylocv(jac_int)
+phylocv(bcd_int)
+
+# coefficients of variation for raw data
+IQR(log10(subdiv$pi))/median(log10(subdiv$pi))
+
+IQR(subdiv$jac)/median(subdiv$jac)
+
+IQR(subdiv$bcd)/median(subdiv$bcd)
+
+# de-correlate observations due to relatedness
+# Get cholesky decomposition of variance covariance matrix
+# then invert the matrix
+# then transpose it
+C_inv = t(solve(chol(compdata$vcv)))
+  
+# scale data by phylogenetic effect
+# This translates the generalized least squares model into an ordinary least squares model
+pi_star = C_inv %*% log10(subdiv$pi)
+jac_star = C_inv %*% (subdiv$jac)
+bcd_star = C_inv %*% (subdiv$bcd)
+
+# coefficients of variation for de-correlated data
+(sd(jac_star)/mean(jac_star))/(sd(pi_star)/mean(pi_star))
+
+(sd(bcd_star)/mean(bcd_star))/(sd(pi_star)/mean(pi_star))
+
+# bootstrap test for whether coefficient of variation is higher for k-mers than SNP diversity 
+my_bootstrap_test = function(x,y,n,b){
+  result = c()
+  for(i in 1:b){
+    # resample
+    sams = sample(1:length(x), size = n, replace = T)
+    x_sam = x[sams]
+    y_sam = y[sams]
+    #calculate test statistic
+    #test_stat = sd(y_sam)/mean(y_sam) - sd(x_sam)/mean(y_sam)
+    yq1 = quantile(y_sam, probs = 0.25)
+    yq3 = quantile(y_sam, probs = 0.75)
+    
+    xq1 = quantile(x_sam, probs = 0.25)
+    xq3 = quantile(x_sam, probs = 0.75)
+    
+    test_stat = abs(((yq3 - yq1)/2)/((yq3 + yq1)/2)) - abs(((xq3 - xq1)/2)/((xq3 + xq1)/2))
+    
+        # save result
+    result = c(result, test_stat)
+  }
+  return(result)
+}
+
+# BOOTstrap test
+pi_vs_jac_cv = my_bootstrap_test(pi_star, jac_star, length(pi_star), 10000)
+hist(pi_vs_jac_cv)
+quantile(pi_vs_jac_cv, probs = 0.95)
+
+
 ```
 
 # Final plots
@@ -1369,48 +1489,65 @@ correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_pi$y, genome_gbif_a
 # make initial data analysis plots, confirming relationship between WCVP and GBIF, jaccard and bray-curtis
 ggarrange(ida_wcvp_vs_gbif_all, ida_wcvp_vs_gbif_native, ida_jac_vs_bcd, ida_generation_vs_mating, nrow = 2, ncol = 2, labels = c("A", "B", "C", "D"), font.label = list(size = 20))
 
-ggsave(paste("wcvp_vs_gbif_and_jac_vs_bcd_", today, ".png", sep = ""), width = 16.5, height = 16)
+ggsave(paste("wcvp_vs_gbif_and_jac_vs_bcd_", today, ".pdf", sep = ""), width = 16.5, height = 16)
 
 # Look at how coverage influences metrics
 ggarrange(ida_meancov_vs_pi, ida_cvbp_vs_pi, ida_meancov_vs_jac, ida_cvbp_vs_jac, ida_meancov_vs_bcd, ida_cvbp_vc_bcd, ncol = 2, nrow = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
 
-ggsave(paste("coverage_vs_diversity_", today, ".png", sep = ""), width = 16, height = 16, units = "in")
+ggsave(paste("coverage_vs_diversity_", today, ".pdf", sep = ""), width = 16, height = 16, units = "in")
 
 # Look at how mating system, cultivation status, ploidy influence diversity
 #ggarrange(ida_mating_vs_pi, ida_cult_vs_pi, ida_ploidy_vs_pi, ida_mating_vs_jac, ida_cult_vs_jac, ida_ploidy_vs_jac, ida_mating_vs_bcd, ida_cult_vs_bcd, ida_ploidy_vs_bcd, ncol = 3, nrow = 3, labels = c("A", "B", "C", "D", "E", "F", "G", "H"))
 
-#ggsave(paste("mating_cultivation_ploidy_vs_diversity_", today, ".png", sep = ""), width = 10, height = 10, units = "in")
+#ggsave(paste("mating_cultivation_ploidy_vs_diversity_", today, ".pdf", sep = ""), width = 10, height = 10, units = "in")
 
 # Compare how k-mer metrics compare to SNP metrics after removing low coverage data
 ggarrange(ida_pi_vs_jac, cda_pi_vs_jac, ida_pi_vs_bcd, cda_pi_vs_bcd, ncol = 2, nrow = 2, common.legend = T, labels = c("A", "B", "C", "D"), legend = "top", font.label = list(size = 20))
 
-ggsave(paste("pi_vs_jac_and_bcd_high_vs_low_cov_", today, ".png", sep = ""), width = 11, height = 10, units = "in")
+ggsave(paste("pi_vs_jac_and_bcd_high_vs_low_cov_", today, ".pdf", sep = ""), width = 11, height = 10, units = "in")
 
 # Compare population sizes to diversity metrics, without correcting for phylogeny
 ggarrange(cda_pi_vs_gbif, cda_pi_vs_wcvp, cda_jac_vs_gbif, cda_jac_vs_wcvp, cda_bcd_vs_gbif, cda_bcd_vs_wcvp, nrow = 3, ncol = 2, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
 
-ggsave(paste("diversity_vs_popsize_", today, ".png", sep = ""), width = 12, height = 16, units = "in")
+ggsave(paste("diversity_vs_popsize_", today, ".pdf", sep = ""), width = 12, height = 16, units = "in")
 
 #### plot phylogenetic least squares models ####
+
+## excluding genome size
+
 ggarrange(wcvp_native_vs_pi_corrected, wcvp_native_vs_jac_corrected, wcvp_native_vs_bcd_corrected,wcvp_all_vs_pi_corrected, wcvp_all_vs_jac_corrected, wcvp_all_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
 
-ggsave(paste("wcvp_popsize_vs_diversity_corrected_", today, ".png", sep = ""), height = 12, width = 16, units = "in")
+ggsave(paste("wcvp_popsize_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
 ggarrange(wcvp_native_area_vs_pi_corrected, wcvp_native_area_vs_jac_corrected, wcvp_native_area_vs_bcd_corrected,wcvp_all_area_vs_pi_corrected, wcvp_all_area_vs_jac_corrected, wcvp_all_area_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
 
-ggsave(paste("wcvp_area_vs_diversity_corrected_", today, ".png", sep = ""), height = 12, width = 16, units = "in")
+ggsave(paste("wcvp_area_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
 ggarrange(gbif_native_vs_pi_corrected, gbif_native_vs_jac_corrected, gbif_native_vs_bcd_corrected,gbif_all_vs_pi_corrected, gbif_all_vs_jac_corrected, gbif_all_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
 
-ggsave(paste("gbif_popsize_vs_diversity_corrected_", today, ".png", sep = ""), height = 12, width = 16, units = "in")
+ggsave(paste("gbif_popsize_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
 ggarrange(gbif_native_area_vs_pi_corrected, gbif_native_area_vs_jac_corrected, gbif_native_area_vs_bcd_corrected,gbif_all_area_vs_pi_corrected, gbif_all_area_vs_jac_corrected, gbif_all_area_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
 
-ggsave(paste("gbif_area_vs_diversity_corrected_", today, ".png", sep = ""), height = 12, width = 16, units = "in")
+ggsave(paste("gbif_area_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
 ggarrange(height_vs_pi_corrected, height_vs_jac_corrected, height_vs_bcd_corrected, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 20))
 
-ggsave(paste("height_vs_diversity_corrected_", today, ".png", sep = ""), height = 6, width = 16, units = "in")
+ggsave(paste("height_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 6, width = 16, units = "in")
+
+## including genome size
+
+ggarrange(genome_wcvp_native_vs_pi_figure, genome_wcvp_native_vs_jac_figure, genome_wcvp_native_vs_bcd_figure,genome_wcvp_all_vs_pi_figure, genome_wcvp_all_vs_jac_figure, genome_wcvp_all_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+
+ggsave(paste("wcvp_popsize_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
+
+ggarrange(genome_gbif_native_vs_pi_figure, genome_gbif_native_vs_jac_figure, genome_gbif_native_vs_bcd_figure,genome_gbif_all_vs_pi_figure, genome_gbif_all_vs_jac_figure, genome_gbif_all_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+
+ggsave(paste("gbif_popsize_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
+
+ggarrange(genome_height_vs_pi_figure, genome_height_vs_jac_figure, genome_height_vs_bcd_figure, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 20))
+
+ggsave(paste("height_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
 #### save results of phylogenetic least squares models as tables ###
 
@@ -1441,7 +1578,22 @@ all_mod_results = rbind(
   summary(mod_wcvp_native_area_bcd)$coefficients,
   summary(mod_height_pi)$coefficients,
   summary(mod_height_jac)$coefficients,
-  summary(mod_height_bcd)$coefficients
+  summary(mod_height_bcd)$coefficients,
+  summary(genome_wcvp_all_vs_pi)$coefficients,
+  summary(genome_wcvp_all_vs_jac)$coefficients,
+  summary(genome_wcvp_all_vs_bcd)$coefficients,
+  summary(genome_wcvp_native_vs_pi)$coefficients,
+  summary(genome_wcvp_native_vs_jac)$coefficients,
+  summary(genome_wcvp_native_vs_bcd)$coefficients,
+  summary(genome_gbif_all_vs_pi)$coefficients,
+  summary(genome_gbif_all_vs_jac)$coefficients,
+  summary(genome_gbif_all_vs_bcd)$coefficients,
+  summary(genome_gbif_native_vs_pi)$coefficients,
+  summary(genome_gbif_native_vs_jac)$coefficients,
+  summary(genome_gbif_native_vs_bcd)$coefficients,
+  summary(genome_height_vs_pi)$coefficients,
+  summary(genome_height_vs_jac)$coefficients,
+  summary(genome_height_vs_bcd)$coefficients
 )
 
 # create column from row names
@@ -1451,14 +1603,59 @@ all_mod_results = cbind(all_mod_results, rownames(all_mod_results))
 all_mod_results = as.data.frame(all_mod_results)
 
 # add some extra descriptors
-all_mod_results$`Diversity metric (response)` = rep(
-    c(
-      rep("Nucleotide diversity", times = 5),
-      rep("Jaccard dissimilarity", times = 5),
-      rep("Bray-Curtis dissimilarity", times = 5)
-    ),
-    times = 9
+all_mod_results$Response = c(
+  rep(mod_gbif_all_popsize_pi$namey, times = 5),
+  rep(mod_gbif_all_popsize_jac$namey, times = 5),
+  rep(mod_gbif_all_popsize_bcd$namey, times = 5),
+  rep(mod_gbif_all_area_pi$namey, times = 5),
+  rep(mod_gbif_all_area_jac$namey, times = 5),
+  rep(mod_gbif_all_area_bcd$namey, times = 5),
+  rep(mod_gbif_native_popsize_pi$namey, times = 5),
+  rep(mod_gbif_native_popsize_jac$namey, times = 5),
+  rep(mod_gbif_native_popsize_bcd$namey, times = 5),
+  rep(mod_gbif_native_area_pi$namey, times = 5),
+  rep(mod_gbif_native_area_jac$namey, times = 5),
+  rep(mod_gbif_native_area_bcd$namey, times = 5),
+  rep(mod_wcvp_all_popsize_pi$namey, times = 5),
+  rep(mod_wcvp_all_popsize_jac$namey, times = 5),
+  rep(mod_wcvp_all_popsize_bcd$namey, times = 5),
+  rep(mod_wcvp_all_area_pi$namey, times = 5),
+  rep(mod_wcvp_all_area_jac$namey, times = 5),
+  rep(mod_wcvp_all_area_bcd$namey, times = 5),
+  rep(mod_wcvp_native_popsize_pi$namey, times = 5),
+  rep(mod_wcvp_native_popsize_jac$namey, times = 5),
+  rep(mod_wcvp_native_popsize_bcd$namey, times = 5),
+  rep(mod_wcvp_native_area_pi$namey, times = 5),
+  rep(mod_wcvp_native_area_jac$namey, times = 5),
+  rep(mod_wcvp_native_area_bcd$namey, times = 5),
+  rep(mod_height_pi$namey, times = 5),
+  rep(mod_height_jac$namey, times = 5),
+  rep(mod_height_bcd$namey, times = 5),
+  rep(genome_wcvp_all_vs_pi$namey, times = 6),
+  rep(genome_wcvp_all_vs_jac$namey, times = 6),
+  rep(genome_wcvp_all_vs_bcd$namey, times = 6),
+  rep(genome_wcvp_native_vs_pi$namey, times = 6),
+  rep(genome_wcvp_native_vs_jac$namey, times = 6),
+  rep(genome_wcvp_native_vs_bcd$namey, times = 6),
+  rep(genome_gbif_all_vs_pi$namey, times = 6),
+  rep(genome_gbif_all_vs_jac$namey, times = 6),
+  rep(genome_gbif_all_vs_bcd$namey, times = 6),
+  rep(genome_gbif_native_vs_pi$namey, times = 6),
+  rep(genome_gbif_native_vs_jac$namey, times = 6),
+  rep(genome_gbif_native_vs_bcd$namey, times = 6),
+  rep(genome_height_vs_pi$namey, times = 6),
+  rep(genome_height_vs_jac$namey, times = 6),
+  rep(genome_height_vs_bcd$namey, times = 6)
 )
+
+#all_mod_results$Response = rep(
+#    c(
+#      rep("Nucleotide diversity", times = 5),
+#      rep("Jaccard dissimilarity", times = 5),
+#      rep("Bray-Curtis dissimilarity", times = 5)
+#    ),
+#    times = 9
+#)
 
 #all_mod_results$`Population size metric` = c(
 #  rep("GBIF", times = 30),

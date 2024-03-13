@@ -1494,8 +1494,11 @@ length(unique(oryza_sativa$BioSample))
 oryza_sativa$layout = NA
 oryza_sativa$layout = "PE" # even the samples without mates are actually paired-end
 
-# randomly subset
-oryza_sativa = random_subset(oryza_sativa, maxbp = maxbp)
+# randomly subset by basepairs
+#oryza_sativa = random_subset(oryza_sativa, maxbp = maxbp)
+
+# randomly subset by number of individuals
+oryza_sativa = oryza_sativa[(oryza_sativa$BioSample %in% sample(unique(oryza_sativa$BioSample), size = 1200, replace = F)),]
 
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = oryza_sativa[,"Run"], replicate = oryza_sativa[,"BioSample"], layout = oryza_sativa[,"layout"], genome = "oryza_sativa", ploidy = 2, taxonKeys = "4135983"))
