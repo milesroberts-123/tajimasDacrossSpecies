@@ -60,8 +60,8 @@ jac = lapply(jac, fread, header = F, data.table = F)
 bcdMean = lapply(bcd, function(x){mean(x[,2])})
 jacMean = lapply(jac, function(x){mean(x[,2])})
 
-# calculate average number of k-mers included in union, scaled by dissimilarity
-unionMean = lapply(jac, function(x){mean(x[,4]*x[,2])})
+# calculate average number of k-mer differences as union - intersection
+unionMean = lapply(jac, function(x){sum(x[,4]-x[,3])})
 
 # calculate number of individuals sampled for each dataset
 # You get this equation by rewriting the formula for the number of pairwise comparisons (n^2 - n)/2 = N as a polynomial and applying the quadratic formula
@@ -469,7 +469,7 @@ write.table(alldiv, paste("final_covariates_", today, ".txt", sep = ""), row.nam
 
 ## load saved data for plotting
 ```{r eval=FALSE, include=FALSE}
-alldiv = read.table("../results/2023-03-26/final_covariates_2024-03-02.txt", sep = "\t", header = T)
+alldiv = read.table("../results/2023-03-26/final_covariates_2024-03-13.txt", sep = "\t", header = T)
 ```
 
 ## Prepare phylogenetic tree
@@ -484,7 +484,7 @@ timetree_names[(timetree_names == "Chenopodium quinoa")] = "Chenopodium album"
 #write.table(timetree_names, paste("../results/2023-03-26/species_list_", today, ".txt", sep = ""), row.names = F, col.names = F, quote = F)
 
 # load time tree from timetree.org
-phy = read.tree("../results/2023-03-26/species_list_2024-03-02.nwk")
+phy = read.tree("../results/2023-03-26/species_list_2024-03-13.nwk")
 
 # remove underscores
 phy$tip.label = gsub("_", " ", phy$tip.label)
@@ -511,6 +511,10 @@ all(phy$tip.label %in% alldiv$species)
 ```{r}
 # scico(2, palette = "lapaz")
 # "#190C64" "#FEF2F2"
+
+# collapse long names
+alldiv$Generation.time[(alldiv$Generation.time == "perennial.biennial.mixed")] = "not\nannual"
+alldiv$Mating.system[(alldiv$Mating.system == "selfing.mixed.clonal")] = "not\noutcrossing"
 
 # check relationship between categorical variables
 table(alldiv$Mating.system, alldiv$cultivation.status)
@@ -545,9 +549,8 @@ my_ggplot_wrap <- function(data, xcol, ycol, xname, yname, filename, filew = 7, 
           axis.title = element_text(face = "bold"),
           axis.text = element_text(face = "bold"))
   
-  myplot
-  
-  ggsave(filename, width = filew, height = fileh)
+  #myplot
+  #ggsave(filename, width = filew, height = fileh)
 
   return(myplot)
 }
@@ -576,9 +579,8 @@ my_ggplot_wrap_xyz <- function(data, xcol, ycol, xname, yname, filename, zcol, l
           axis.title = element_text(face = "bold"), 
           axis.text = element_text(face = "bold"))
   
-  myplot
-  
-  ggsave(filename, width = filew, height = fileh)
+  #myplot
+  #ggsave(filename, width = filew, height = fileh)
 
   return(myplot)
 }
@@ -593,9 +595,8 @@ my_ggplot_wrap_box <- function(data, xcol, ycol, xname, yname, filename, filew =
     #stat_anova_test(type = 3, method = "one_way") +
     labs(x = xname, y = yname)
   
-  myplot
-  
-  ggsave(filename, width = filew, height = fileh)
+  #myplot
+  #ggsave(filename, width = filew, height = fileh)
 
   return(myplot)
 }
@@ -624,9 +625,8 @@ my_ggplot_wrap_line <- function(data, xcol, ycol, xname, yname, filename, filew 
           axis.title = element_text(face = "bold"), 
           axis.text = element_text(face = "bold"))
   
-  myplot
-  
-  ggsave(filename, width = filew, height = fileh)
+  #myplot
+  #ggsave(filename, width = filew, height = fileh)
 
   return(myplot)
 }
@@ -689,24 +689,34 @@ my_ggplot_wrap_barplot = function(data, var1, var2, xname, yname, lname, my_colo
 }
 
 # visualize relationship between categorical variables
-ida_generation_vs_mating = my_ggplot_wrap_barplot(alldiv, "Generation.time", "Mating.system", "Life cycle habit", "Number of species", "Mating system", c("#65014B", "#0C4C00"), paste("ida_generation_vs_mating_", today, ".png", sep = ""))
+ida_generation_vs_mating = my_ggplot_wrap_barplot(alldiv, "Generation.time", "Mating.system", "Life cycle habit", "Number of species", "Mating\nsystem", c("#65014B", "#0C4C00"), paste("ida_generation_vs_mating_", today, ".png", sep = ""))
 
-ida_cultivation_vs_mating = my_ggplot_wrap_barplot(alldiv, "cultivation.status", "Mating.system", "Cultivation status", "Number of species", "Mating system", c("#65014B", "#0C4C00"), paste("ida_cultivation_vs_mating_", today, ".png", sep = ""))
+ida_cultivation_vs_mating = my_ggplot_wrap_barplot(alldiv, "Mating.system", "cultivation.status", "Mating system", "Number of species", "Cultivation\nstatus", c("#8C0172", "#B2F2FD"), paste("ida_cultivation_vs_mating_", today, ".png", sep = ""))
 
-ida_cultivation_vs_generation = my_ggplot_wrap_barplot(alldiv, "cultivation.status", "Generation.time", "Cultivation status", "Number of species", "Life cycle habit", c("#9EB0FF", "#FFACAC"), paste("ida_cultivation_vs_generation_", today, ".png", sep = ""))
+ida_cultivation_vs_generation = my_ggplot_wrap_barplot(alldiv, "cultivation.status", "Generation.time", "Cultivation status", "Number of species", "Life cycle\nhabit", c("#9EB0FF", "#FFACAC"), paste("ida_cultivation_vs_generation_", today, ".png", sep = ""))
 
 # scatterplots
-ida_meancov_vs_pi = my_ggplot_wrap(alldiv, "log10(meancov)", "log10(pi)", "log10(mean coverage per biosample)", "log10(Nucleotide diversity)", paste("ida_coverage-vs-pi_", today, ".png", sep = ""))
 
-ida_meancov_vs_jac = my_ggplot_wrap(alldiv, "log10(meancov)", "jac", "log10(mean coverage per biosample)", "Jaccard dissimilarity", paste("ida_coverage-vs-jac_", today, ".png", sep = ""))
+## average coverage vs diversity
+ida_meancov_vs_pi = my_ggplot_wrap(alldiv, "log10(meancov)", "pi", "log10(mean coverage per biosample)", "Nucleotide diversity", paste("ida_coverage-vs-pi_", today, ".png", sep = ""))
 
-ida_meancov_vs_bcd = my_ggplot_wrap(alldiv, "log10(meancov)", "bcd", "log10(mean coverage per biosample)", "Bray-Curtis dissimilarity", paste("ida_coverage-vs-bcd_", today, ".png", sep = ""))
+ida_meancov_vs_jac = my_ggplot_wrap(alldiv, "log10(meancov)", "jac", "log(mean coverage per biosample)", "Jaccard dissimilarity", paste("ida_coverage-vs-jac_", today, ".png", sep = ""))
 
-ida_cvbp_vs_pi = my_ggplot_wrap(alldiv, "cvbp", "log10(pi)", "Coefficient of variation in bp sequenced", "log10(Nucleotide diversity)", paste("ida_cvbp-vs-pi_", today, ".png", sep = ""))
+ida_meancov_vs_bcd = my_ggplot_wrap(alldiv, "log10(meancov)", "bcd", "log(mean coverage per biosample)", "Bray-Curtis dissimilarity", paste("ida_coverage-vs-bcd_", today, ".png", sep = ""))
+
+## depth of sequencing variation vs diversity
+ida_cvbp_vs_pi = my_ggplot_wrap(alldiv, "cvbp", "pi", "Coefficient of variation in bp sequenced", "Nucleotide diversity", paste("ida_cvbp-vs-pi_", today, ".png", sep = ""))
 
 ida_cvbp_vs_jac = my_ggplot_wrap(alldiv, "cvbp", "jac", "Coefficient of variation in bp sequenced", "Jaccard dissimilarity", paste("ida_cvbp-vs-jac_", today, ".png", sep = ""))
 
-ida_cvbp_vc_bcd = my_ggplot_wrap(alldiv, "cvbp", "bcd", "Coefficient of variation in bp sequenced", "Bray-Curtis dissimilarity", paste("ida_cvbp-vs-bcd_", today, ".png", sep = ""))
+ida_cvbp_vs_bcd = my_ggplot_wrap(alldiv, "cvbp", "bcd", "Coefficient of variation in bp sequenced", "Bray-Curtis dissimilarity", paste("ida_cvbp-vs-bcd_", today, ".png", sep = ""))
+
+## number of individuals sequenced vs diversity
+ida_nidv_vs_pi = my_ggplot_wrap(alldiv, "log10(nidv)", "pi", "log(Number of biosamples sequenced)", "Nucleotide diversity", paste("ida_nidv-vs-pi_", today, ".png", sep = ""))
+
+ida_nidv_vs_jac = my_ggplot_wrap(alldiv, "log10(nidv)", "jac", "log(Number of biosamples sequenced)", "Jaccard dissimilarity", paste("ida_nidv-vs-jac_", today, ".png", sep = ""))
+
+ida_nidv_vs_bcd = my_ggplot_wrap(alldiv, "log10(nidv)", "bcd", "log(Number of biosamples sequenced)", "Bray-Curtis dissimilarity", paste("ida_nidv-vs-bcd_", today, ".png", sep = ""))
 
 # compare diversity, colored by coverage
 ida_jac_vs_bcd = my_ggplot_wrap_lm(alldiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("ida_jac-vs-bcd_", today, ".png", sep = ""))
@@ -729,16 +739,11 @@ ida_pi_vs_bcd_nidv = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log(Nucleot
 my_ggplot_wrap_xyz(alldiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("ida_jac-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov/sample)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
 # compare population size estimates
-ida_wcvp_vs_gbif_native = my_ggplot_wrap_line(alldiv, "log10(wcvp_native_area)", "log10(gbif_native_area)", expression(bold("log10(WCVP native range size)"~(km^2))), expression(bold("log10(GBIF native range size)"~(km^2))), paste("ida_wcvp-vs-gbif_native_", today, ".png", sep = ""))
+ida_wcvp_vs_gbif_native = my_ggplot_wrap_line(alldiv, "log10(wcvp_native_area)", "log10(gbif_native_area)", expression(bold("log(WCVP native range)"~km^2)), expression(bold("log(GBIF native range)"~km^2)), paste("ida_wcvp-vs-gbif_native_", today, ".png", sep = ""))
 
-ida_wcvp_vs_gbif_all = my_ggplot_wrap_line(alldiv, "log10(wcvp_all_area)", "log10(gbif_all_area)", expression(bold("log10(WCVP native+invaded range size)"~km^2)), expression(bold("log10(GBIF native+invaded range size)"~(km)^2)), paste("ida_wcvp-vs-gbif_all_", today, ".png", sep = ""))
+ida_wcvp_vs_gbif_all = my_ggplot_wrap_line(alldiv, "log10(wcvp_all_area)", "log10(gbif_all_area)", expression(bold("log(WCVP full range)"~km^2)), expression(bold("log(GBIF full range)"~km^2)), paste("ida_wcvp-vs-gbif_all_", today, ".png", sep = ""))
 
-# compare number of individuals sequenced to diversity measures
-ida_nidv_vs_pi = my_ggplot_wrap(alldiv, "log10(nidv)", "log10(pi)", "log(Number of biosamples sequenced)", "log(Nucleotide diversity)", paste("ida_nidv-vs-pi_", today, ".png", sep = ""))
 
-ida_nidv_vs_jac = my_ggplot_wrap(alldiv, "nidv", "jac", "Number of biosamples sequenced", "Jaccard dissimilarity", paste("ida_nidv-vs-jac_", today, ".png", sep = ""))
-
-ida_nidv_vs_bcd = my_ggplot_wrap(alldiv, "nidv", "bcd", "Number of biosamples sequenced", "Bray-Curtis dissimilarity", paste("ida_nidv-vs-bcd_", today, ".png", sep = ""))
 
 # plot diversity by mating system
 ida_mating_vs_pi = my_ggplot_wrap_box(alldiv, "Mating.system", "log10(pi)", "Mating system", "log10(Nucleotide diversity)", paste("mating_vs_pi_", today, ".png", sep = ""))
@@ -866,17 +871,17 @@ cda_pi_vs_bcd = my_ggplot_wrap_xyz(subdiv, "log10(pi)", "bcd", "log(Nucleotide d
 my_ggplot_wrap(subdiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("cda_jac-vs-bcd_", today, ".png", sep = ""))
 
 # compare population size proxies with diversity
-cda_pi_vs_wcvp = my_ggplot_wrap(subdiv, "log10(pi)", "log10(wcvp_native_popsize)", "log10(Nucleotide diversity)", "log10(WCVP pop size proxy)", paste("cda_pi-vs-wcvp_", today, ".png", sep = ""))
+cda_pi_vs_wcvp = my_ggplot_wrap(subdiv, "log10(pi)", "log10(wcvp_native_popsize)", "log(Nucleotide diversity)", "log(WCVP native proxy)", paste("cda_pi-vs-wcvp_", today, ".png", sep = ""))
 
-cda_pi_vs_gbif = my_ggplot_wrap(subdiv, "log10(pi)", "log10(gbif_native_popsize)", "log10(Nucleotide diversity)", "log10(GBIF pop size proxy)", paste("cda_pi-vs-gbif_", today, ".png", sep = ""))
+cda_pi_vs_gbif = my_ggplot_wrap(subdiv, "log10(pi)", "log10(gbif_native_popsize)", "log(Nucleotide diversity)", "log(GBIF native proxy)", paste("cda_pi-vs-gbif_", today, ".png", sep = ""))
 
-cda_jac_vs_wcvp = my_ggplot_wrap(subdiv, "jac", "log10(wcvp_native_popsize)", "Jaccard dissimilarity", "log10(WCVP pop size proxy)", paste("cda_jac-vs-wcvp_", today, ".png", sep = ""))
+cda_jac_vs_wcvp = my_ggplot_wrap(subdiv, "jac", "log10(wcvp_native_popsize)", "Jaccard dissimilarity", "log(WCVP native proxy)", paste("cda_jac-vs-wcvp_", today, ".png", sep = ""))
 
-cda_jac_vs_gbif = my_ggplot_wrap(subdiv, "jac", "log10(gbif_native_popsize)", "Jaccard dissimilarity", "log10(GBIF pop size proxy)", paste("cda_jac-vs-gbif_", today, ".png", sep = ""))
+cda_jac_vs_gbif = my_ggplot_wrap(subdiv, "jac", "log10(gbif_native_popsize)", "Jaccard dissimilarity", "log(GBIF native proxy)", paste("cda_jac-vs-gbif_", today, ".png", sep = ""))
 
-cda_bcd_vs_wcvp = my_ggplot_wrap(subdiv, "bcd", "log10(wcvp_native_popsize)", "Bray-Curtis dissimilarity", "log10(WCVP pop size proxy)", paste("cda_bcd-vs-wcvp_", today, ".png", sep = ""))
+cda_bcd_vs_wcvp = my_ggplot_wrap(subdiv, "bcd", "log10(wcvp_native_popsize)", "Bray-Curtis dissimilarity", "log(WCVP native proxy)", paste("cda_bcd-vs-wcvp_", today, ".png", sep = ""))
 
-cda_bcd_vs_gbif = my_ggplot_wrap(subdiv, "bcd", "log10(gbif_native_popsize)", "Bray-Curtis dissimilarity", "log10(GBIF pop size proxy)", paste("cda_bcd-vs-gbif_", today, ".png", sep = ""))
+cda_bcd_vs_gbif = my_ggplot_wrap(subdiv, "bcd", "log10(gbif_native_popsize)", "Bray-Curtis dissimilarity", "log10(GBIF native proxy)", paste("cda_bcd-vs-gbif_", today, ".png", sep = ""))
 ```
 
 ## Combine tree and data to get comparative object
@@ -1400,17 +1405,31 @@ genome_height_vs_bcd_figure = correct_and_plot(genome_mod_mat_height, genome_hei
 
 ## Do k-mers uncover more between species variation?
 ```{r eval=FALSE, include=FALSE}
-summary(subdiv$jac/(subdiv$pi*30))
+
+# calculate ratio of observed k-mer differences to expected number of k-mer differences based on SNP-differences alone
+subdiv$obs_vs_exp_uncor = subdiv$umean/(30*subdiv$pi*subdiv$ntotal*choose(subdiv$nidv, 2))
+
+subdiv$obs_vs_exp_low = (0.05/(subdiv$ntotal/subdiv$genome.size)) * subdiv$umean/(30*subdiv$pi*subdiv$ntotal*choose(subdiv$nidv, 2))
+subdiv$obs_vs_exp_med = (0.01/(subdiv$ntotal/subdiv$genome.size)) * subdiv$umean/(30*subdiv$pi*subdiv$ntotal*choose(subdiv$nidv, 2))
+subdiv$obs_vs_exp_high = (0.005/(subdiv$ntotal/subdiv$genome.size)) * subdiv$umean/(30*subdiv$pi*subdiv$ntotal*choose(subdiv$nidv, 2))
 
 # A point mutation generates up to k new k-mers in a genome
 # Thus, each SNP corresponds to at most k presence-absence differences in a pair of genomes
-subdiv$excess_color = ifelse(subdiv$jac/(subdiv$pi*30) > 1, "greater", "lesser")
+subdiv$excess_color = ifelse(subdiv$obs_vs_exp_uncor > 1, "TRUE", "FALSE")
 
-ggplot(subdiv, aes(x = reorder(species,-log10(jac/(pi*30))), y = log10(jac/(pi*30)), color = excess_color, fill = excess_color)) +
+ggplot(subdiv, aes(x = reorder(species,-obs_vs_exp_uncor), y = log10(obs_vs_exp_uncor), fill = excess_color)) +
   geom_bar(stat = "identity") +
   theme_classic() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
-  geom_hline(yintercept = log10(1))
+  geom_hline(yintercept = log10(1)) +
+  scale_fill_manual(values = scico(2, palette = "berlin")) +
+  scale_color_manual(values = scico(2, palette = "berlin")) +
+  labs(x = "Species", y = "log(observed k-mer diff./expected k-mer diff.)", fill = "Obs. > Exp.") +
+  coord_flip()
+
+
+
+
 
 # calculate mean, variance accounting for phylogeny
 pi_int = pgls(-log10(pi) ~ 1, data = compdata)
@@ -1479,22 +1498,23 @@ my_bootstrap_test = function(x,y,n,b){
 pi_vs_jac_cv = my_bootstrap_test(pi_star, jac_star, length(pi_star), 10000)
 hist(pi_vs_jac_cv)
 quantile(pi_vs_jac_cv, probs = 0.95)
-
-
 ```
 
 # Final plots
 
 ```{r}
 # make initial data analysis plots, confirming relationship between WCVP and GBIF, jaccard and bray-curtis
-ggarrange(ida_wcvp_vs_gbif_all, ida_wcvp_vs_gbif_native, ida_jac_vs_bcd, ida_generation_vs_mating, nrow = 2, ncol = 2, labels = c("A", "B", "C", "D"), font.label = list(size = 20))
+ggarrange(ida_wcvp_vs_gbif_all, ida_wcvp_vs_gbif_native, nrow = 2, ncol = 1, labels = c("A", "B"), font.label = list(size = 20), hjust = -2)
 
-ggsave(paste("wcvp_vs_gbif_and_jac_vs_bcd_", today, ".pdf", sep = ""), width = 16.5, height = 16)
+ggsave(paste("wcvp_vs_gbif_", today, ".pdf", sep = ""), width = 5.2, height = 7.75, device = cairo_pdf)
 
-# Look at how coverage influences metrics
-ggarrange(ida_meancov_vs_pi, ida_cvbp_vs_pi, ida_meancov_vs_jac, ida_cvbp_vs_jac, ida_meancov_vs_bcd, ida_cvbp_vc_bcd, ncol = 2, nrow = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+# Jaccard vs bray-curtis dissimilarity
+ggsave(paste("ida_jac_vs_bcd_", today, ".pdf", sep = ""), ida_jac_vs_bcd, width = 7, height = 7, device = cairo_pdf)
 
-ggsave(paste("coverage_vs_diversity_", today, ".pdf", sep = ""), width = 16, height = 16, units = "in")
+# Look at sequencing metrics influence diversity
+ggarrange(ida_meancov_vs_pi, ida_cvbp_vs_pi, ida_nidv_vs_pi, ida_meancov_vs_jac, ida_cvbp_vs_jac, ida_nidv_vs_jac, ida_meancov_vs_bcd, ida_cvbp_vs_bcd, ida_nidv_vs_bcd, ncol = 3, nrow = 3, labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I"), font.label = list(size = 20))
+
+ggsave(paste("coverage_vs_diversity_", today, ".pdf", sep = ""), width = 20, height = 16, units = "in", device = cairo_pdf)
 
 # Look at how mating system, cultivation status, ploidy influence diversity
 #ggarrange(ida_mating_vs_pi, ida_cult_vs_pi, ida_ploidy_vs_pi, ida_mating_vs_jac, ida_cult_vs_jac, ida_ploidy_vs_jac, ida_mating_vs_bcd, ida_cult_vs_bcd, ida_ploidy_vs_bcd, ncol = 3, nrow = 3, labels = c("A", "B", "C", "D", "E", "F", "G", "H"))
@@ -1506,10 +1526,25 @@ ggarrange(ida_pi_vs_jac, cda_pi_vs_jac, ida_pi_vs_bcd, cda_pi_vs_bcd, ncol = 2, 
 
 ggsave(paste("pi_vs_jac_and_bcd_high_vs_low_cov_", today, ".pdf", sep = ""), width = 11, height = 10, units = "in")
 
+# Look at how cv in sequencing affect SNP vs k-mer comparison
+ggarrange(ida_pi_vs_jac_cvbp, ida_pi_vs_bcd_cvbp, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 20))
+
+ggsave(paste("pi_vs_jac_and_bcd_cvbp_", today, ".pdf", sep = ""), width = 9, height = 6, units = "in", device = cairo_pdf)
+
+# Look at how number of individuals sequenced affects SNP vs k-mer comparison
+ggarrange(ida_pi_vs_jac_nidv, ida_pi_vs_bcd_nidv, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 20))
+
+ggsave(paste("pi_vs_jac_and_bcd_nidv_", today, ".pdf", sep = ""), width = 9, height = 6, units = "in", device = cairo_pdf)
+
+# Simple barplot of how cultivation varies with generation and mating system
+ggarrange(ida_cultivation_vs_generation, ida_cultivation_vs_mating, ida_generation_vs_mating, labels = c("A", "B", "C"), font.label = list(size = 20), ncol = 3, nrow = 1, legend = "right")
+
+ggsave(paste("cultivation_vs_generation_and_mating", today, ".pdf", sep = ""), width = 15, height = 4, units = "in", device = cairo_pdf)
+
 # Compare population sizes to diversity metrics, without correcting for phylogeny
 ggarrange(cda_pi_vs_gbif, cda_pi_vs_wcvp, cda_jac_vs_gbif, cda_jac_vs_wcvp, cda_bcd_vs_gbif, cda_bcd_vs_wcvp, nrow = 3, ncol = 2, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
 
-ggsave(paste("diversity_vs_popsize_", today, ".pdf", sep = ""), width = 12, height = 16, units = "in")
+ggsave(paste("diversity_vs_popsize_", today, ".pdf", sep = ""), width = 12, height = 16, units = "in", device = cairo_pdf)
 
 #### plot phylogenetic least squares models ####
 

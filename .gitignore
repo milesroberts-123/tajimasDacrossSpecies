@@ -37,6 +37,7 @@ core.**
 **.tex
 **.log
 **.tsv
+**.pdf
 
 !speciesList.txt
 !panicum_halli_search.txt
