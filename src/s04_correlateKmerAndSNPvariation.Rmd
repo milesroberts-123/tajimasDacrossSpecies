@@ -44,9 +44,9 @@ jac = list.files("../results/2023-03-26/jaccard-dissimilarities", full.names = T
 # for now, remove species that can't be processed further for whatever reason
 # pi: panicum virgatum
 # jac and bcd: panicum hallii, lens culinaris
-jac = jac[c(-56, -80)]
-bcd = bcd[c(-56, -80)]
-pi = pi[c(-79)]
+jac = jac[c(-56, -81)]
+bcd = bcd[c(-56, -81)]
+pi = pi[c(-80)]
 
 # get species IDs
 species = gsub("_pairwise-pi.txt", "", gsub("../results/2023-03-26/genome-wide-pi/", "", pi))
@@ -1221,25 +1221,25 @@ correct_and_plot = function(mod_mat, y, V, primary, xlab, ylab, xpos, ypos){
 
 wcvp_native_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_pi$y, mod_wcvp_native_popsize_pi$Vt, "log10(wcvp_native_popsize)", "log(WCVP native proxy), adj.", "log(Nucleotide diversity), adj.")
 
-wcvp_all_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_pi$y, mod_wcvp_all_popsize_pi$Vt, "log10(wcvp_all_popsize)", "log(WCVP native+invaded proxy), adj.", "log(Nucleotide diversity), adj.")
+wcvp_all_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_pi$y, mod_wcvp_all_popsize_pi$Vt, "log10(wcvp_all_popsize)", "log(WCVP full proxy), adj.", "log(Nucleotide diversity), adj.")
 
-wcvp_all_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_pi$y, mod_wcvp_all_area_pi$Vt, "log10(wcvp_all_area)", "log(WCVP native+invaded range size, km^2), adj.", "log(Nucleotide diversity), adj.")
+wcvp_all_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_pi$y, mod_wcvp_all_area_pi$Vt, "log10(wcvp_all_area)", "log(WCVP full range size, km^2), adj.", "log(Nucleotide diversity), adj.")
 
 wcvp_native_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_pi$y, mod_wcvp_native_area_pi$Vt, "log10(wcvp_native_area)", "log(WCVP native range size, km^2), adj.", "log(Nucleotide diversity), adj.")
 
 wcvp_native_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_jac$y, mod_wcvp_native_popsize_jac$Vt, "log10(wcvp_native_popsize)", "log(WCVP native proxy), adj.", "Jaccard dissimilarity, adj.")
 
-wcvp_all_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_jac$y, mod_wcvp_all_popsize_jac$Vt, "log10(wcvp_all_popsize)", "log(WCVP native+invaded proxy), adj.", "Jaccard dissimilarity, adj.")
+wcvp_all_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_jac$y, mod_wcvp_all_popsize_jac$Vt, "log10(wcvp_all_popsize)", "log(WCVP full proxy), adj.", "Jaccard dissimilarity, adj.")
 
-wcvp_all_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_jac$y, mod_wcvp_all_area_jac$Vt, "log10(wcvp_all_area)", "log(WCVP native+invaded range size, km^2), adj.", "Jaccard dissimilarity, adj.")
+wcvp_all_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_jac$y, mod_wcvp_all_area_jac$Vt, "log10(wcvp_all_area)", "log(WCVP full range size, km^2), adj.", "Jaccard dissimilarity, adj.")
 
 wcvp_native_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_jac$y, mod_wcvp_native_area_jac$Vt, "log10(wcvp_native_area)", "log(WCVP native range size, km^2), adj.", "Jaccard dissimilarity, adj.")
 
 wcvp_native_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_bcd$y, mod_wcvp_native_popsize_bcd$Vt, "log10(wcvp_native_popsize)", "log(WCVP native proxy), adj.", "Bray-Curtis dissimilarity, adj.")
 
-wcvp_all_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_bcd$y, mod_wcvp_all_popsize_bcd$Vt, "log10(wcvp_all_popsize)", "log(WCVP native+invaded proxy), adj.", "Bray-Curtis dissimilarity, adj.")
+wcvp_all_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_bcd$y, mod_wcvp_all_popsize_bcd$Vt, "log10(wcvp_all_popsize)", "log(WCVP full proxy), adj.", "Bray-Curtis dissimilarity, adj.")
 
-wcvp_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_bcd$y, mod_wcvp_all_area_bcd$Vt, "log10(wcvp_all_area)", "log(WCVP native+invaded range size, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+wcvp_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_bcd$y, mod_wcvp_all_area_bcd$Vt, "log10(wcvp_all_area)", "log(WCVP full range size, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
 
 wcvp_native_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_bcd$y, mod_wcvp_native_area_bcd$Vt, "log10(wcvp_native_area)", "log(WCVP native range size, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
 
@@ -1249,9 +1249,9 @@ wcvp_native_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native_area, m
 
 gbif_native_vs_pi_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_pi$y, mod_gbif_native_popsize_pi$Vt, "log10(gbif_native_popsize)", "log(GBIF native proxy), adj.", "log(Nucleotide diversity), adj.")
 
-gbif_all_vs_pi_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_pi$y, mod_gbif_all_popsize_pi$Vt, "log10(gbif_all_popsize)", "log(GBIF native+invaded proxy), adj.", "log(Nucleotide diversity), adj.")
+gbif_all_vs_pi_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_pi$y, mod_gbif_all_popsize_pi$Vt, "log10(gbif_all_popsize)", "log(GBIF full proxy), adj.", "log(Nucleotide diversity), adj.")
 
-gbif_all_area_vs_pi_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_pi$y, mod_gbif_all_area_pi$Vt, "log10(gbif_all_area)", "log(GBIF native+invaded range size, km^2), adj.", "log(Nucleotide diversity), adj.")
+gbif_all_area_vs_pi_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_pi$y, mod_gbif_all_area_pi$Vt, "log10(gbif_all_area)", "log(GBIF full range size, km^2), adj.", "log(Nucleotide diversity), adj.")
   
 gbif_native_area_vs_pi_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_pi$y, mod_gbif_native_area_pi$Vt, "log10(gbif_native_area)", "log(GBIF native range size, km^2), adj.", "log(Nucleotide diversity), adj.")
 
@@ -1259,9 +1259,9 @@ gbif_native_area_vs_pi_corrected = correct_and_plot(mod_mat_gbif_native_area, mo
 
 gbif_native_vs_jac_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_jac$y, mod_gbif_native_popsize_jac$Vt, "log10(gbif_native_popsize)", "log(GBIF native proxy), adj.", "Jaccard dissimilarity, adj.")
 
-gbif_all_vs_jac_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_jac$y, mod_gbif_all_popsize_jac$Vt, "log10(gbif_all_popsize)", "log(GBIF native+invaded proxy), adj.", "Jaccard dissimilarity, adj.")
+gbif_all_vs_jac_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_jac$y, mod_gbif_all_popsize_jac$Vt, "log10(gbif_all_popsize)", "log(GBIF full proxy), adj.", "Jaccard dissimilarity, adj.")
 
-gbif_all_area_vs_jac_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_jac$y, mod_gbif_all_area_jac$Vt, "log10(gbif_all_area)", "log(GBIF native+invaded range size, km^2), adj.", "Jaccard dissimilarity, adj.")
+gbif_all_area_vs_jac_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_jac$y, mod_gbif_all_area_jac$Vt, "log10(gbif_all_area)", "log(GBIF full range size, km^2), adj.", "Jaccard dissimilarity, adj.")
   
 gbif_native_area_vs_jac_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_jac$y, mod_gbif_native_area_jac$Vt, "log10(gbif_native_area)", "log(GBIF native range size, km^2), adj.", "Jaccard dissimilarity, adj.")
 
@@ -1269,9 +1269,9 @@ gbif_native_area_vs_jac_corrected = correct_and_plot(mod_mat_gbif_native_area, m
 
 gbif_native_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_bcd$y, mod_gbif_native_popsize_bcd$Vt, "log10(gbif_native_popsize)", "log(GBIF native proxy), adj.", "Bray-Curtis dissimilarity, adj.")
 
-gbif_all_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_bcd$y, mod_gbif_all_popsize_bcd$Vt, "log10(gbif_all_popsize)", "log(GBIF native+invaded proxy), adj.", "Bray-Curtis dissimilarity, adj.")
+gbif_all_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_bcd$y, mod_gbif_all_popsize_bcd$Vt, "log10(gbif_all_popsize)", "log(GBIF full proxy), adj.", "Bray-Curtis dissimilarity, adj.")
 
-gbif_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_bcd$y, mod_gbif_all_area_bcd$Vt, "log10(gbif_all_area)", "log(GBIF native+invaded range size, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+gbif_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_bcd$y, mod_gbif_all_area_bcd$Vt, "log10(gbif_all_area)", "log(GBIF full range size, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
   
 gbif_native_area_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_bcd$y, mod_gbif_native_area_bcd$Vt, "log10(gbif_native_area)", "log(GBIF native range size, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
 
@@ -1698,9 +1698,9 @@ all_mod_results$Response = c(
 #)
 
 #all_mod_results$`Range included` = c(
-#  rep("native+invaded", times = 15),
+#  rep("full", times = 15),
 #  rep("native only", times = 15),
-#  rep("native+invaded", times = 15),
+#  rep("full", times = 15),
 #  rep("native only", times = 15)
 #)
 

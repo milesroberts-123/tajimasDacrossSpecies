@@ -1723,8 +1723,11 @@ quercus_robur = fread("../workflow/data/SRArunInfo/SraRunInfo_quercus_robur_PRJE
 
 quercus_robur = quercus_robur[(quercus_robur$ScientificName == "Quercus robur"),]
 
+# randomly subset to meet bp threshold
+quercus_robur = random_subset(quercus_robur, maxbp = maxbp)
+
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = quercus_robur[,"Run"], replicate = quercus_robur[,"BioSample"], layout = "PE", genome = "quercus_robur", ploidy = 2, taxonKeys = "2878688"))
+allReads = rbind(allReads, data.frame(run = quercus_robur[,"Run"], replicate = quercus_robur[,"BioSample"], layout = "PE", genome = "quercus_robur", ploidy = 2, taxonKeys = "2880130"))
 ```
 
 ## Raphanus sativus
