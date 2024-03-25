@@ -2188,6 +2188,9 @@ zea_mays$layout = NA
 zea_mays$layout[(zea_mays$spots_with_mates > 0)] = "PE"
 zea_mays$layout[(zea_mays$spots_with_mates == 0)] = "SE"
 
+# random subset
+zea_mays = random_subset(zea_mays, maxbp = maxbp)
+
 # add reads to growing list
 allReads = rbind(allReads, data.frame(run = zea_mays[,"Run"], replicate = zea_mays[,"BioSample"], layout = zea_mays[,"layout"], genome = "zea_mays", ploidy = 2, taxonKeys = "5678457"))
 ```

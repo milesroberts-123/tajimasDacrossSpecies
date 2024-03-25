@@ -4,13 +4,13 @@ Miles Roberts
 
 # Contents
 
-(Summary)[#summary]
+[Summary](#summary)
 
-(How to replicate my results)[#How-to-replicate-my-results]
+[How to replicate my results](#How-to-replicate-my-results)
 
-(Notes)[#notes]
+[Notes](#notes)
 
-(To do)[#to-do]
+[To do](#to-do)
 
 # Summary
 
@@ -44,7 +44,7 @@ This workflow will **not** work if:
 
 * Some replicates of a given sample are single-end, but others are paired-end. To resolve this, either throw out read two of the paired-end replicates (treating them as single end) or throw out the single-end reads (leaving only paired-end).
 
-* If a single sample is associated with more than one genome
+* If a single sample needs to be aligned to more than one genome.
 
 # How to replicate my results
 
@@ -147,79 +147,6 @@ git commit -m "my update message"
 
 git push -u origin main
 ```
-
-## search methods for genotype data
-
-My search for plant genotype data was restricted to only species with reference genomes on phytozome. I then would type each species name into the SRA search bar and restrict matches to the Organism field (example: Arabidopsis lyrata[Organism]) and then further filter for samples sourced from DNA. I would then download the Run info from the search and then look at the bioprojects with the highest number of SRA samples.
-
-To get the CSV for Boechera stricta run numbers I searched "Boechera stricta Reference Population" on the SRA.
-
-## listing genomes in NCBI to investigate
-
-I first looked for WGS data based on genomes I found in phytozome, then I moved to ensembl.
-
-Then, on 2023-01-30, I downloaded a list of genomes that met these filters on NCBI genome: eukaryotic, plants, land plants, exclude partial. I then filtered this list to exclude genomes that I already looked at from phytozome and ensembl, genomes that didn't have download links or didn't include chromosome assemblies (i.e. only plastid genomes) or didn't include any coding sequences.
-
-## installing updated snakemake
-
-The snakemake installation on the MSU HPCC is v4, but I want v7 so that I can use the `--containerize` functions
-
-```
-# create environment
-conda create --name snakemake
-
-# install snakemake in environment
-conda install -c bioconda snakemake
-
-# install mamba too, a faster replacement for conda
-conda install -n base -c conda-forge mamba
-```
-
-## Running workflow in batches
-
-I've tried to run the workflow in batches (`snakemake --batch rule=1/n`) but this function seems most helpful when you have a central aggregation step in your workflow where the input includes all of the upstream files and the output goes on to all of the downstream files. Given the high level of branching in my workflow though, there's not really a good rule to apply batch processing to. I think I'll just abandon the idea for now.
-
-## Adding scripts to estimate dS
-
-I was thinking I could add scripts for estimating the mutation rate in each species as the synonymous substitution rate. I could then combine mutation rate with diversity data to estimate population size. However, given that I'm interested in how diversity correlates with population size, this feels like I'm dipping into circular logic. This is a good idea for a future workflow in an unrelated project though.
-
-## including multiple types of sequencing data
-
-I'm assuming that variation in diversity between species will be greater than variation between methods (i.e. WGS vs GBS vs RAD-seq etc.)
-
-This is similar to an assumption that Buffalo 2022 **Elife** makes
-
-In other words, I think it would be okay to include different types of sequencing into the same analysis. Variation between species will be confounded with variation between methods, but again we can assume that variation between species will be greater than variation between methods.
-
-## choosing wild relatives to measure historical range size for domesticated species
-
-For each domesticated species in our dataset, we looked at a wild relative to estimate range size. The relative species has to be in the same genus as the domesticated species. When there are multiple wild relatives to choose from, we looked at the one with the most recorded occurences on GBIF
-
-Cases where I have both a domesticated species and it's wild relative in my dataset are interesting. I'll pair the wild relative's GBIF data with its nucleotide diversity data, and just choose a different wild relative to estimate range size in the domesticated species.
-
-The range of the wild relative should also overlap with the native range of the domesticated species, according to plants of the world online.
-
-## Omitted transcripts
-
-For some species, specific transcripts need to be ommitted because exons are on differing strands. I think this arises as an error during annotation. This used to make `degenotate` throw an error. However, I reached out to the authors of degenotate [here](https://github.com/harvardinformatics/degenotate/issues/30) and got them to turn this error into a warning where problematic transcripts are automatically dropped.
-
-## plastid genomes
-
-I don't want to incorporate chloroplast and mitochondria variants in my anlayses because they have interesting modes of inheritance that probably have a big effect on nucleotide diversity. However, chloroplast and mitochondria variants are so hard to call, I probably won't find many of them and thus they probably won't affect my results too much.
-
-These are the species that have mitochondria and chloroplast calls thus far:
-
-* Arabidopsis thaliana 
-
-* Helianthus annuus
-
-## duplicated sequences
-
-**Lupinus angustifolius** has scaffolds with the same name, but different sequences for some reason... I renamed the sequences with seqkit before processing.
-
-`seqkit rename lupinus_angustifolius.fa > tmp.fa; mv tmp.fa lupinus_angustifolius.fa`
-
-This means that for the duplicated scaffolds, I can't be sure which scaffold duplicate the four-fold degenerate sites are located on. Perhaps a better approach would be to remove the duplicate scaffolds entirely due to this ambiguity? For now, the workflow will just call genotypes on the first duplicate of each scaffold, but align reads across all the scaffolds because the duplicate scaffolds are ommitted from `chromosomes.tsv`
 
 # To do
 
