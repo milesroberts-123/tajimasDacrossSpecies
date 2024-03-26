@@ -164,10 +164,6 @@ git push -u origin main
 
 - [x] Make `samtools sort` multithreaded
 
-- [ ] Create a test dataset to store on github so people can verify my analyses without performing the whole workflow
-
-- [ ] add validation schema for sample metadata and config file to Snakefile
-
 ## Genetic diversity estimation
 
 - [x] Move input data to `config/`
