@@ -8,6 +8,10 @@ Miles Roberts
 
 [How to replicate my results](#How-to-replicate-my-results)
 
+[Inputs](#inputs)
+
+[Outputs](#outputs)
+
 [Notes](#notes)
 
 [To do](#to-do)
@@ -60,7 +64,7 @@ Running the scripts in `src/` in their numbered order to will replicate my analy
 
 4. `s04_correlateKmerAndSNPvariation.Rmd` Analyze the workflow outputs to generate final graphs for publication
 
-## Input files for workflow
+# Inputs
 
 This how I eventually want the input data for the workflow to be organized
 
@@ -78,7 +82,7 @@ workflow/data/
 
 See `workflow/dag.svg` for an example of my snakemake workflow executed on a handful of samples.
 
-### samples.tsv
+## samples.tsv
 
 This file contains the following columns:
 
@@ -96,7 +100,7 @@ export GBIF_PWD=<password>
 
 The script `workflow/scripts/download_gbif.R` needs this information in order to download GBIF data.
 
-### chromosomes.tsv
+## chromosomes.tsv
 
 This file is used to parallelize the GATK genotype GVCFs step in the workflow (splitting the data by chromosome/scaffold) contains the following columns
 
@@ -120,6 +124,24 @@ To change the workflow parameters, alter the values in `config/config.yaml`
 | het | The expected level of heterozygosity passed to GATK | 0.001 |
 | occCountThreshold | The number of species occurences on a continent required to attempt drawing an alpha hull | 20 |
 | alpha | Alpha value for drawing alpha hull around species occurences | 200 |
+
+# Outputs
+
+## pairwise-pi.txt
+
+A file ending in `pairwise-pi.txt` will be generated for each specified genome with the following columns:
+
+| h | w | ntotal | nvariant | ninvariant | pi | thetaw | d |
+|---|---|--------|----------|------------|----|--------|---|
+|summed heterozygosity across all sites | total Watersons's theta | number of sites with called genotypes | number of variant sites called | number of invariant sites called | nucleotide diversity per site | Watterson's theta per site | Tajima's D |
+
+## bcd.txt
+
+A file ending in `bcd.txt` will be generated for each genome and will contain Bray-Curtis dissimilarity calculations for every pair of individuals mapped to each genome.
+
+## jac.txt
+
+A file ending in `jac.txt` will be generated for each genome containing Jaccard dissimilarity calculations for every pair of individuals mapped to each genome.
 
 # Notes
 
