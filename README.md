@@ -1,6 +1,10 @@
 # Author
 
-Miles Roberts
+Miles Roberts, Michigan State University
+
+# Citation
+
+Preprint DOI: XXX
 
 # Contents
 
