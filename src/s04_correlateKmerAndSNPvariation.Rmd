@@ -545,7 +545,7 @@ my_ggplot_wrap <- function(data, xcol, ycol, xname, yname, filename, filew = 7, 
     theme_classic() +
     #stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho", size = 7) +
     labs(x = xname, y = yname, title = result_label) +
-    theme(text = element_text(size = 20), 
+    theme(text = element_text(size = 12), 
           axis.title = element_text(face = "bold"),
           axis.text = element_text(face = "bold"))
   
@@ -575,7 +575,7 @@ my_ggplot_wrap_xyz <- function(data, xcol, ycol, xname, yname, filename, zcol, l
     #stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho", size = 7) +
     scale_color_gradient(low = lcol, high = hcol, name = lname, limits = mylims) +
     labs(x = xname, y = yname, title = result_label) +
-    theme(text = element_text(size = 20), 
+    theme(text = element_text(size = 12), 
           axis.title = element_text(face = "bold"), 
           axis.text = element_text(face = "bold"))
   
@@ -590,7 +590,7 @@ my_ggplot_wrap_box <- function(data, xcol, ycol, xname, yname, filename, filew =
   myplot = ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
     geom_boxplot() +
     theme_classic() +
-    theme(text = element_text(size = 20)) +
+    theme(text = element_text(size = 12)) +
     stat_kruskal_test(size = 7) +
     #stat_anova_test(type = 3, method = "one_way") +
     labs(x = xname, y = yname)
@@ -621,7 +621,7 @@ my_ggplot_wrap_line <- function(data, xcol, ycol, xname, yname, filename, filew 
     theme_classic() +
     #stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho", size = 7) +
     labs(x = xname, y = yname, title = result_label) +
-    theme(text = element_text(size = 20), 
+    theme(text = element_text(size = 12), 
           axis.title = element_text(face = "bold"), 
           axis.text = element_text(face = "bold"))
   
@@ -649,7 +649,7 @@ my_ggplot_wrap_lm <- function(data, xcol, ycol, xname, yname, filename, filew = 
     theme_classic() +
     #stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho", size = 7) +
     labs(x = xname, y = yname, title = result_label) +
-    theme(text = element_text(size = 20), 
+    theme(text = element_text(size = 12), 
       axis.title = element_text(face = "bold"), 
       axis.text = element_text(face = "bold"))
   
@@ -677,7 +677,7 @@ my_ggplot_wrap_barplot = function(data, var1, var2, xname, yname, lname, my_colo
   myplot = ggplot(alldiv, aes_string(x = var1, fill = var2)) +
     geom_bar(position = "dodge") +
     theme_classic() +
-    theme(text = element_text(size = 20, face = "bold")) +
+    theme(text = element_text(size = 12, face = "bold")) +
     scale_fill_manual(values = my_colors, name = lname) +
     labs(x = xname, y = yname, title = result_label)
 
@@ -743,7 +743,9 @@ ida_wcvp_vs_gbif_native = my_ggplot_wrap_line(alldiv, "log10(wcvp_native_area)",
 
 ida_wcvp_vs_gbif_all = my_ggplot_wrap_line(alldiv, "log10(wcvp_all_area)", "log10(gbif_all_area)", expression(bold("log(WCVP full range)"~km^2)), expression(bold("log(GBIF full range)"~km^2)), paste("ida_wcvp-vs-gbif_all_", today, ".png", sep = ""))
 
+ida_wcvp_all_vs_wcvp_native = my_ggplot_wrap_line(alldiv, "log10(wcvp_all_area)", "log10(wcvp_native_area)", expression(bold("log(WCVP full range)"~km^2)), expression(bold("log(WCVP native range)"~km^2)), paste("ida_wcvp-all-vs-wcvp-native_", today, ".png", sep = ""))
 
+ida_gbif_all_vs_gbif_native = my_ggplot_wrap_line(alldiv, "log10(gbif_all_area)", "log10(gbif_native_area)", expression(bold("log(GBIF full range)"~km^2)), expression(bold("log(GBIF native range)"~km^2)), paste("ida_gbif-all-vs-gbif-native_", today, ".png", sep = ""))
 
 # plot diversity by mating system
 ida_mating_vs_pi = my_ggplot_wrap_box(alldiv, "Mating.system", "log10(pi)", "Mating system", "log10(Nucleotide diversity)", paste("mating_vs_pi_", today, ".png", sep = ""))
@@ -1204,7 +1206,7 @@ correct_and_plot = function(mod_mat, y, V, primary, xlab, ylab, xpos, ypos){
     geom_point() +
     geom_abline(intercept = 0, slope = coeff_star[primary], color = "purple") +
     theme_classic() +
-    theme(text = element_text(size = 20)) +
+    theme(text = element_text(size = 12, face = "bold")) +
     #stat_regline_equation(aes(label = paste(..eq.label.., ..adj.rr.label.., sep = "~~~~")), size = 5) +
     #annotate(geom = "text", x = xpos, y = ypos, label = modlabel, size = 7) +
     ggtitle(modlabel) +
@@ -1504,15 +1506,15 @@ quantile(pi_vs_jac_cv, probs = 0.95)
 
 ```{r}
 # make initial data analysis plots, confirming relationship between WCVP and GBIF, jaccard and bray-curtis
-ggarrange(ida_wcvp_vs_gbif_all, ida_wcvp_vs_gbif_native, nrow = 2, ncol = 1, labels = c("A", "B"), font.label = list(size = 20), hjust = -2)
+ggarrange(ida_wcvp_vs_gbif_all, ida_wcvp_vs_gbif_native, ida_wcvp_all_vs_wcvp_native, ida_gbif_all_vs_gbif_native, nrow = 2, ncol = 2, labels = c("A", "B", "C", "D"), font.label = list(size = 12), hjust = -2)
 
-ggsave(paste("wcvp_vs_gbif_", today, ".pdf", sep = ""), width = 5.2, height = 7.75, device = cairo_pdf)
+ggsave(paste("wcvp_vs_gbif_", today, ".pdf", sep = ""), width = 6, height = 6, device = cairo_pdf)
 
 # Jaccard vs bray-curtis dissimilarity
 ggsave(paste("ida_jac_vs_bcd_", today, ".pdf", sep = ""), ida_jac_vs_bcd, width = 7, height = 7, device = cairo_pdf)
 
 # Look at sequencing metrics influence diversity
-ggarrange(ida_meancov_vs_pi, ida_cvbp_vs_pi, ida_nidv_vs_pi, ida_meancov_vs_jac, ida_cvbp_vs_jac, ida_nidv_vs_jac, ida_meancov_vs_bcd, ida_cvbp_vs_bcd, ida_nidv_vs_bcd, ncol = 3, nrow = 3, labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I"), font.label = list(size = 20))
+ggarrange(ida_meancov_vs_pi, ida_cvbp_vs_pi, ida_nidv_vs_pi, ida_meancov_vs_jac, ida_cvbp_vs_jac, ida_nidv_vs_jac, ida_meancov_vs_bcd, ida_cvbp_vs_bcd, ida_nidv_vs_bcd, ncol = 3, nrow = 3, labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I"), font.label = list(size = 12))
 
 ggsave(paste("coverage_vs_diversity_", today, ".pdf", sep = ""), width = 20, height = 16, units = "in", device = cairo_pdf)
 
@@ -1522,27 +1524,27 @@ ggsave(paste("coverage_vs_diversity_", today, ".pdf", sep = ""), width = 20, hei
 #ggsave(paste("mating_cultivation_ploidy_vs_diversity_", today, ".pdf", sep = ""), width = 10, height = 10, units = "in")
 
 # Compare how k-mer metrics compare to SNP metrics after removing low coverage data
-ggarrange(ida_pi_vs_jac, cda_pi_vs_jac, ida_pi_vs_bcd, cda_pi_vs_bcd, ncol = 2, nrow = 2, common.legend = T, labels = c("A", "B", "C", "D"), legend = "top", font.label = list(size = 20))
+ggarrange(ida_pi_vs_jac, cda_pi_vs_jac, ida_pi_vs_bcd, cda_pi_vs_bcd, ncol = 2, nrow = 2, common.legend = T, labels = c("A", "B", "C", "D"), legend = "top", font.label = list(size = 12))
 
 ggsave(paste("pi_vs_jac_and_bcd_high_vs_low_cov_", today, ".pdf", sep = ""), width = 11, height = 10, units = "in")
 
 # Look at how cv in sequencing affect SNP vs k-mer comparison
-ggarrange(ida_pi_vs_jac_cvbp, ida_pi_vs_bcd_cvbp, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 20))
+ggarrange(ida_pi_vs_jac_cvbp, ida_pi_vs_bcd_cvbp, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 12))
 
 ggsave(paste("pi_vs_jac_and_bcd_cvbp_", today, ".pdf", sep = ""), width = 9, height = 6, units = "in", device = cairo_pdf)
 
 # Look at how number of individuals sequenced affects SNP vs k-mer comparison
-ggarrange(ida_pi_vs_jac_nidv, ida_pi_vs_bcd_nidv, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 20))
+ggarrange(ida_pi_vs_jac_nidv, ida_pi_vs_bcd_nidv, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 12))
 
 ggsave(paste("pi_vs_jac_and_bcd_nidv_", today, ".pdf", sep = ""), width = 9, height = 6, units = "in", device = cairo_pdf)
 
 # Simple barplot of how cultivation varies with generation and mating system
-ggarrange(ida_cultivation_vs_generation, ida_cultivation_vs_mating, ida_generation_vs_mating, labels = c("A", "B", "C"), font.label = list(size = 20), ncol = 3, nrow = 1, legend = "right")
+ggarrange(ida_cultivation_vs_generation, ida_cultivation_vs_mating, ida_generation_vs_mating, labels = c("A", "B", "C"), font.label = list(size = 12), ncol = 3, nrow = 1, legend = "right")
 
 ggsave(paste("cultivation_vs_generation_and_mating", today, ".pdf", sep = ""), width = 15, height = 4, units = "in", device = cairo_pdf)
 
 # Compare population sizes to diversity metrics, without correcting for phylogeny
-ggarrange(cda_pi_vs_gbif, cda_pi_vs_wcvp, cda_jac_vs_gbif, cda_jac_vs_wcvp, cda_bcd_vs_gbif, cda_bcd_vs_wcvp, nrow = 3, ncol = 2, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+ggarrange(cda_pi_vs_gbif, cda_pi_vs_wcvp, cda_jac_vs_gbif, cda_jac_vs_wcvp, cda_bcd_vs_gbif, cda_bcd_vs_wcvp, nrow = 3, ncol = 2, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
 ggsave(paste("diversity_vs_popsize_", today, ".pdf", sep = ""), width = 12, height = 16, units = "in", device = cairo_pdf)
 
@@ -1550,37 +1552,37 @@ ggsave(paste("diversity_vs_popsize_", today, ".pdf", sep = ""), width = 12, heig
 
 ## excluding genome size
 
-ggarrange(wcvp_native_vs_pi_corrected, wcvp_native_vs_jac_corrected, wcvp_native_vs_bcd_corrected,wcvp_all_vs_pi_corrected, wcvp_all_vs_jac_corrected, wcvp_all_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+ggarrange(wcvp_native_vs_pi_corrected, wcvp_native_vs_jac_corrected, wcvp_native_vs_bcd_corrected,wcvp_all_vs_pi_corrected, wcvp_all_vs_jac_corrected, wcvp_all_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
 ggsave(paste("wcvp_popsize_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
-ggarrange(wcvp_native_area_vs_pi_corrected, wcvp_native_area_vs_jac_corrected, wcvp_native_area_vs_bcd_corrected,wcvp_all_area_vs_pi_corrected, wcvp_all_area_vs_jac_corrected, wcvp_all_area_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+ggarrange(wcvp_native_area_vs_pi_corrected, wcvp_native_area_vs_jac_corrected, wcvp_native_area_vs_bcd_corrected,wcvp_all_area_vs_pi_corrected, wcvp_all_area_vs_jac_corrected, wcvp_all_area_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
 ggsave(paste("wcvp_area_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
-ggarrange(gbif_native_vs_pi_corrected, gbif_native_vs_jac_corrected, gbif_native_vs_bcd_corrected,gbif_all_vs_pi_corrected, gbif_all_vs_jac_corrected, gbif_all_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+ggarrange(gbif_native_vs_pi_corrected, gbif_native_vs_jac_corrected, gbif_native_vs_bcd_corrected,gbif_all_vs_pi_corrected, gbif_all_vs_jac_corrected, gbif_all_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
 ggsave(paste("gbif_popsize_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
-ggarrange(gbif_native_area_vs_pi_corrected, gbif_native_area_vs_jac_corrected, gbif_native_area_vs_bcd_corrected,gbif_all_area_vs_pi_corrected, gbif_all_area_vs_jac_corrected, gbif_all_area_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+ggarrange(gbif_native_area_vs_pi_corrected, gbif_native_area_vs_jac_corrected, gbif_native_area_vs_bcd_corrected,gbif_all_area_vs_pi_corrected, gbif_all_area_vs_jac_corrected, gbif_all_area_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
 ggsave(paste("gbif_area_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
-ggarrange(height_vs_pi_corrected, height_vs_jac_corrected, height_vs_bcd_corrected, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 20))
+ggarrange(height_vs_pi_corrected, height_vs_jac_corrected, height_vs_bcd_corrected, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 12))
 
 ggsave(paste("height_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 6, width = 16, units = "in")
 
 ## including genome size
 
-ggarrange(genome_wcvp_native_vs_pi_figure, genome_wcvp_native_vs_jac_figure, genome_wcvp_native_vs_bcd_figure,genome_wcvp_all_vs_pi_figure, genome_wcvp_all_vs_jac_figure, genome_wcvp_all_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+ggarrange(genome_wcvp_native_vs_pi_figure, genome_wcvp_native_vs_jac_figure, genome_wcvp_native_vs_bcd_figure,genome_wcvp_all_vs_pi_figure, genome_wcvp_all_vs_jac_figure, genome_wcvp_all_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
 ggsave(paste("wcvp_popsize_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
-ggarrange(genome_gbif_native_vs_pi_figure, genome_gbif_native_vs_jac_figure, genome_gbif_native_vs_bcd_figure,genome_gbif_all_vs_pi_figure, genome_gbif_all_vs_jac_figure, genome_gbif_all_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 20))
+ggarrange(genome_gbif_native_vs_pi_figure, genome_gbif_native_vs_jac_figure, genome_gbif_native_vs_bcd_figure,genome_gbif_all_vs_pi_figure, genome_gbif_all_vs_jac_figure, genome_gbif_all_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
 ggsave(paste("gbif_popsize_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
-ggarrange(genome_height_vs_pi_figure, genome_height_vs_jac_figure, genome_height_vs_bcd_figure, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 20))
+ggarrange(genome_height_vs_pi_figure, genome_height_vs_jac_figure, genome_height_vs_bcd_figure, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 12))
 
 ggsave(paste("height_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 12, width = 16, units = "in")
 
@@ -1729,7 +1731,7 @@ r1 = ggplot(alldiv, aes(x = log10(rangeArea), y = log10(pi), label = species)) +
   geom_text(position = position_jitter(seed = 1)) +
   geom_smooth(method = "auto") +
   theme_classic() +
-  theme(text = element_text(size = 20)) +
+  theme(text = element_text(size = 12)) +
   xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "log10(Nucleotide diversity)")
 
@@ -1741,7 +1743,7 @@ r2 = ggplot(alldiv, aes(x = log10(rangeArea), y = bcd, label = species)) +
   geom_text(position = position_jitter(seed = 1)) + 
   geom_smooth(method = "auto") +
   theme_classic() +
-  theme(text = element_text(size = 20)) +
+  theme(text = element_text(size = 12)) +
   xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "Bray-Curtis dissimilarity")
 
@@ -1753,7 +1755,7 @@ r3 = ggplot(alldiv, aes(x = log10(rangeArea), y = jac, label = species)) +
   geom_text(position = position_jitter(seed = 1)) + 
   geom_smooth(method = "auto") +
   theme_classic() +
-  theme(text = element_text(size = 20)) +
+  theme(text = element_text(size = 12)) +
   xlim(5.5, 8.5) +
   labs(x = "log10(Range area in square km)", y = "Jaccard dissimilarity")
 
@@ -1975,7 +1977,7 @@ ggplot(coefplot, aes(x=coef, y=label)) +
   geom_errorbar(aes(xmin=coef-err, xmax=coef+err), width=.2, position=position_dodge(0.05)) +
   geom_vline(xintercept = 0, lty = "dotted", size = 2) +
   theme_classic() +
-  theme(text = element_text(size = 20)) +
+  theme(text = element_text(size = 12)) +
   labs(x = "Absolute value of coefficient", y = "PGLS model parameter")
 
 ggsave(paste("pgls_coefficients_", today, ".png", sep = ""), width = 7, height = 7)
