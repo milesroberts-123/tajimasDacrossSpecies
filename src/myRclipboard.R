@@ -6,6 +6,16 @@
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
 #
+@Manual{,
+  title = {R: A Language and Environment for Statistical Computing},
+  author = {{R Core Team}},
+  organization = {R Foundation for Statistical Computing},
+  address = {Vienna, Austria},
+  year = {2022},
+  url = {https://www.R-project.org/},
+}
+
+#
 https://stackoverflow.com/questions/67794202/fatal-error-with-ggplot-after-updating-to-latest-rstudio-version
 
 #
