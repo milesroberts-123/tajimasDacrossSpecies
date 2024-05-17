@@ -542,7 +542,7 @@ my_ggplot_wrap <- function(data, xcol, ycol, xname, yname, filename, filew = 5, 
   
   # plot
   myplot = ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
-    geom_point() +
+    geom_point(pch = 21, color = "black") +
     geom_smooth(method = "loess", color = "purple") +
     theme_classic() +
     #stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho", size = 7) +
@@ -568,12 +568,12 @@ my_ggplot_wrap_xyz <- function(data, xcol, ycol, xname, yname, filename, zcol, l
   p_label = signif(test_results$p.value, digits = 2)
   result_label = paste("\U03C1 = ", cor_label, ", ", "p = ", p_label, sep = "")
   
-  myplot = ggplot(data = data, aes_string(x = xcol, y = ycol, color = zcol)) + 
-    geom_point() +
+  myplot = ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
+    geom_point(aes_string(fill = zcol), pch = 21, color = "black") +
     geom_smooth(method = "loess", color = "purple", n = 20) +
     theme_classic() +
     #stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho", size = 7) +
-    scale_color_gradient(low = lcol, high = hcol, name = lname, limits = mylims) +
+    scale_fill_gradient(low = lcol, high = hcol, name = lname, limits = mylims) +
     labs(x = xname, y = yname, title = result_label) +
     theme(text = element_text(size = 12))
   
@@ -613,7 +613,7 @@ my_ggplot_wrap_line <- function(data, xcol, ycol, xname, yname, filename, filew 
   
   # combine everything into a plot
   myplot = ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
-    geom_point() +
+    geom_point(pch = 21, color = "black") +
     geom_abline(slope = 1, intercept = 0) +
     geom_smooth(method = "lm", color = "purple") + 
     theme_classic() +
@@ -640,7 +640,7 @@ my_ggplot_wrap_lm <- function(data, xcol, ycol, xname, yname, filename, filew = 
   result_label = paste("\U03C1 = ", cor_label, ", ", "p = ", p_label, sep = "")
   
   myplot = ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
-    geom_point() +
+    geom_point(pch = 21, color = "black") +
     geom_smooth(method = "lm", color = "purple") + 
     theme_classic() +
     #stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho", size = 7) +
@@ -779,7 +779,7 @@ ida_cult_vs_bcd = my_ggplot_wrap_box(alldiv, "cultivation.status", "bcd", "Culti
 ```
 
 
-## distributions of variables
+## DEPRECATED: distributions of variables
 ```{r eval=FALSE, include=FALSE}
 # histograms of diversity data
 ggplot(alldiv, aes(x = log10(pi))) +
@@ -798,8 +798,8 @@ ggplot(alldiv, aes(x = bcd)) +
   labs(x = "Bray-Curtis Dissimilarity")
 ```
 
-## correlations between variables
-```{r}
+## DEPRECATED: correlations between variables
+```{r eval=FALSE, include=FALSE}
 # Does pi correlate with k-mer diversity?
 cor(alldiv$pi, alldiv$bcd, method = "spearman", use = "pairwise.complete.obs")
 cor(alldiv$pi, alldiv$jac, method = "spearman", use = "pairwise.complete.obs")
@@ -1031,19 +1031,28 @@ correct_and_plot = function(mod_mat, y, V, primary, xlab, ylab, xpos, ypos){
   slope_value = signif(pvalues[primary,1], digits = 2) # get slope
   slope_se_value = signif(pvalues[primary,2], digits = 2) # get standard error of slope
   slope_p_value = signif(pvalues[primary,4], digits = 2) # get p-value for slope
-  adj_r_squared = signif(summary(mod_star)$adj.r.squared, digits = 2) # get adjusted R-squared for whole model
   
   # correct response for phylogeny and other covariates, then plot against predictor of interest
   technicals = colnames(X_star)[(colnames(X_star) != primary)]
   y_star_corrected = y_star - (X_star[,technicals] %*% coeff_star[technicals])
   
   # Create label that will go on plot with lm information
-  modlabel = paste("slope = ", slope_value, " +/- ", slope_se_value, "\n", "p = ", slope_p_value, "\n", "Adj. R^2 = ", adj_r_squared, sep = "")
+  modlabel = paste("slope = ", slope_value, " +/- ", slope_se_value, "\n", "p = ", slope_p_value, "\n", sep = "")
   
   # plot result
   myplot = ggplot(mapping = aes(x = X_star[,primary], y = y_star_corrected)) +
-    geom_point() +
-    geom_abline(intercept = 0, slope = coeff_star[primary], color = "purple") +
+    geom_point(pch = 21, color = "black") +
+    geom_abline(intercept = 0, 
+                slope = coeff_star[primary] - slope_se_value, 
+                color = "black", 
+                linetype = "dotted") +
+    geom_abline(intercept = 0, 
+                slope = coeff_star[primary], 
+                color = "purple") +
+    geom_abline(intercept = 0, 
+                slope = coeff_star[primary] + slope_se_value, 
+                color = "black", 
+                linetype = "dotted") +
     theme_classic() +
     theme(text = element_text(size = 10)) +
     #stat_regline_equation(aes(label = paste(..eq.label.., ..adj.rr.label.., sep = "~~~~")), size = 5) +
@@ -1064,23 +1073,23 @@ wcvp_native_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_nat
 
 wcvp_all_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_pi$y, mod_wcvp_all_popsize_pi$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "log(Nucleotide diversity), adj.")
 
-wcvp_all_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_pi$y, mod_wcvp_all_area_pi$Vt, "log10(wcvp_all_area)", "log(WCVP full range), adj.", "log(Nucleotide diversity), adj.")
+wcvp_all_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_pi$y, mod_wcvp_all_area_pi$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "log(Nucleotide diversity), adj.")
 
-wcvp_native_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_pi$y, mod_wcvp_native_area_pi$Vt, "log10(wcvp_native_area)", "log(WCVP native range), adj.", "log(Nucleotide diversity), adj.")
+wcvp_native_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_pi$y, mod_wcvp_native_area_pi$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "log(Nucleotide diversity), adj.")
 
 wcvp_native_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_jac$y, mod_wcvp_native_popsize_jac$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio), adj.", "Jaccard dissimilarity, adj.")
 
 wcvp_all_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_jac$y, mod_wcvp_all_popsize_jac$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "Jaccard dissimilarity, adj.")
 
-wcvp_all_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_jac$y, mod_wcvp_all_area_jac$Vt, "log10(wcvp_all_area)", "log(WCVP full range), adj.", "Jaccard dissimilarity, adj.")
+wcvp_all_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_jac$y, mod_wcvp_all_area_jac$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "Jaccard dissimilarity, adj.")
 
-wcvp_native_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_jac$y, mod_wcvp_native_area_jac$Vt, "log10(wcvp_native_area)", "log(WCVP native range), adj.", "Jaccard dissimilarity, adj.")
+wcvp_native_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_jac$y, mod_wcvp_native_area_jac$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "Jaccard dissimilarity, adj.")
 
 wcvp_native_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_bcd$y, mod_wcvp_native_popsize_bcd$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio), adj.", "Bray-Curtis dissimilarity, adj.")
 
 wcvp_all_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_bcd$y, mod_wcvp_all_popsize_bcd$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "Bray-Curtis dissimilarity, adj.")
 
-wcvp_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_bcd$y, mod_wcvp_all_area_bcd$Vt, "log10(wcvp_all_area)", "log(WCVP full range), adj.", "Bray-Curtis dissimilarity, adj.")
+wcvp_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_bcd$y, mod_wcvp_all_area_bcd$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
 
 wcvp_native_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_bcd$y, mod_wcvp_native_area_bcd$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
 
@@ -1628,9 +1637,9 @@ ggarrange(genome_height_vs_pi_figure, genome_height_vs_jac_figure, genome_height
 
 ggsave(paste("height_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 4, width = 7.5, units = "in")
 
-#### save results of phylogenetic least squares models as tables ###
+#### save results of phylogenetic least squares models as tables ####
 
-all_mod_results = rbind(
+mod_coeff_results = rbind(
   summary(mod_gbif_all_popsize_pi)$coefficients,
   summary(mod_gbif_all_popsize_jac)$coefficients,
   summary(mod_gbif_all_popsize_bcd)$coefficients,
@@ -1688,13 +1697,13 @@ all_mod_results = rbind(
 )
 
 # create column from row names
-all_mod_results = cbind(all_mod_results, rownames(all_mod_results))
+mod_coeff_results = cbind(mod_coeff_results, rownames(mod_coeff_results))
 
 # convert to dataframe
-all_mod_results = as.data.frame(all_mod_results)
+mod_coeff_results = as.data.frame(mod_coeff_results)
 
 # add some extra descriptors: name of response variable and model id, so that readers know which values are all together in one model
-all_mod_results$Response = c(
+mod_coeff_results$Response = c(
   rep(mod_gbif_all_popsize_pi$namey, times = 5),
   rep(mod_gbif_all_popsize_jac$namey, times = 5),
   rep(mod_gbif_all_popsize_bcd$namey, times = 5),
@@ -1751,7 +1760,7 @@ all_mod_results$Response = c(
   rep(genome_height_vs_bcd$namey, times = 6)
 )
 
-all_mod_results$ID = c(
+mod_coeff_results$ID = c(
   rep(1, times = 5),
   rep(2, times = 5),
   rep(3, times = 5),
@@ -1808,7 +1817,7 @@ all_mod_results$ID = c(
   rep(54, times = 6)
 )
 
-#all_mod_results$Response = rep(
+#mod_coeff_results$Response = rep(
 #    c(
 #      rep("Nucleotide diversity", times = 5),
 #      rep("Jaccard dissimilarity", times = 5),
@@ -1817,12 +1826,12 @@ all_mod_results$ID = c(
 #    times = 9
 #)
 
-#all_mod_results$`Population size metric` = c(
+#mod_coeff_results$`Population size metric` = c(
 #  rep("GBIF", times = 30),
 #  rep("WCVP", times = 30)
 #)
 
-#all_mod_results$`Range included` = c(
+#mod_coeff_results$`Range included` = c(
 #  rep("full", times = 15),
 #  rep("native only", times = 15),
 #  rep("full", times = 15),
@@ -1830,12 +1839,94 @@ all_mod_results$ID = c(
 #)
 
 # reorganize the columns
-all_mod_results = all_mod_results[,c(7,6,5,1:4)]
+mod_coeff_results = mod_coeff_results[,c(7,6,5,1:4)]
 
-colnames(all_mod_results)[3] = "Variable"
+colnames(mod_coeff_results)[3] = "Variable"
 
 # save results
-write.csv(all_mod_results, paste("model_coefficients_", today, ".csv", sep = ""), row.names = F)
+write.csv(mod_coeff_results, paste("model_coefficients_", today, ".csv", sep = ""), row.names = F)
+
+#### Save whole model statistics as a separate table ####
+
+# Write function to extract statistics that apply to entire model
+extract_mod_results = function(mod){
+  mod_sum = summary(mod)
+  mod_frame = data.frame(
+    call = as.character(mod_sum$call)[2],
+    fstatvalue = mod_sum$fstatistic["value"],
+    fstatnumdf = mod_sum$fstatistic["numdf"],
+    fstatdendf = mod_sum$fstatistic["dendf"],
+    rsq = mod_sum$r.squared,
+    adjrsq = mod_sum$adj.r.squared[1,1]
+  )
+  return(mod_frame)
+}
+
+whole_mod_results = rbind(
+  extract_mod_results(mod_gbif_all_popsize_pi),
+  extract_mod_results(mod_gbif_all_popsize_jac),
+  extract_mod_results(mod_gbif_all_popsize_bcd),
+  extract_mod_results(mod_gbif_all_area_pi),
+  extract_mod_results(mod_gbif_all_area_jac),
+  extract_mod_results(mod_gbif_all_area_bcd),
+  extract_mod_results(mod_gbif_native_popsize_pi),
+  extract_mod_results(mod_gbif_native_popsize_jac),
+  extract_mod_results(mod_gbif_native_popsize_bcd),
+  extract_mod_results(mod_gbif_native_area_pi),
+  extract_mod_results(mod_gbif_native_area_jac),
+  extract_mod_results(mod_gbif_native_area_bcd),
+  extract_mod_results(mod_wcvp_all_popsize_pi),
+  extract_mod_results(mod_wcvp_all_popsize_jac),
+  extract_mod_results(mod_wcvp_all_popsize_bcd),
+  extract_mod_results(mod_wcvp_all_area_pi),
+  extract_mod_results(mod_wcvp_all_area_jac),
+  extract_mod_results(mod_wcvp_all_area_bcd),
+  extract_mod_results(mod_wcvp_native_popsize_pi),
+  extract_mod_results(mod_wcvp_native_popsize_jac),
+  extract_mod_results(mod_wcvp_native_popsize_bcd),
+  extract_mod_results(mod_wcvp_native_area_pi),
+  extract_mod_results(mod_wcvp_native_area_jac),
+  extract_mod_results(mod_wcvp_native_area_bcd),
+  extract_mod_results(mod_height_pi),
+  extract_mod_results(mod_height_jac),
+  extract_mod_results(mod_height_bcd),
+  extract_mod_results(genome_wcvp_all_vs_pi),
+  extract_mod_results(genome_wcvp_all_vs_jac),
+  extract_mod_results(genome_wcvp_all_vs_bcd),
+  extract_mod_results(genome_wcvp_native_vs_pi),
+  extract_mod_results(genome_wcvp_native_vs_jac),
+  extract_mod_results(genome_wcvp_native_vs_bcd),
+  extract_mod_results(genome_wcvp_all_area_vs_pi),
+  extract_mod_results(genome_wcvp_all_area_vs_jac),
+  extract_mod_results(genome_wcvp_all_area_vs_bcd),
+  extract_mod_results(genome_wcvp_native_area_vs_pi),
+  extract_mod_results(genome_wcvp_native_area_vs_jac),
+  extract_mod_results(genome_wcvp_native_area_vs_bcd),
+  extract_mod_results(genome_gbif_all_vs_pi),
+  extract_mod_results(genome_gbif_all_vs_jac),
+  extract_mod_results(genome_gbif_all_vs_bcd),
+  extract_mod_results(genome_gbif_native_vs_pi),
+  extract_mod_results(genome_gbif_native_vs_jac),
+  extract_mod_results(genome_gbif_native_vs_bcd),
+  extract_mod_results(genome_gbif_all_area_vs_pi),
+  extract_mod_results(genome_gbif_all_area_vs_jac),
+  extract_mod_results(genome_gbif_all_area_vs_bcd),
+  extract_mod_results(genome_gbif_native_area_vs_pi),
+  extract_mod_results(genome_gbif_native_area_vs_jac),
+  extract_mod_results(genome_gbif_native_area_vs_bcd),
+  extract_mod_results(genome_height_vs_pi),
+  extract_mod_results(genome_height_vs_jac),
+  extract_mod_results(genome_height_vs_bcd)
+)
+
+whole_mod_results$ID = 1:54
+
+names(whole_mod_results) = c("Model", "F statistic", "F test df1", "F test df2", "R squared", "Adjusted R squared", "ID")
+
+whole_mod_results = whole_mod_results[,c(7,1:6)]
+
+write.csv(whole_mod_results, paste("model_rsquared_", today, ".csv", sep = ""), row.names = F, quote = F)
+
 ```
 
 # DEPRECATED
@@ -1938,7 +2029,7 @@ ggtree(plotphy, size = 1.5) +
   theme_tree2() +
   theme(strip.background = element_rect(fill="white")) +
   theme(strip.text = element_text(colour = 'black'), text = element_text(size = 12)) +
-  xlim_tree(400)
+  xlim_tree(500)
   
 ggsave(paste("tree_with_primary_variables_", today, ".tiff", sep = ""), width = 7.5, height = 7.75, compression = "lzw")
 ggsave(paste("tree_with_primary_variables_", today, ".pdf", sep = ""), width = 7.5, height = 7.75)
@@ -1955,7 +2046,7 @@ ggtree(plotphy, size = 1.5) +
   theme_tree2() +
   theme(strip.background = element_rect(fill="white")) +
   theme(strip.text = element_text(colour = 'black'), text = element_text(size = 12)) +
-  xlim_tree(400)
+  xlim_tree(500)
 
 ggsave(paste("tree_with_technical_variables_", today, ".pdf", sep = ""), width = 7.5, height = 7.75)
 

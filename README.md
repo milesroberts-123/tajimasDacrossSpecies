@@ -26,13 +26,13 @@ This workflow takes a list of SRA run numbers, separated before-hand as either p
 
 1. Align reads to reference genome, then call SNPs and indels at four-fold degenerate sites
 
-2. Count k-mers within reads, omiting k-mers that appear in the coding sequences of their respective species. Then, choose a random subset of k-mers to keep for further analysis. K-mer counts for each genotype are merged into a large matrix and then used to calculate two measures of dissimilarity:
+2. Count k-mers within reads, omitting k-mers that appear in the coding sequences of their respective species. Then, choose a random subset of k-mers to keep for further analysis. K-mer counts for each genotype are merged into a large matrix and then used to calculate two measures of dissimilarity:
 
 * Jaccard dissimilarity: k-mers are marked as either present (1) or absent (0) based on their count within the whole genome sequencing reads for each genotype. Then you look at the intersection-union ratio for each pair of k-mer sets
 
 * Bray-Curtis dissimilarity: counts are first normalized to sum to one (within each sample) to help control for coverage variation between samples, then you apply [the formula in this paper](https://doi.org/10.1186/s12859-015-0875-7)
 
-At the same time, the workflow will download GBIF occurence data and estimate range size.
+At the same time, the workflow will download GBIF occurrence data and estimate range size.
 
 In addition, this workflow is designed to:
 

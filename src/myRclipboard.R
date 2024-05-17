@@ -5,6 +5,8 @@
 # cat panicum_halli_search.txt | tr '\n' ' ' | sed 's/ / OR /g'
 # esearch -db sra -query $QUERY | efetch --format runinfo > panicum_halli.csv
 
+2.88793*(1 - 1055.0/679.585)*1055.0 + 1055.0
+
 #
 @Manual{,
   title = {R: A Language and Environment for Statistical Computing},
