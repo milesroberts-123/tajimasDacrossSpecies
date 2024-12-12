@@ -1,0 +1,249 @@
+---
+title: "Planting density vs plant height"
+output: html_notebook
+---
+
+
+# set up
+
+```{r}
+rm(list = ls())
+library(tidyr)
+library(rvest)
+library(httr)
+library(stringr)
+library(ggplot2)
+library(ggpubr)
+library(caper)
+
+today = Sys.Date()
+```
+# Scrape data from the Encyclopedia of life
+
+
+```{r}
+eol_table = read.table("/mnt/ufs18/home-010/robe1195/Josephs_Lab_Projects/tajimasDacrossSpecies/results/2023-03-26/eol_pages_plant_height_and_planting_density_2024-08-15.tsv", fill = T, sep = "\t", header = T)
+
+# extract species names so that I can get species tree from time tree
+# https://stackoverflow.com/questions/41263946/remove-text-after-the-second-space 
+eol_table$Scientific.Name.short = sub("^(\\S*\\s+\\S+).*", "\\1", eol_table$Scientific.Name)
+write.table(eol_table$Scientific.Name.short, "/mnt/ufs18/home-010/robe1195/Josephs_Lab_Projects/tajimasDacrossSpecies/results/2023-03-26/eol_names_plant_height_and_planting_density_2024-08-17.tsv", quote = F, sep = "\t", row.names = F)
+
+# set up loop
+density_values = NULL
+
+height_values = list()
+
+commercial_values = list()
+
+for(i in 452:length(eol_table$Taxon.URL)){
+  
+  page = eol_table$Taxon.URL[i]
+  
+  full_page = paste("https://eol.org", page, "/data", sep = "")
+  
+  print(full_page)
+  
+  eol_page = (full_page %>% GET(., timeout(600)) %>% read_html(full_page))
+  
+  eol_trait_text = (eol_page %>% html_elements(".js-data-row-contain") %>% html_elements(".trait-val") %>% html_text())
+  
+  all_text = unlist(eol_page %>% html_element("body") %>% html_text2() %>% str_split(pattern = "\n"))
+  
+  start = which(all_text == "plant height")
+  
+  stop = min(which(all_text %in% c("plant propagation method", "plant lifeform", "terrestrial plant")))
+  
+  height_block = all_text[start:stop]
+  print(height_block)
+  
+  feet_heights = height_block[grepl("feet", height_block)]
+  
+  meter_heights = height_block[grepl(" m$", height_block)]
+  meter_heights = as.numeric(gsub(" m", "", meter_heights))
+  
+  cm_heights = height_block[grepl(" cm$", height_block)]
+  
+  dm_heights = height_block[grepl(" dm$", height_block)]
+  
+  # convert feet heights to meters
+  feet_heights = as.numeric(gsub(" feet", "", feet_heights)) * 0.3048
+
+  # convert cm heights to meters
+  cm_heights = as.numeric(gsub(" cm", "", cm_heights)) * 0.01
+  
+  # convert dm heights to meters
+  dm_heights = as.numeric(gsub(" dm", "", dm_heights)) * 0.1
+  
+  # calculate mean of height values
+  mean_height = mean(c(meter_heights, feet_heights, cm_heights, dm_heights))
+  
+  eol_header_text = (eol_page %>% html_elements(".data-section-head") %>% html_text())
+  
+  density_value = eol_trait_text[grepl("per acre", eol_trait_text) & !grepl("fixation", eol_trait_text)]
+  
+  #height_value = eol_trait_text[grepl(" m\n", eol_trait_text)]
+  
+  commercial_value = any(grepl("used for", eol_header_text))
+  
+  height_values[[i]] = mean_height
+  
+  commercial_values[[i]] = commercial_value
+  
+  density_values = rbind(density_values, density_value)
+  
+  # every 200 pulls, sleep for a few minutes
+  # otherwise, just sleep for a few seconds
+  if (i %% 100 == 0) {
+    closeAllConnections()
+    print(paste("Sleep for 2 minutes"))
+    Sys.sleep(120)
+  } else{
+    sleep_length = runif(1, min = 0, max = 4)
+    print(paste("Sleep for:", sleep_length))
+    Sys.sleep(sleep_length)
+  }
+  #i = i + 1
+}
+
+
+# combine all 
+trait_matrix = as.data.frame(do.call(cbind, list(eol_table$Taxon.URL, height_values, density_values, commercial_values)))
+
+# only get species with one unique measurement in meters, this is how we know it's height
+#rows_to_keep = (str_count(trait_matrix$V2, "m") == 1)
+#trait_matrix = trait_matrix[rows_to_keep,]
+
+# convert height measurements into numbers
+trait_matrix$V2 = unlist(trait_matrix$V2)
+#trait_matrix$V2 = as.numeric(gsub("\n| m", "", trait_matrix$V2))
+
+# convert density into number
+trait_matrix$V3 = unlist(trait_matrix$V3)
+trait_matrix$V3 = as.numeric(gsub("\n| per acre\n", "", trait_matrix$V3))
+
+trait_matrix$V4 = unlist(trait_matrix$V4)
+trait_matrix$V4 = as.numeric(gsub("\n| per acre\n", "", trait_matrix$V4))
+
+# calculate average planting density (mean of min and max)
+trait_matrix$min_density = pmin(trait_matrix$V3, trait_matrix$V4)
+trait_matrix$max_density = pmax(trait_matrix$V3, trait_matrix$V4)
+trait_matrix$mid_density = (trait_matrix$max_density + trait_matrix$min_density)/2
+
+# convert density to square kilometers
+# individuals/acre * 1 acre/0.00404686 sq km = individuals/sq km
+trait_matrix$min_density = trait_matrix$min_density/0.00404686
+trait_matrix$mid_density = trait_matrix$mid_density/0.00404686
+trait_matrix$max_density = trait_matrix$max_density/0.00404686
+
+# remove any species with documented human uses
+trait_matrix$V5 = unlist(trait_matrix$V5)
+#wild_trait_matrix = trait_matrix[(trait_matrix$V5 == FALSE),]
+
+# save table
+names(trait_matrix)[1] = "Taxon.URL"
+names(trait_matrix)[2] = "height.m"
+names(trait_matrix)[5] = "human_uses"
+
+trait_matrix$Taxon.URL = unlist(trait_matrix$Taxon.URL)
+
+trait_matrix = merge(trait_matrix, eol_table, by = "Taxon.URL")
+
+trait_matrix$Taxon.URL = paste("https://eol.org", trait_matrix$Taxon.URL, "/data", sep = "")
+
+trait_matrix = trait_matrix[,c(-12,-13)]
+
+trait_matrix$Common.Name = gsub('\t.*', "", trait_matrix$Common.Name)
+
+trait_matrix = trait_matrix[,c(-3, -4)]
+
+write.table(trait_matrix, paste("/mnt/ufs18/home-010/robe1195/Josephs_Lab_Projects/tajimasDacrossSpecies/results/2023-03-26/figures/", today, "/eol_table_plant_height_and_planting_density.tsv", sep = ""), quote = F, sep = "\t", row.names = F)
+```
+
+# create plots, analysis
+826 species with both planting density and height data in EOL
+
+719 species without documented human uses
+
+511 species with unambiguous phylogenetic placement in timetree
+
+```{r}
+
+trait_matrix = read.table("/mnt/ufs18/home-010/robe1195/Josephs_Lab_Projects/tajimasDacrossSpecies/results/2023-03-26/figures/2024-08-18/eol_table_plant_height_and_planting_density.tsv", sep = "\t", header = T)
+
+# load in phylogeny
+phy = read.tree("../results/2023-03-26/eol_names_plant_height_and_planting_density_2024-08-17.nwk")
+phy$tip.label = gsub("_", " ", phy$tip.label)
+
+# subset to just wild species
+trait_matrix = trait_matrix[(trait_matrix$human_uses == F),]
+
+# remove duplicates that can't be matched to phylogeny
+trait_matrix = trait_matrix[!duplicated(trait_matrix$Scientific.Name.short),]
+
+# remove species that aren't found in phylogeny
+trait_matrix = trait_matrix[(trait_matrix$Scientific.Name.short %in% phy$tip.label),]
+
+# calculate height squared
+trait_matrix$height2 = trait_matrix$height.m^2
+
+# create comparative object
+trait_phy_data = comparative.data(phy, trait_matrix, names.col = "Scientific.Name.short", vcv = T)
+
+# corrected for phylogeny
+min_vs_height_mod = pgls(log10(height.m) ~ log10(min_density), trait_phy_data)
+min_vs_height_pvalue = summary(min_vs_height_mod)$coefficients[2,4]
+min_vs_height_sterr = min_vs_height_mod$sterr
+min_vs_height_coeff = coefficients(min_vs_height_mod)
+
+mid_vs_height_mod = pgls(log10(height.m) ~ log10(mid_density), trait_phy_data)
+mid_vs_height_pvalue = summary(mid_vs_height_mod)$coefficients[2,4]
+mid_vs_height_sterr = mid_vs_height_mod$sterr
+mid_vs_height_coeff = coefficients(mid_vs_height_mod)
+
+max_vs_height_mod = pgls(log10(height.m) ~ log10(max_density), trait_phy_data)
+max_vs_height_pvalue = summary(max_vs_height_mod)$coefficients[2,4]
+max_vs_height_sterr = max_vs_height_mod$sterr
+max_vs_height_coeff = coefficients(max_vs_height_mod)
+ 
+## min density
+
+p1 = ggplot(trait_matrix, aes(x = log10(min_density), y = log10(height.m))) +
+  geom_point() +
+  geom_smooth(method = "lm", lwd = 2, color = "blue") + 
+  geom_abline(intercept = min_vs_height_coeff[1], slope = min_vs_height_coeff[2] - min_vs_height_sterr[2], linetype = 2) +
+  geom_abline(intercept = min_vs_height_coeff[1], slope = min_vs_height_coeff[2], lwd = 2, color = "purple") +
+  geom_abline(intercept = min_vs_height_coeff[1], slope = min_vs_height_coeff[2] + min_vs_height_sterr[2], linetype = 2) +
+  theme_classic() +
+  labs(x = "log(Min planting density, km^-2)", y = "log(height, m)", title = paste("n = ", nrow(trait_matrix), "; p = ", signif(min_vs_height_pvalue, digits = 3), sep = ""))
+
+## mean density
+#mid_vs_height = cor.test(trait_matrix$mid_density, trait_matrix$height.m, method = "spearman")
+
+p2 = ggplot(trait_matrix, aes(x = log10(mid_density), y = log10(height.m))) +
+  geom_point() +
+  geom_smooth(method = "lm", lwd = 2, color = "blue") + 
+  geom_abline(intercept = mid_vs_height_coeff[1], slope = mid_vs_height_coeff[2] - mid_vs_height_sterr[2], linetype = 2) +
+  geom_abline(intercept = mid_vs_height_coeff[1], slope = mid_vs_height_coeff[2], lwd = 2, color = "purple") +
+  geom_abline(intercept = mid_vs_height_coeff[1], slope = mid_vs_height_coeff[2] + mid_vs_height_sterr[2], linetype = 2) +
+  theme_classic() +
+  labs(x = "log(Mean planting density, km^-2)", y = "log(height, m)", title = paste("n = ", nrow(trait_matrix), "; p = ", signif(mid_vs_height_pvalue, digits = 3), sep = ""))
+
+## max density
+#max_vs_height = cor.test(trait_matrix$max_density, trait_matrix$height.m, method = "spearman")
+
+p3 = ggplot(trait_matrix, aes(x = log10(max_density), y = log10(height.m))) +
+  geom_point() +
+  geom_smooth(method = "lm", lwd = 2, color = "blue") + 
+  geom_abline(intercept = max_vs_height_coeff[1], slope = max_vs_height_coeff[2] - max_vs_height_sterr[2], linetype = 2) +
+  geom_abline(intercept = max_vs_height_coeff[1], slope = max_vs_height_coeff[2], lwd = 2, color = "purple") +
+  geom_abline(intercept = max_vs_height_coeff[1], slope = max_vs_height_coeff[2] + max_vs_height_sterr[2], linetype = 2) +
+  theme_classic() +
+  labs(x = "log(Max planting density, km^-2)", y = "log(height, m)", title = paste("n = ", nrow(trait_matrix), "; p = ", signif(max_vs_height_pvalue, digits = 3), sep = ""))
+
+# min density vs height squared
+
+# save plots
+ggarrange(p1, p2, p3, ncol = 3, nrow = 1)
+ggsave(paste("/mnt/ufs18/home-010/robe1195/Josephs_Lab_Projects/tajimasDacrossSpecies/results/2023-03-26/figures/", today, "/plant_height_and_planting_density.pdf", sep = ""), height = 3, width = 8)
+```

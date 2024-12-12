@@ -1,7 +1,7 @@
 ---
 title: "K-mer approach to Lewontin's paradox results"
 author: "Miles Roberts"
-date: "2024-04-03"
+date: "2024-09-08"
 output:
   html_document:
     df_print: paged
@@ -184,6 +184,9 @@ native_areas$`Capsicum annuum` = native_areas$`Capsicum annuum`[c(1,2),]
 
 # Castanea mollissima is native only to asia
 native_areas$`Castanea mollissima` = native_areas$`Castanea mollissima`[2,]
+
+# Corylus americana is only native to north america
+native_areas$`Corylus americana` = native_areas$`Corylus americana`[1,]
 
 # Cucumis myriocarpus is native only to africa
 native_areas$`Cucumis melo` = native_areas$`Cucumis melo`[2,]
@@ -412,7 +415,7 @@ metadata = read.table("../results/2023-03-26/species_metadata_2024-04-03.txt", s
 names(metadata)[1] = "species"
 
 # remove weird space character
-metadata$species = gsub("<a0>", " ", metadata$species)
+metadata$species = gsub("\xa0", " ", metadata$species, useBytes = T)
 metadata$species = gsub(" $", "", metadata$species)
 
 # merge metadata with diversity data
@@ -468,8 +471,9 @@ write.table(alldiv, paste("final_covariates_", today, ".txt", sep = ""), row.nam
 # Initial data analysis
 
 ## load saved data for plotting
-```{r eval=FALSE, include=FALSE}
-alldiv = read.table("../results/2023-03-26/final_covariates_2024-04-03.txt", sep = "\t", header = T)
+```{r}
+#alldiv2 = read.table("../results/2023-03-26/final_covariates_2024-04-03.txt", sep = "\t", header = T)
+alldiv = read.table("../results/2023-03-26/final_covariates_2024-09-08.txt", sep = "\t", header = T)
 ```
 
 ## Prepare phylogenetic tree
@@ -543,7 +547,7 @@ my_ggplot_wrap <- function(data, xcol, ycol, xname, yname, filename, filew = 5, 
   # plot
   myplot = ggplot(data = data, aes_string(x = xcol, y = ycol)) + 
     geom_point(pch = 21, color = "black") +
-    geom_smooth(method = "loess", color = "purple") +
+    geom_smooth(method = "lm", color = "purple") +
     theme_classic() +
     #stat_cor(method = "spearman", digits = 2, cor.coef.name = "rho", size = 7) +
     labs(x = xname, y = yname, title = result_label) +
@@ -692,45 +696,45 @@ ida_cultivation_vs_generation = my_ggplot_wrap_barplot(alldiv, "cultivation.stat
 # scatterplots
 
 ## average coverage vs diversity
-ida_meancov_vs_pi = my_ggplot_wrap(alldiv, "log10(meancov)", "log10(pi)", "log(mean coverage)", "log(Nucleotide diversity)", paste("ida_coverage-vs-pi_", today, ".png", sep = ""))
+ida_meancov_vs_pi = my_ggplot_wrap(alldiv, "log10(meancov)", "log10(pi)", "log(mean coverage)", "log(4-fold SNP diversity)", paste("ida_coverage-vs-pi_", today, ".png", sep = ""))
 
 ida_meancov_vs_jac = my_ggplot_wrap(alldiv, "log10(meancov)", "jac", "log(mean coverage)", "Jaccard dissimilarity", paste("ida_coverage-vs-jac_", today, ".png", sep = ""))
 
 ida_meancov_vs_bcd = my_ggplot_wrap(alldiv, "log10(meancov)", "bcd", "log(mean coverage)", "Bray-Curtis dissimilarity", paste("ida_coverage-vs-bcd_", today, ".png", sep = ""))
 
 ## depth of sequencing variation vs diversity
-ida_cvbp_vs_pi = my_ggplot_wrap(alldiv, "cvbp", "log10(pi)", "Coeff. of variation in bp sequenced", "log(Nucleotide diversity)", paste("ida_cvbp-vs-pi_", today, ".png", sep = ""))
+ida_cvbp_vs_pi = my_ggplot_wrap(alldiv, "cvbp", "log10(pi)", "coeff. of var. in bp sequenced", "log(4-fold SNP diversity)", paste("ida_cvbp-vs-pi_", today, ".png", sep = ""))
 
-ida_cvbp_vs_jac = my_ggplot_wrap(alldiv, "cvbp", "jac", "Coeff. of variation in bp sequenced", "Jaccard dissimilarity", paste("ida_cvbp-vs-jac_", today, ".png", sep = ""))
+ida_cvbp_vs_jac = my_ggplot_wrap(alldiv, "cvbp", "jac", "coeff. of var. in bp sequenced", "Jaccard dissimilarity", paste("ida_cvbp-vs-jac_", today, ".png", sep = ""))
 
-ida_cvbp_vs_bcd = my_ggplot_wrap(alldiv, "cvbp", "bcd", "Coeff. of variation in bp sequenced", "Bray-Curtis dissimilarity", paste("ida_cvbp-vs-bcd_", today, ".png", sep = ""))
+ida_cvbp_vs_bcd = my_ggplot_wrap(alldiv, "cvbp", "bcd", "coeff. of var. in bp sequenced", "Bray-Curtis dissimilarity", paste("ida_cvbp-vs-bcd_", today, ".png", sep = ""))
 
 ## number of individuals sequenced vs diversity
-ida_nidv_vs_pi = my_ggplot_wrap(alldiv, "log10(nidv)", "log10(pi)", "log(Number of individuals)", "log(Nucleotide diversity)", paste("ida_nidv-vs-pi_", today, ".png", sep = ""))
+ida_nidv_vs_pi = my_ggplot_wrap(alldiv, "log10(nidv)", "log10(pi)", "log(Number of individuals)", "log(4-fold SNP diversity)", paste("ida_nidv-vs-pi_", today, ".png", sep = ""))
 
 ida_nidv_vs_jac = my_ggplot_wrap(alldiv, "log10(nidv)", "jac", "log(Number of individuals)", "Jaccard dissimilarity", paste("ida_nidv-vs-jac_", today, ".png", sep = ""))
 
 ida_nidv_vs_bcd = my_ggplot_wrap(alldiv, "log10(nidv)", "bcd", "log(Number of individuals)", "Bray-Curtis dissimilarity", paste("ida_nidv-vs-bcd_", today, ".png", sep = ""))
 
 ## number of variant sites vs diversity
-ida_nvariant_vs_pi = my_ggplot_wrap(alldiv, "log10(nvariant + 1)", "log10(pi)", "log(Number of variant sites + 1)", "log(Nucleotide diversity)", paste("ida_nvariant-vs-pi_", today, ".png", sep = ""))
+ida_nvariant_vs_pi = my_ggplot_wrap(alldiv, "log10(nvariant + 1)", "log10(pi)", "log(Number of variant sites + 1)", "log(4-fold SNP diversity)", paste("ida_nvariant-vs-pi_", today, ".png", sep = ""))
 
 # compare diversity, colored by coverage
 ida_jac_vs_bcd = my_ggplot_wrap_lm(alldiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("ida_jac-vs-bcd_", today, ".png", sep = ""))
 
-ida_pi_vs_jac = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", 'log(Nucleotide diversity)', "Jaccard dissimilarity", paste("ida_pi-vs-jac_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", 'log(mean coverage)', c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
+ida_pi_vs_jac = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", 'log(4-fold SNP diversity)', "Jaccard dissimilarity", paste("ida_pi-vs-jac_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", 'log(mean coverage)', c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
-ida_pi_vs_bcd = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log(mean coverage)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
+ida_pi_vs_bcd = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log(4-fold SNP diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log(mean coverage)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
 # compare diversity measures, colored by variation in coverage
-ida_pi_vs_jac_cvbp = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", "log10(Nucleotide diversity)", "Jaccard dissimilarity", paste("ida_pi-vs-jac_cvbp_", today, ".png", sep = ""), "cvbp", "#FEF2F2", "#190C64", "Coeff.\nof variation\nbp sequenced", c(min(alldiv$cvbp), max(alldiv$cvbp)))
+ida_pi_vs_jac_cvbp = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", "log10(4-fold SNP diversity)", "Jaccard dissimilarity", paste("ida_pi-vs-jac_cvbp_", today, ".png", sep = ""), "cvbp", "#FEF2F2", "#190C64", "Coeff.\nof variation\nbp sequenced", c(min(alldiv$cvbp), max(alldiv$cvbp)))
 
-ida_pi_vs_bcd_cvbp = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log10(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_cvbp_", today, ".png", sep = ""), "cvbp", "#FEF2F2", "#190C64", "Coeff.\nof variation\nbp sequenced", c(min(alldiv$cvbp), max(alldiv$cvbp)))
+ida_pi_vs_bcd_cvbp = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log10(4-fold SNP diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_cvbp_", today, ".png", sep = ""), "cvbp", "#FEF2F2", "#190C64", "Coeff.\nof variation\nbp sequenced", c(min(alldiv$cvbp), max(alldiv$cvbp)))
 
 # compare diversity measures, colored by number of individuals sequenced
-ida_pi_vs_jac_nidv = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", "log(Nucleotide diversity)", "Jaccard dissimilarity", paste("ida_pi-vs-jac_nidv_", today, ".png", sep = ""), "log10(nidv)", "#FEF2F2", "#190C64", "log(Number of\nindividuals\nsequenced)", c(min(log10(alldiv$nidv)), max(log10(alldiv$nidv))))
+ida_pi_vs_jac_nidv = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "jac", "log(4-fold SNP diversity)", "Jaccard dissimilarity", paste("ida_pi-vs-jac_nidv_", today, ".png", sep = ""), "log10(nidv)", "#FEF2F2", "#190C64", "log(Number of\nindividuals\nsequenced)", c(min(log10(alldiv$nidv)), max(log10(alldiv$nidv))))
 
-ida_pi_vs_bcd_nidv = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_nidv_", today, ".png", sep = ""), "log10(nidv)", "#FEF2F2", "#190C64", "log(Number of\nindividuals\nsequenced)", c(min(log10(alldiv$nidv)), max(log10(alldiv$nidv))))
+ida_pi_vs_bcd_nidv = my_ggplot_wrap_xyz(alldiv, "log10(pi)", "bcd", "log(4-fold SNP diversity)", "Bray-Curtis dissimilarity", paste("ida_pi-vs-bcd_nidv_", today, ".png", sep = ""), "log10(nidv)", "#FEF2F2", "#190C64", "log(Number of\nindividuals\nsequenced)", c(min(log10(alldiv$nidv)), max(log10(alldiv$nidv))))
 
 # compare k-mer diversity measures
 my_ggplot_wrap_xyz(alldiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("ida_jac-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log10(mean cov/sample)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
@@ -745,21 +749,21 @@ ida_wcvp_all_vs_wcvp_native = my_ggplot_wrap_line(alldiv, "log10(wcvp_all_area)"
 ida_gbif_all_vs_gbif_native = my_ggplot_wrap_line(alldiv, "log10(gbif_all_area)", "log10(gbif_native_area)", expression("log(GBIF full range)"~km^2), expression("log(GBIF native range)"~km^2), paste("ida_gbif-all-vs-gbif-native_", today, ".png", sep = ""))
 
 # plot diversity by mating system
-ida_mating_vs_pi = my_ggplot_wrap_box(alldiv, "Mating.system", "log10(pi)", "Mating system", "log10(Nucleotide diversity)", paste("mating_vs_pi_", today, ".png", sep = ""))
+ida_mating_vs_pi = my_ggplot_wrap_box(alldiv, "Mating.system", "log10(pi)", "Mating system", "log10(4-fold SNP diversity)", paste("mating_vs_pi_", today, ".png", sep = ""))
 
 ida_mating_vs_jac = my_ggplot_wrap_box(alldiv, "Mating.system", "jac", "Mating system", "Jaccard dissimilarity", paste("mating_vs_jac_", today, ".png", sep = ""))
 
 ida_mating_vs_bcd = my_ggplot_wrap_box(alldiv, "Mating.system", "bcd", "Mating system", "Bray-Curtis dissimilarity", paste("mating_vs_bcd_", today, ".png", sep = ""))
 
 # plot diversity by ploidy
-ida_ploidy_vs_pi = my_ggplot_wrap_box(alldiv, "Ploidy", "log10(pi)", "Ploidy", "log10(Nucleotide diversity)", paste("ploidy_vs_pi_", today, ".png", sep = ""))
+ida_ploidy_vs_pi = my_ggplot_wrap_box(alldiv, "Ploidy", "log10(pi)", "Ploidy", "log10(4-fold SNP diversity)", paste("ploidy_vs_pi_", today, ".png", sep = ""))
 
 ida_ploidy_vs_jac = my_ggplot_wrap_box(alldiv, "Ploidy", "jac", "Ploidy", "Jaccard dissimilarity", paste("ploidy_vs_jac_", today, ".png", sep = ""))
 
 ida_ploidy_vs_bcd = my_ggplot_wrap_box(alldiv, "Ploidy", "bcd", "Ploidy", "Bray-Curtis dissimilarity", paste("ploidy_vs_bcd_", today, ".png", sep = ""))
 
 # plot diversity by cultivation status
-ida_cult_vs_pi = my_ggplot_wrap_box(alldiv, "cultivation.status", "log10(pi)", "Cultivation status", "log10(Nucleotide diversity)", paste("cultivation_vs_pi_", today, ".png", sep = ""))
+ida_cult_vs_pi = my_ggplot_wrap_box(alldiv, "cultivation.status", "log10(pi)", "Cultivation status", "log10(4-fold SNP diversity)", paste("cultivation_vs_pi_", today, ".png", sep = ""))
 
 ida_cult_vs_jac = my_ggplot_wrap_box(alldiv, "cultivation.status", "jac", "Cultivation status", "Jaccard dissimilarity", paste("cultivation_vs_jac_", today, ".png", sep = ""))
 
@@ -806,28 +810,28 @@ subdiv = alldiv[(alldiv$nvariant >= 1000 & alldiv$meancov > 0.5),]
 
 ## replot trends
 ```{r}
-my_ggplot_wrap(subdiv, "log10(meancov)", "log10(pi)", "log10(mean coverage)", "log10(Nucleotide diversity)", paste("cda_coverage-vs-pi_", today, ".png", sep = ""))
+my_ggplot_wrap(subdiv, "log10(meancov)", "log10(pi)", "log10(mean coverage)", "log10(4-fold SNP diversity)", paste("cda_coverage-vs-pi_", today, ".png", sep = ""))
 
 my_ggplot_wrap(subdiv, "log10(meancov)", "jac", "log10(mean coverage)", "Jaccard dissimilarity", paste("cda_coverage-vs-jac_", today, ".png", sep = ""))
 
 my_ggplot_wrap(subdiv, "log10(meancov)", "bcd", "log10(mean coverage)", "Bray-Curtis dissimilarity", paste("cda_coverage-vs-bcd_", today, ".png", sep = ""))
 
-my_ggplot_wrap(subdiv, "cvbp", "log10(pi)", "Coeff. of variation in bp sequenced", "log10(Nucleotide diversity)", paste("cda_cvbp-vs-pi_", today, ".png", sep = ""))
+my_ggplot_wrap(subdiv, "cvbp", "log10(pi)", "coeff. of var. in bp sequenced", "log10(4-fold SNP diversity)", paste("cda_cvbp-vs-pi_", today, ".png", sep = ""))
 
-my_ggplot_wrap(subdiv, "cvbp", "jac", "Coeff. of variation in bp sequenced", "Jaccard dissimilarity", paste("cda_cvbp-vs-jac_", today, ".png", sep = ""))
+my_ggplot_wrap(subdiv, "cvbp", "jac", "coeff. of var. in bp sequenced", "Jaccard dissimilarity", paste("cda_cvbp-vs-jac_", today, ".png", sep = ""))
 
-my_ggplot_wrap(subdiv, "cvbp", "bcd", "Coeff. of variation in bp sequenced", "Bray-Curtis dissimilarity", paste("cda_cvbp-vs-bcd_", today, ".png", sep = ""))
+my_ggplot_wrap(subdiv, "cvbp", "bcd", "coeff. of var. in bp sequenced", "Bray-Curtis dissimilarity", paste("cda_cvbp-vs-bcd_", today, ".png", sep = ""))
 
-cda_pi_vs_jac = my_ggplot_wrap_xyz(subdiv, "log10(pi)", "jac", "log(Nucleotide diversity)", "Jaccard dissimilarity", paste("cda_pi-vs-jac_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log(mean coverage)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
+cda_pi_vs_jac = my_ggplot_wrap_xyz(subdiv, "log10(pi)", "jac", "log(4-fold SNP diversity)", "Jaccard dissimilarity", paste("cda_pi-vs-jac_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log(mean coverage)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
-cda_pi_vs_bcd = my_ggplot_wrap_xyz(subdiv, "log10(pi)", "bcd", "log(Nucleotide diversity)", "Bray-Curtis dissimilarity", paste("cda_pi-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log(mean coverage)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
+cda_pi_vs_bcd = my_ggplot_wrap_xyz(subdiv, "log10(pi)", "bcd", "log(4-fold SNP diversity)", "Bray-Curtis dissimilarity", paste("cda_pi-vs-bcd_", today, ".png", sep = ""), "log10(meancov)", "#FEF2F2", "#190C64", "log(mean coverage)", c(min(log10(alldiv$meancov)), max(log10(alldiv$meancov))))
 
 my_ggplot_wrap(subdiv, "jac", "bcd", "Jaccard dissimilarity", "Bray-Curtis dissimilarity", paste("cda_jac-vs-bcd_", today, ".png", sep = ""))
 
 # compare population size proxies with diversity
-cda_pi_vs_wcvp = my_ggplot_wrap(subdiv, "log10(pi)", "log10(wcvp_native_popsize)", "log(Nucleotide diversity)", "log(WCVP native ratio)", paste("cda_pi-vs-wcvp_", today, ".png", sep = ""))
+cda_pi_vs_wcvp = my_ggplot_wrap(subdiv, "log10(pi)", "log10(wcvp_native_popsize)", "log(4-fold SNP diversity)", "log(WCVP native ratio)", paste("cda_pi-vs-wcvp_", today, ".png", sep = ""))
 
-cda_pi_vs_gbif = my_ggplot_wrap(subdiv, "log10(pi)", "log10(gbif_native_popsize)", "log(Nucleotide diversity)", "log(GBIF native ratio)", paste("cda_pi-vs-gbif_", today, ".png", sep = ""))
+cda_pi_vs_gbif = my_ggplot_wrap(subdiv, "log10(pi)", "log10(gbif_native_popsize)", "log(4-fold SNP diversity)", "log(GBIF native ratio)", paste("cda_pi-vs-gbif_", today, ".png", sep = ""))
 
 cda_jac_vs_wcvp = my_ggplot_wrap(subdiv, "jac", "log10(wcvp_native_popsize)", "Jaccard dissimilarity", "log(WCVP native ratio)", paste("cda_jac-vs-wcvp_", today, ".png", sep = ""))
 
@@ -991,7 +995,7 @@ correct_and_plot = function(mod_mat, y, V, primary, xlab, ylab, xpos, ypos){
   y_star_corrected = y_star - (X_star[,technicals] %*% coeff_star[technicals])
   
   # Create label that will go on plot with lm information
-  modlabel = paste("slope = ", slope_value, " +/- ", slope_se_value, "\n", "p = ", slope_p_value, "\n", sep = "")
+  modlabel = paste("slope=", slope_value, "+/-", slope_se_value, "\n", "p = ", slope_p_value, "\n", sep = "")
   
   # plot result
   myplot = ggplot(mapping = aes(x = X_star[,primary], y = y_star_corrected)) +
@@ -1023,82 +1027,82 @@ correct_and_plot = function(mod_mat, y, V, primary, xlab, ylab, xpos, ypos){
 
 ## wcvp
 
-wcvp_native_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_pi$y, mod_wcvp_native_popsize_pi$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio), adj.", "log(Nucleotide diversity), adj.")
+wcvp_native_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_pi$y, mod_wcvp_native_popsize_pi$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-wcvp_all_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_pi$y, mod_wcvp_all_popsize_pi$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "log(Nucleotide diversity), adj.")
+wcvp_all_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_pi$y, mod_wcvp_all_popsize_pi$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-wcvp_all_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_pi$y, mod_wcvp_all_area_pi$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "log(Nucleotide diversity), adj.")
+wcvp_all_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_pi$y, mod_wcvp_all_area_pi$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-wcvp_native_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_pi$y, mod_wcvp_native_area_pi$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "log(Nucleotide diversity), adj.")
+wcvp_native_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_pi$y, mod_wcvp_native_area_pi$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-wcvp_native_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_jac$y, mod_wcvp_native_popsize_jac$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio), adj.", "Jaccard dissimilarity, adj.")
+wcvp_native_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_jac$y, mod_wcvp_native_popsize_jac$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-wcvp_all_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_jac$y, mod_wcvp_all_popsize_jac$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "Jaccard dissimilarity, adj.")
+wcvp_all_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_jac$y, mod_wcvp_all_popsize_jac$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-wcvp_all_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_jac$y, mod_wcvp_all_area_jac$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "Jaccard dissimilarity, adj.")
+wcvp_all_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_jac$y, mod_wcvp_all_area_jac$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-wcvp_native_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_jac$y, mod_wcvp_native_area_jac$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "Jaccard dissimilarity, adj.")
+wcvp_native_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_jac$y, mod_wcvp_native_area_jac$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-wcvp_native_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_bcd$y, mod_wcvp_native_popsize_bcd$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio), adj.", "Bray-Curtis dissimilarity, adj.")
+wcvp_native_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native, mod_wcvp_native_popsize_bcd$y, mod_wcvp_native_popsize_bcd$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
-wcvp_all_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_bcd$y, mod_wcvp_all_popsize_bcd$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "Bray-Curtis dissimilarity, adj.")
+wcvp_all_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all, mod_wcvp_all_popsize_bcd$y, mod_wcvp_all_popsize_bcd$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
-wcvp_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_bcd$y, mod_wcvp_all_area_bcd$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+wcvp_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_all_area, mod_wcvp_all_area_bcd$y, mod_wcvp_all_area_bcd$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
-wcvp_native_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_bcd$y, mod_wcvp_native_area_bcd$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+wcvp_native_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_native_area, mod_wcvp_native_area_bcd$y, mod_wcvp_native_area_bcd$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## gbif
 
 # pi
 
-gbif_native_vs_pi_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_pi$y, mod_gbif_native_popsize_pi$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio), adj.", "log(Nucleotide diversity), adj.")
+gbif_native_vs_pi_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_pi$y, mod_gbif_native_popsize_pi$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-gbif_all_vs_pi_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_pi$y, mod_gbif_all_popsize_pi$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio), adj.", "log(Nucleotide diversity), adj.")
+gbif_all_vs_pi_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_pi$y, mod_gbif_all_popsize_pi$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-gbif_all_area_vs_pi_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_pi$y, mod_gbif_all_area_pi$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2), adj.", "log(Nucleotide diversity), adj.")
+gbif_all_area_vs_pi_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_pi$y, mod_gbif_all_area_pi$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
   
-gbif_native_area_vs_pi_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_pi$y, mod_gbif_native_area_pi$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2), adj.", "log(Nucleotide diversity), adj.")
+gbif_native_area_vs_pi_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_pi$y, mod_gbif_native_area_pi$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
 # JAC
 
-gbif_native_vs_jac_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_jac$y, mod_gbif_native_popsize_jac$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio), adj.", "Jaccard dissimilarity, adj.")
+gbif_native_vs_jac_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_jac$y, mod_gbif_native_popsize_jac$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-gbif_all_vs_jac_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_jac$y, mod_gbif_all_popsize_jac$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio), adj.", "Jaccard dissimilarity, adj.")
+gbif_all_vs_jac_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_jac$y, mod_gbif_all_popsize_jac$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-gbif_all_area_vs_jac_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_jac$y, mod_gbif_all_area_jac$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2), adj.", "Jaccard dissimilarity, adj.")
+gbif_all_area_vs_jac_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_jac$y, mod_gbif_all_area_jac$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
   
-gbif_native_area_vs_jac_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_jac$y, mod_gbif_native_area_jac$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2), adj.", "Jaccard dissimilarity, adj.")
+gbif_native_area_vs_jac_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_jac$y, mod_gbif_native_area_jac$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
 # bcd
 
-gbif_native_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_bcd$y, mod_gbif_native_popsize_bcd$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio), adj.", "Bray-Curtis dissimilarity, adj.")
+gbif_native_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_native, mod_gbif_native_popsize_bcd$y, mod_gbif_native_popsize_bcd$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
-gbif_all_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_bcd$y, mod_gbif_all_popsize_bcd$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio), adj.", "Bray-Curtis dissimilarity, adj.")
+gbif_all_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_all, mod_gbif_all_popsize_bcd$y, mod_gbif_all_popsize_bcd$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
-gbif_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_bcd$y, mod_gbif_all_area_bcd$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+gbif_all_area_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_all_area, mod_gbif_all_area_bcd$y, mod_gbif_all_area_bcd$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
   
-gbif_native_area_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_bcd$y, mod_gbif_native_area_bcd$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+gbif_native_area_vs_bcd_corrected = correct_and_plot(mod_mat_gbif_native_area, mod_gbif_native_area_bcd$y, mod_gbif_native_area_bcd$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## height
 
-height_vs_pi_corrected = correct_and_plot(mod_mat_height, mod_height_pi$y, mod_height_pi$Vt, "log10(height_final)", "log(height, m), adj.", "log(Nucleotide diversity), adj.")
+height_vs_pi_corrected = correct_and_plot(mod_mat_height, mod_height_pi$y, mod_height_pi$Vt, "log10(height_final)", "log(height, m)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-height_vs_jac_corrected = correct_and_plot(mod_mat_height, mod_height_jac$y, mod_height_jac$Vt, "log10(height_final)", "log(height, m), adj.", "Jaccard dissimilarity, adj.")
+height_vs_jac_corrected = correct_and_plot(mod_mat_height, mod_height_jac$y, mod_height_jac$Vt, "log10(height_final)", "log(height, m)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-height_vs_bcd_corrected = correct_and_plot(mod_mat_height, mod_height_bcd$y, mod_height_bcd$Vt, "log10(height_final)", "log(height, m), adj.", "Jaccard dissimilarity, adj.")
+height_vs_bcd_corrected = correct_and_plot(mod_mat_height, mod_height_bcd$y, mod_height_bcd$Vt, "log10(height_final)", "log(height, m)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
 
-#wcvp_pop_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_pi, mod_pi_1$y, mod_pi_1$Vt, "log10(wcvp_native_popsize)", "log10(WCVP pop size ratio), scaled", "log10(Nucleotide diversity), scaled and adjusted")
+#wcvp_pop_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_pi, mod_pi_1$y, mod_pi_1$Vt, "log10(wcvp_native_popsize)", "log10(WCVP pop size ratio)\nscaled", "log10(4-fold SNP diversity)\nscaled and adjusted")
 
-#wcvp_pop_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_jac, mod_jac_1$y, mod_jac_1$Vt, "log10(wcvp_native_popsize)", "log10(WCVP pop size ratio), scaled", "Jaccard dissimilarity, scaled and adjusted")
+#wcvp_pop_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_jac, mod_jac_1$y, mod_jac_1$Vt, "log10(wcvp_native_popsize)", "log10(WCVP pop size ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-#wcvp_pop_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_bcd, mod_bcd_1$y, mod_bcd_1$Vt, "log10(wcvp_native_popsize)", "log10(WCVP pop size ratio), scaled", "Bray-Curtis dissimilarity, scaled and adjusted")
+#wcvp_pop_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_pop_vs_bcd, mod_bcd_1$y, mod_bcd_1$Vt, "log10(wcvp_native_popsize)", "log10(WCVP pop size ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
-#wcvp_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_area_vs_pi, mod_pi_wcvp_area_3$y, mod_pi_wcvp_area_3$Vt, "log10(area)", "log10(WCVP range in square km), scaled", "log10(Nucleotide diversity), scaled and adjusted")
+#wcvp_area_vs_pi_corrected = correct_and_plot(mod_mat_wcvp_area_vs_pi, mod_pi_wcvp_area_3$y, mod_pi_wcvp_area_3$Vt, "log10(area)", "log10(WCVP range in square km)\nscaled", "log10(4-fold SNP diversity)\nscaled and adjusted")
 
-#wcvp_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_area_vs_jac, mod_jac_wcvp_area_1$y, mod_jac_wcvp_area_1$Vt, "log10(area)", "log10(WCVP range in square km), scaled", "Jaccard dissimilarity, scaled and adjusted")
+#wcvp_area_vs_jac_corrected = correct_and_plot(mod_mat_wcvp_area_vs_jac, mod_jac_wcvp_area_1$y, mod_jac_wcvp_area_1$Vt, "log10(area)", "log10(WCVP range in square km)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-#wcvp_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_area_vs_bcd, mod_bcd_wcvp_area_2$y, mod_bcd_wcvp_area_2$Vt, "log10(area)", "log10(WCVP range in square km), scaled", "Bray-Curtis dissimilarity, scaled and adjusted")
+#wcvp_area_vs_bcd_corrected = correct_and_plot(mod_mat_wcvp_area_vs_bcd, mod_bcd_wcvp_area_2$y, mod_bcd_wcvp_area_2$Vt, "log10(area)", "log10(WCVP range in square km)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ```
 
@@ -1220,133 +1224,133 @@ genome_mod_mat_height = model.matrix(~ log10(genome.size) + log10(height_final) 
 # create plots
 
 ## gbif all ratio
-genome_gbif_all_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_pi$y, genome_gbif_all_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_gbif_all_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_pi$y, genome_gbif_all_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_gbif_all_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_jac$y, genome_gbif_all_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_gbif_all_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_jac$y, genome_gbif_all_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_gbif_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_bcd$y, genome_gbif_all_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_gbif_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_bcd$y, genome_gbif_all_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## gbif native ratio
-genome_gbif_native_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_pi$y, genome_gbif_native_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_gbif_native_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_pi$y, genome_gbif_native_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_gbif_native_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_jac$y, genome_gbif_native_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_gbif_native_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_jac$y, genome_gbif_native_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_gbif_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_bcd$y, genome_gbif_native_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_gbif_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_bcd$y, genome_gbif_native_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## gbif all range size
-genome_gbif_all_area_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_pi$y, genome_gbif_all_area_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_gbif_all_area_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_pi$y, genome_gbif_all_area_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_gbif_all_area_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_jac$y, genome_gbif_all_area_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_gbif_all_area_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_jac$y, genome_gbif_all_area_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_gbif_all_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_bcd$y, genome_gbif_all_area_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_gbif_all_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_bcd$y, genome_gbif_all_area_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## gbif native range size
-genome_gbif_native_area_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_pi$y, genome_gbif_native_area_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_gbif_native_area_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_pi$y, genome_gbif_native_area_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_gbif_native_area_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_jac$y, genome_gbif_native_area_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_gbif_native_area_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_jac$y, genome_gbif_native_area_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_gbif_native_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_bcd$y, genome_gbif_native_area_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_gbif_native_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_bcd$y, genome_gbif_native_area_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## wcvp all
-genome_wcvp_all_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_pi$y, genome_wcvp_all_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_wcvp_all_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_pi$y, genome_wcvp_all_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_wcvp_all_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_jac$y, genome_wcvp_all_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_wcvp_all_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_jac$y, genome_wcvp_all_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_wcvp_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_bcd$y, genome_wcvp_all_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_wcvp_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_bcd$y, genome_wcvp_all_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## wcvp native
-genome_wcvp_native_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_pi$y, genome_wcvp_native_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_wcvp_native_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_pi$y, genome_wcvp_native_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_wcvp_native_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_jac$y, genome_wcvp_native_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_wcvp_native_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_jac$y, genome_wcvp_native_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_wcvp_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_bcd$y, genome_wcvp_native_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_wcvp_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_bcd$y, genome_wcvp_native_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## wcvp all range size
-genome_wcvp_all_area_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_pi$y, genome_wcvp_all_area_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_wcvp_all_area_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_pi$y, genome_wcvp_all_area_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_wcvp_all_area_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_jac$y, genome_wcvp_all_area_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_wcvp_all_area_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_jac$y, genome_wcvp_all_area_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_wcvp_all_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_bcd$y, genome_wcvp_all_area_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_wcvp_all_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_bcd$y, genome_wcvp_all_area_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## wcvp native range size
-genome_wcvp_native_area_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_pi$y, genome_wcvp_native_area_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_wcvp_native_area_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_pi$y, genome_wcvp_native_area_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_wcvp_native_area_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_jac$y, genome_wcvp_native_area_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_wcvp_native_area_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_jac$y, genome_wcvp_native_area_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_wcvp_native_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_bcd$y, genome_wcvp_native_area_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_wcvp_native_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_bcd$y, genome_wcvp_native_area_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## height
-genome_height_vs_pi_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_pi$y, genome_height_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "log(Nucleotide diversity), adj.")
+genome_height_vs_pi_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_pi$y, genome_height_vs_pi$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-genome_height_vs_jac_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_jac$y, genome_height_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Jaccard dissimilarity, adj.")
+genome_height_vs_jac_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_jac$y, genome_height_vs_jac$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-genome_height_vs_bcd_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_bcd$y, genome_height_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp), adj.", "Bray-Curtis dissimilarity, adj.")
+genome_height_vs_bcd_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_bcd$y, genome_height_vs_bcd$Vt, "log10(genome.size)", "log(genome size in bp)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 ```
 
 ### Population size vs diversity, controlling for genome size
 ```{r}
 ## gbif all ratio
-pop_genome_gbif_all_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_pi$y, genome_gbif_all_vs_pi$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_gbif_all_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_pi$y, genome_gbif_all_vs_pi$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_gbif_all_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_jac$y, genome_gbif_all_vs_jac$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_gbif_all_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_jac$y, genome_gbif_all_vs_jac$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_gbif_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_bcd$y, genome_gbif_all_vs_bcd$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_gbif_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all, genome_gbif_all_vs_bcd$y, genome_gbif_all_vs_bcd$Vt, "log10(gbif_all_popsize)", "log(GBIF full ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## gbif native ratio
-pop_genome_gbif_native_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_pi$y, genome_gbif_native_vs_pi$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_gbif_native_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_pi$y, genome_gbif_native_vs_pi$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_gbif_native_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_jac$y, genome_gbif_native_vs_jac$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_gbif_native_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_jac$y, genome_gbif_native_vs_jac$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_gbif_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_bcd$y, genome_gbif_native_vs_bcd$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_gbif_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native, genome_gbif_native_vs_bcd$y, genome_gbif_native_vs_bcd$Vt, "log10(gbif_native_popsize)", "log(GBIF native ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## gbif all range size
-pop_genome_gbif_all_area_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_pi$y, genome_gbif_all_area_vs_pi$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_gbif_all_area_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_pi$y, genome_gbif_all_area_vs_pi$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_gbif_all_area_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_jac$y, genome_gbif_all_area_vs_jac$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_gbif_all_area_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_jac$y, genome_gbif_all_area_vs_jac$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_gbif_all_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_bcd$y, genome_gbif_all_area_vs_bcd$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_gbif_all_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_all_area, genome_gbif_all_area_vs_bcd$y, genome_gbif_all_area_vs_bcd$Vt, "log10(gbif_all_area)", "log(GBIF full range, km^2)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## gbif native range size
-pop_genome_gbif_native_area_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_pi$y, genome_gbif_native_area_vs_pi$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_gbif_native_area_vs_pi_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_pi$y, genome_gbif_native_area_vs_pi$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_gbif_native_area_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_jac$y, genome_gbif_native_area_vs_jac$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_gbif_native_area_vs_jac_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_jac$y, genome_gbif_native_area_vs_jac$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_gbif_native_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_bcd$y, genome_gbif_native_area_vs_bcd$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_gbif_native_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_gbif_native_area, genome_gbif_native_area_vs_bcd$y, genome_gbif_native_area_vs_bcd$Vt, "log10(gbif_native_area)", "log(GBIF native range, km^2)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## wcvp all
-pop_genome_wcvp_all_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_pi$y, genome_wcvp_all_vs_pi$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_wcvp_all_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_pi$y, genome_wcvp_all_vs_pi$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_wcvp_all_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_jac$y, genome_wcvp_all_vs_jac$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_wcvp_all_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_jac$y, genome_wcvp_all_vs_jac$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_wcvp_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_bcd$y, genome_wcvp_all_vs_bcd$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_wcvp_all_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all, genome_wcvp_all_vs_bcd$y, genome_wcvp_all_vs_bcd$Vt, "log10(wcvp_all_popsize)", "log(WCVP full ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## wcvp native
-pop_genome_wcvp_native_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_pi$y, genome_wcvp_native_vs_pi$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_wcvp_native_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_pi$y, genome_wcvp_native_vs_pi$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_wcvp_native_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_jac$y, genome_wcvp_native_vs_jac$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_wcvp_native_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_jac$y, genome_wcvp_native_vs_jac$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_wcvp_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_bcd$y, genome_wcvp_native_vs_bcd$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_wcvp_native_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native, genome_wcvp_native_vs_bcd$y, genome_wcvp_native_vs_bcd$Vt, "log10(wcvp_native_popsize)", "log(WCVP native ratio)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## wcvp all range size
-pop_genome_wcvp_all_area_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_pi$y, genome_wcvp_all_area_vs_pi$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_wcvp_all_area_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_pi$y, genome_wcvp_all_area_vs_pi$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_wcvp_all_area_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_jac$y, genome_wcvp_all_area_vs_jac$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_wcvp_all_area_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_jac$y, genome_wcvp_all_area_vs_jac$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_wcvp_all_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_bcd$y, genome_wcvp_all_area_vs_bcd$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_wcvp_all_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_all_area, genome_wcvp_all_area_vs_bcd$y, genome_wcvp_all_area_vs_bcd$Vt, "log10(wcvp_all_area)", "log(WCVP full range, km^2)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## wcvp native range size
-pop_genome_wcvp_native_area_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_pi$y, genome_wcvp_native_area_vs_pi$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_wcvp_native_area_vs_pi_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_pi$y, genome_wcvp_native_area_vs_pi$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_wcvp_native_area_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_jac$y, genome_wcvp_native_area_vs_jac$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_wcvp_native_area_vs_jac_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_jac$y, genome_wcvp_native_area_vs_jac$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_wcvp_native_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_bcd$y, genome_wcvp_native_area_vs_bcd$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_wcvp_native_area_vs_bcd_figure = correct_and_plot(genome_mod_mat_wcvp_native_area, genome_wcvp_native_area_vs_bcd$y, genome_wcvp_native_area_vs_bcd$Vt, "log10(wcvp_native_area)", "log(WCVP native range, km^2)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 
 ## height
-pop_genome_height_vs_pi_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_pi$y, genome_height_vs_pi$Vt, "log10(height_final)", "log(height in m), adj.", "log(Nucleotide diversity), adj.")
+pop_genome_height_vs_pi_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_pi$y, genome_height_vs_pi$Vt, "log10(height_final)", "log(height in m)\nscaled", "log(4-fold SNP diversity)\nscaled and adjusted")
 
-pop_genome_height_vs_jac_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_jac$y, genome_height_vs_jac$Vt, "log10(height_final)", "log(height in m), adj.", "Jaccard dissimilarity, adj.")
+pop_genome_height_vs_jac_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_jac$y, genome_height_vs_jac$Vt, "log10(height_final)", "log(height in m)\nscaled", "Jaccard dissimilarity\nscaled and adjusted")
 
-pop_genome_height_vs_bcd_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_bcd$y, genome_height_vs_bcd$Vt, "log10(height_final)", "log(height in m), adj.", "Bray-Curtis dissimilarity, adj.")
+pop_genome_height_vs_bcd_figure = correct_and_plot(genome_mod_mat_height, genome_height_vs_bcd$y, genome_height_vs_bcd$Vt, "log10(height_final)", "log(height in m)\nscaled", "Bray-Curtis dissimilarity\nscaled and adjusted")
 ```
 
 
@@ -1357,50 +1361,50 @@ pop_genome_height_vs_bcd_figure = correct_and_plot(genome_mod_mat_height, genome
 ggarrange(ida_wcvp_vs_gbif_all, ida_wcvp_vs_gbif_native, ida_wcvp_all_vs_wcvp_native, ida_gbif_all_vs_gbif_native, nrow = 2, ncol = 2, labels = c("A", "B", "C", "D"), font.label = list(size = 12), hjust = -2)
 
 #ggsave(paste("wcvp_vs_gbif_", today, ".tiff", sep = ""), width = 6, height = 6, scale = 1, compression = "lzw")
-ggsave(paste("wcvp_vs_gbif_", today, ".pdf", sep = ""), width = 6, height = 6, device = cairo_pdf)
+ggsave(paste("wcvp_vs_gbif_", today, ".jpg", sep = ""), width = 6, height = 6, dpi = 350)
 
 # Jaccard vs bray-curtis dissimilarity
-ggsave(paste("ida_jac_vs_bcd_", today, ".pdf", sep = ""), ida_jac_vs_bcd, width = 4, height = 4, device = cairo_pdf)
+ggsave(paste("ida_jac_vs_bcd_", today, ".jpg", sep = ""), ida_jac_vs_bcd, width = 4, height = 4, dpi = 350)
 
 # Look at sequencing metrics influence diversity
 ggarrange(ida_meancov_vs_pi, ida_cvbp_vs_pi, ida_nidv_vs_pi, ida_meancov_vs_jac, ida_cvbp_vs_jac, ida_nidv_vs_jac, ida_meancov_vs_bcd, ida_cvbp_vs_bcd, ida_nidv_vs_bcd, ncol = 3, nrow = 3, labels = c("A", "B", "C", "D", "E", "F", "G", "H", "I"), font.label = list(size = 12))
 
-ggsave(paste("coverage_vs_diversity_", today, ".pdf", sep = ""), width = 10, height = 8, units = "in", device = cairo_pdf)
+ggsave(paste("coverage_vs_diversity_", today, ".jpg", sep = ""), width = 10, height = 8, units = "in", dpi = 350)
 
 # Look at how mating system, cultivation status, ploidy influence diversity
 #ggarrange(ida_mating_vs_pi, ida_cult_vs_pi, ida_ploidy_vs_pi, ida_mating_vs_jac, ida_cult_vs_jac, ida_ploidy_vs_jac, ida_mating_vs_bcd, ida_cult_vs_bcd, ida_ploidy_vs_bcd, ncol = 3, nrow = 3, labels = c("A", "B", "C", "D", "E", "F", "G", "H"))
 
-#ggsave(paste("mating_cultivation_ploidy_vs_diversity_", today, ".pdf", sep = ""), width = 10, height = 10, units = "in")
+#ggsave(paste("mating_cultivation_ploidy_vs_diversity_", today, ".jpg", sep = ""), width = 10, height = 10, units = "in", dpi = 350)
 
 # Compare how k-mer metrics compare to SNP metrics after removing low coverage data
 ggarrange(ida_pi_vs_bcd, cda_pi_vs_bcd, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 12))
 
 ggsave(paste("pi_vs_bcd_high_vs_low_cov_", today, ".tiff", sep = ""), width = 6, height = 4, units = "in", compression = "lzw")
-ggsave(paste("pi_vs_bcd_high_vs_low_cov_", today, ".pdf", sep = ""), width = 6, height = 4, units = "in", device = cairo_pdf)
+ggsave(paste("pi_vs_bcd_high_vs_low_cov_", today, ".jpg", sep = ""), width = 6, height = 4, units = "in", dpi = 350)
 
 ggarrange(ida_pi_vs_jac, cda_pi_vs_jac, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 12))
 
-ggsave(paste("pi_vs_jac_high_vs_low_cov_", today, ".pdf", sep = ""), width = 6, height = 4, units = "in", device = cairo_pdf)
+ggsave(paste("pi_vs_jac_high_vs_low_cov_", today, ".jpg", sep = ""), width = 6, height = 4, units = "in", dpi = 350)
 
 # Look at how cv in sequencing affect SNP vs k-mer comparison
 ggarrange(ida_pi_vs_jac_cvbp, ida_pi_vs_bcd_cvbp, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 12))
 
-ggsave(paste("pi_vs_jac_and_bcd_cvbp_", today, ".pdf", sep = ""), width = 9, height = 6, units = "in", device = cairo_pdf)
+ggsave(paste("pi_vs_jac_and_bcd_cvbp_", today, ".jpg", sep = ""), width = 9, height = 6, units = "in", dpi = 350)
 
 # Look at how number of individuals sequenced affects SNP vs k-mer comparison
 ggarrange(ida_pi_vs_jac_nidv, ida_pi_vs_bcd_nidv, ncol = 2, nrow = 1, common.legend = T, labels = c("A", "B"), legend = "top", font.label = list(size = 12))
 
-ggsave(paste("pi_vs_jac_and_bcd_nidv_", today, ".pdf", sep = ""), width = 9, height = 6, units = "in", device = cairo_pdf)
+ggsave(paste("pi_vs_jac_and_bcd_nidv_", today, ".jpg", sep = ""), width = 9, height = 6, units = "in", dpi = 350)
 
 # Simple barplot of how cultivation varies with generation and mating system
 ggarrange(ida_cultivation_vs_generation, ida_cultivation_vs_mating, ida_generation_vs_mating, labels = c("A", "B", "C"), font.label = list(size = 12), ncol = 3, nrow = 1, legend = "right")
 
-ggsave(paste("cultivation_vs_generation_and_mating", today, ".pdf", sep = ""), width = 15, height = 4, units = "in", device = cairo_pdf)
+ggsave(paste("cultivation_vs_generation_and_mating", today, ".jpg", sep = ""), width = 15, height = 4, units = "in", dpi = 350)
 
 # Compare population sizes to diversity metrics, without correcting for phylogeny
 ggarrange(cda_pi_vs_gbif, cda_pi_vs_wcvp, cda_jac_vs_gbif, cda_jac_vs_wcvp, cda_bcd_vs_gbif, cda_bcd_vs_wcvp, nrow = 3, ncol = 2, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("diversity_vs_popsize_", today, ".pdf", sep = ""), width = 6, height = 8, units = "in", device = cairo_pdf)
+ggsave(paste("diversity_vs_popsize_", today, ".jpg", sep = ""), width = 6, height = 8, units = "in", dpi = 350)
 
 #### plot phylogenetic least squares models ####
 
@@ -1409,24 +1413,24 @@ ggsave(paste("diversity_vs_popsize_", today, ".pdf", sep = ""), width = 6, heigh
 ### Figure 3
 ggarrange(wcvp_native_vs_pi_corrected, wcvp_native_vs_jac_corrected, wcvp_native_vs_bcd_corrected,wcvp_all_vs_pi_corrected, wcvp_all_vs_jac_corrected, wcvp_all_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("wcvp_popsize_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("wcvp_popsize_vs_diversity_corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ### supplemental figures
 ggarrange(wcvp_native_area_vs_pi_corrected, wcvp_native_area_vs_jac_corrected, wcvp_native_area_vs_bcd_corrected,wcvp_all_area_vs_pi_corrected, wcvp_all_area_vs_jac_corrected, wcvp_all_area_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("wcvp_area_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("wcvp_area_vs_diversity_corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(gbif_native_vs_pi_corrected, gbif_native_vs_jac_corrected, gbif_native_vs_bcd_corrected,gbif_all_vs_pi_corrected, gbif_all_vs_jac_corrected, gbif_all_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("gbif_popsize_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("gbif_popsize_vs_diversity_corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(gbif_native_area_vs_pi_corrected, gbif_native_area_vs_jac_corrected, gbif_native_area_vs_bcd_corrected,gbif_all_area_vs_pi_corrected, gbif_all_area_vs_jac_corrected, gbif_all_area_vs_bcd_corrected, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("gbif_area_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("gbif_area_vs_diversity_corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(height_vs_pi_corrected, height_vs_jac_corrected, height_vs_bcd_corrected, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 12))
 
-ggsave(paste("height_vs_diversity_corrected_", today, ".pdf", sep = ""), height = 3, width = 7.5, units = "in")
+ggsave(paste("height_vs_diversity_corrected_", today, ".jpg", sep = ""), height = 3, width = 7.5, units = "in", dpi = 350)
 
 ## population size vs diversity, including genome size
 
@@ -1434,32 +1438,32 @@ ggsave(paste("height_vs_diversity_corrected_", today, ".pdf", sep = ""), height 
 ggarrange(pop_genome_wcvp_all_vs_pi_figure, pop_genome_wcvp_all_vs_bcd_figure, nrow = 1, ncol = 2, labels = c("A", "B"), font.label = list(size = 12))
 
 ggsave(paste("wcvp_all_popsize_vs_pi_and_bcd_genome-size-corrected_", today, ".tiff", sep = ""), height = 3, width = 5, units = "in", compression = "lzw")
-ggsave(paste("wcvp_all_popsize_vs_pi_and_bcd_genome-size-corrected_", today, ".pdf", sep = ""), height = 3, width = 5, units = "in")
+ggsave(paste("wcvp_all_popsize_vs_pi_and_bcd_genome-size-corrected_", today, ".jpg", sep = ""), height = 3, width = 5, units = "in", dpi = 350)
 
 ggarrange(pop_genome_wcvp_all_vs_jac_figure)
 
-ggsave(paste("wcvp_all_popsize_vs_jac_genome-size-corrected_", today, ".pdf", sep = ""), height = 3, width = 3, units = "in")
+ggsave(paste("wcvp_all_popsize_vs_jac_genome-size-corrected_", today, ".jpg", sep = ""), height = 3, width = 3, units = "in", dpi = 350)
 
 ggarrange(pop_genome_wcvp_native_vs_pi_figure, pop_genome_wcvp_native_vs_jac_figure, pop_genome_wcvp_native_vs_bcd_figure, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 12))
 
-ggsave(paste("wcvp_native_popsize_vs_diversity_genome-size-corrected_", today, ".pdf", sep = ""), height = 3, width = 7.5, units = "in")
+ggsave(paste("wcvp_native_popsize_vs_diversity_genome-size-corrected_", today, ".jpg", sep = ""), height = 3, width = 7.5, units = "in", dpi = 350)
 
 ### supplemental figures
 ggarrange(pop_genome_gbif_native_vs_pi_figure, pop_genome_gbif_native_vs_jac_figure, pop_genome_gbif_native_vs_bcd_figure,pop_genome_gbif_all_vs_pi_figure, pop_genome_gbif_all_vs_jac_figure, pop_genome_gbif_all_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("gbif_popsize_vs_diversity_genome-size-corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("gbif_popsize_vs_diversity_genome-size-corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(pop_genome_wcvp_native_area_vs_pi_figure, pop_genome_wcvp_native_area_vs_jac_figure, pop_genome_wcvp_native_area_vs_bcd_figure,pop_genome_wcvp_all_area_vs_pi_figure, pop_genome_wcvp_all_area_vs_jac_figure, pop_genome_wcvp_all_area_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("wcvp_area_vs_diversity_genome-size-corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("wcvp_area_vs_diversity_genome-size-corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(pop_genome_gbif_native_area_vs_pi_figure, pop_genome_gbif_native_area_vs_jac_figure, pop_genome_gbif_native_area_vs_bcd_figure,pop_genome_gbif_all_area_vs_pi_figure, pop_genome_gbif_all_area_vs_jac_figure, pop_genome_gbif_all_area_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("gbif_area_vs_diversity_genome-size-corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("gbif_area_vs_diversity_genome-size-corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(pop_genome_height_vs_pi_figure, pop_genome_height_vs_jac_figure, pop_genome_height_vs_bcd_figure, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 12))
 
-ggsave(paste("height_vs_diversity_genome-size-corrected_", today, ".pdf", sep = ""), height = 4, width = 7.5, units = "in")
+ggsave(paste("height_vs_diversity_genome-size-corrected_", today, ".jpg", sep = ""), height = 4, width = 7.5, units = "in", dpi = 350)
 
 ## genome size vs diversity
 
@@ -1467,33 +1471,33 @@ ggsave(paste("height_vs_diversity_genome-size-corrected_", today, ".pdf", sep = 
 ggarrange(genome_wcvp_all_vs_pi_figure, genome_wcvp_all_vs_bcd_figure, nrow = 1, ncol = 2, labels = c("A", "B"), font.label = list(size = 12))
 
 ggsave(paste("pi_bcd_vs_genome_size_wcvp-all-corrected_", today, ".tiff", sep = ""), height = 3, width = 5, units = "in", compression = "lzw")
-ggsave(paste("pi_bcd_vs_genome_size_wcvp-all-corrected_", today, ".pdf", sep = ""), height = 3, width = 5, units = "in")
+ggsave(paste("pi_bcd_vs_genome_size_wcvp-all-corrected_", today, ".jpg", sep = ""), height = 3, width = 5, units = "in", dpi = 350)
 
 ggarrange(genome_wcvp_all_vs_jac_figure)
 
-ggsave(paste("jac_vs_genome_size_wcvp-all-corrected_", today, ".pdf", sep = ""), height = 3, width = 3, units = "in")
+ggsave(paste("jac_vs_genome_size_wcvp-all-corrected_", today, ".jpg", sep = ""), height = 3, width = 3, units = "in", dpi = 350)
 
 ggarrange(genome_wcvp_native_vs_pi_figure, genome_wcvp_native_vs_jac_figure, genome_wcvp_native_vs_bcd_figure, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 12))
 
-ggsave(paste("pi_jac_bcd_vs_genome_size_wcvp-native-corrected_", today, ".pdf", sep = ""), height = 3, width = 7.5, units = "in")
+ggsave(paste("pi_jac_bcd_vs_genome_size_wcvp-native-corrected_", today, ".jpg", sep = ""), height = 3, width = 7.5, units = "in", dpi = 350)
 
 ### supplemental figures
 
 ggarrange(genome_gbif_native_vs_pi_figure, genome_gbif_native_vs_jac_figure, genome_gbif_native_vs_bcd_figure,genome_gbif_all_vs_pi_figure, genome_gbif_all_vs_jac_figure, genome_gbif_all_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("gbif_popsize_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("gbif_popsize_vs_genome_size_corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(genome_wcvp_native_area_vs_pi_figure, genome_wcvp_native_area_vs_jac_figure, genome_wcvp_native_area_vs_bcd_figure,genome_wcvp_all_area_vs_pi_figure, genome_wcvp_all_area_vs_jac_figure, genome_wcvp_all_area_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("wcvp_area_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("wcvp_area_vs_genome_size_corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(genome_gbif_native_area_vs_pi_figure, genome_gbif_native_area_vs_jac_figure, genome_gbif_native_area_vs_bcd_figure,genome_gbif_all_area_vs_pi_figure, genome_gbif_all_area_vs_jac_figure, genome_gbif_all_area_vs_bcd_figure, nrow = 2, ncol = 3, labels = c("A", "B", "C", "D", "E", "F"), font.label = list(size = 12))
 
-ggsave(paste("gbif_area_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 6, width = 7.5, units = "in")
+ggsave(paste("gbif_area_vs_genome_size_corrected_", today, ".jpg", sep = ""), height = 6, width = 7.5, units = "in", dpi = 350)
 
 ggarrange(genome_height_vs_pi_figure, genome_height_vs_jac_figure, genome_height_vs_bcd_figure, nrow = 1, ncol = 3, labels = c("A", "B", "C"), font.label = list(size = 12))
 
-ggsave(paste("height_vs_genome_size_corrected_", today, ".pdf", sep = ""), height = 4, width = 7.5, units = "in")
+ggsave(paste("height_vs_genome_size_corrected_", today, ".jpg", sep = ""), height = 4, width = 7.5, units = "in", dpi = 350)
 
 #### save results of phylogenetic least squares models as tables ####
 
@@ -1677,7 +1681,7 @@ mod_coeff_results$ID = c(
 
 #mod_coeff_results$Response = rep(
 #    c(
-#      rep("Nucleotide diversity", times = 5),
+#      rep("4-fold SNP diversity", times = 5),
 #      rep("Jaccard dissimilarity", times = 5),
 #      rep("Bray-Curtis dissimilarity", times = 5)
 #    ),
@@ -1792,12 +1796,11 @@ write.csv(whole_mod_results, paste("model_rsquared_", today, ".csv", sep = ""), 
 ggtree causes linear models to crash, so need to do this separately
 
 ```{r}
-#install.packages("ggtree")
+
 #if (!require("BiocManager", quietly = TRUE))
 #    install.packages("BiocManager")
 #BiocManager::install("ggtree")
 
-#install.packages("ggtree")
 library(ggtree)
 
 # test ggtree package
@@ -1810,6 +1813,8 @@ plotdf = alldiv %>% arrange(factor(species, levels = phy$tip.label))
 plotdf$Ploidy = as.numeric(plotdf$Ploidy)
 
 plotdf = plotdf[!is.na(plotdf$species),]
+
+plotdf$retained = (plotdf$nvariant >= 1000 & plotdf$meancov > 0.5)
 
 # remove species from phylogeny that lack data
 plotphy = drop.tip(phy, tip = phy$tip.label[!(phy$tip.label %in% alldiv$species)])
@@ -1824,21 +1829,28 @@ plotpal = c("#021326", "#3B5378", "#7F5F70", "#CE685E", "#E5AA7F")
 #plotpal = c("#021326","#3B5378","#7F5F70","#CE685E","#E5AA7F","#FDF4D9")
 #plotpal = c("#191900","#663329","#D85F4D","#ECAC54","#FFFECB")
 
+# vector of colors to show outlier vs not
+# scico(2, palette = "bam")
+outlier_colors = plotdf$retained
+outlier_colors[outlier_colors] = "#0C4C00"
+outlier_colors[(outlier_colors == FALSE)] = "#65014B"
+
 # plot phylogeny alongside other data
 ggtree(plotphy, size = 1.5) + 
-  geom_tiplab(size = 2) +
-  #geom_facet(panel = "log10(GBIF native ratio)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(gbif_native_popsize)), color = plotpal[1]) +
+  geom_tiplab(color = outlier_colors, size = 2, offset = 10) +
+  #geom_tippoint(aes(shape = retained, node = NULL), data = plotdf, size = 1.5) +
+  #geom_facet(panel = "Retained", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = x, color = retained)) +
   geom_facet(panel = "log(WCVP full ratio)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(wcvp_all_popsize)), color = plotpal[2]) +
-  geom_facet(panel = "log(Nucleotide diversity)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(pi)), color = plotpal[3]) +
+  geom_facet(panel = "log(4-fold SNP diversity)", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = log10(pi)), color = plotpal[3]) +
   geom_facet(panel = "Bray-Curtis dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = bcd), color = plotpal[4]) +
   #geom_facet(panel = "Jaccard dissimilarity", data = plotdf, geom = geom_segment, size = 3, mapping = aes(x = 0, y = y, yend = y, xend = jac), color = plotpal[5]) +
   theme_tree2() +
   theme(strip.background = element_rect(fill="white")) +
   theme(strip.text = element_text(colour = 'black'), text = element_text(size = 12)) +
-  xlim_tree(500)
+  xlim_tree(550)
   
 ggsave(paste("tree_with_primary_variables_", today, ".tiff", sep = ""), width = 7.5, height = 7.75, compression = "lzw")
-ggsave(paste("tree_with_primary_variables_", today, ".pdf", sep = ""), width = 7.5, height = 7.75)
+ggsave(paste("tree_with_primary_variables_", today, ".jpg", sep = ""), width = 7.5, height = 7.75, dpi = 350)
 
 # plot technical variables
 ggtree(plotphy, size = 1.5) +
@@ -1854,7 +1866,7 @@ ggtree(plotphy, size = 1.5) +
   theme(strip.text = element_text(colour = 'black'), text = element_text(size = 12)) +
   xlim_tree(500)
 
-ggsave(paste("tree_with_technical_variables_", today, ".pdf", sep = ""), width = 7.5, height = 7.75)
+ggsave(paste("tree_with_technical_variables_", today, ".jpg", sep = ""), width = 7.5, height = 7.75, dpi = 350)
 
 ```
 

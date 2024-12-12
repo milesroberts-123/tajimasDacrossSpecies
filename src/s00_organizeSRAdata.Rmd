@@ -701,7 +701,7 @@ any(duplicated(corylus_americana$BioSample))
 any(duplicated(corylus_americana$SampleName))
 
 # add reads to growing list
-allReads = rbind(allReads, data.frame(run = corylus_americana[,"Run"], replicate = corylus_americana[,"BioSample"], layout = "SE", genome = "corylus_americana", ploidy = 2, taxonKeys = "2895317"))
+allReads = rbind(allReads, data.frame(run = corylus_americana[,"Run"], replicate = corylus_americana[,"BioSample"], layout = "SE", genome = "corylus_americana", ploidy = 2, taxonKeys = "2876060"))
 ```
 
 ## Corylus avellana
